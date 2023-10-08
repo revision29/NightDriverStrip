@@ -163,8 +163,25 @@ void LoadEffectFactories()
     # elif CROSS
         //debugI("NUmber of leds %i",NUM_LEDS);
         //ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 255, 255, 50, 6, 200, false, false);
-        ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 255, 255, 50, 6, 3, false, false);
-        ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 6, 2);
+
+        ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, RedColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, LavaColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, ForestColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,1,0);
+        
+/*
+  PaletteEffect(const CRGBPalette16 & palette,
+                  float density = 1.0,
+                  float paletteSpeed = 1,
+                  float ledsPerSecond = 0,
+                  float lightSize = 1,
+                  float gapSize = 1,
+                  TBlendType blend = LINEARBLEND,
+                  bool  bErase = true,
+                  float brightness = 1.0)*/
+
         /*
             int     LEDCount;           // Number of LEDs total
     int     CellsPerLED;
@@ -175,10 +192,13 @@ void LoadEffectFactories()
     bool    bReversed;          // If reversed we draw from 0 outwards
     bool    bMirrored;          // If mirrored we split and duplicate the drawing*/
     # elif ESPCROSS
-        ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 6, 2);
-        ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 40, 5, 50, 3, 3, true, false);
-        ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 6, 2);
-        ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Medium Fire", NUM_LEDS, 1, 5, 100, 3, 4, true, false);
+        ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 2, 3, 150, 3, 10, false, false);
+        ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, RedColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, LavaColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, ForestColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,1,0);
     #elif LASERLINE
 
         ADD_EFFECT(EFFECT_STRIP_LASER_LINE, LaserLineEffect, 500, 20);
@@ -490,7 +510,7 @@ std::optional<JsonObjectConst> LoadEffectsJSONFile(std::unique_ptr<AllocatedJson
 
     // Only return the JSON object if the persistent version matches the current one
     if (jsonVersion == EFFECT_SET_VERSION)
-        return jsonObject;
+        //return jsonObject;//This line was disabled to prevent effects from loading from json
 
     return {};
 }

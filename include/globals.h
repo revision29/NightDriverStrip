@@ -291,11 +291,11 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define PROJECT_NAME            "Cross"
     #endif
 
-    //#define NUM_RINGS               4
-    //#define RING_SIZE_0             15
-    //#define RING_SIZE_1             8
-    //#define RING_SIZE_2             8
-    //#define RING_SIZE_3             8
+    #define NUM_RINGS               4
+    #define RING_SIZE_0             15
+    #define RING_SIZE_1             8
+    #define RING_SIZE_2             8
+    #define RING_SIZE_3             8
     #define MATRIX_WIDTH            39
     #define MATRIX_HEIGHT           1
     #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
@@ -333,14 +333,14 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     // Wall Mounted Cross. 3 sets of 8 leds and one set of 15
 
     #ifndef PROJECT_NAME
-    #define PROJECT_NAME            "Cross"
+    #define PROJECT_NAME            "ESP Cross"
     #endif
 
-    //#define NUM_RINGS               4
-    //#define RING_SIZE_0             15
-    //#define RING_SIZE_1             8
-    //#define RING_SIZE_2             8
-    //#define RING_SIZE_3             8
+    #define NUM_RINGS               4
+    #define RING_SIZE_0             15
+    #define RING_SIZE_1             8
+    #define RING_SIZE_2             8
+    #define RING_SIZE_3             8
     #define MATRIX_WIDTH            39
     #define MATRIX_HEIGHT           1
     //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
@@ -351,25 +351,38 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define POWER_LIMIT_MW       5000   // 1 amp supply at 5 volts assumed
     //#define POWER_LIMIT_MW       15000   // 3 amp supply at 5 volts assumed
 
+/*
+In addition to simple trips, the app handles matrixes as well.
+//    It also handles groups of rings.  In one incarnation, 10 RGB
+//    LED PC fans are connected in a LianLi case plus the 32 or so
+//    on the front of the case.  The fans are grouped into NUM_FANS
+//    fans.  It also supports concentrically nested rings of varying
+//    size, which I use for a Christmas-tree project where each tree
+//    is made up of a "stack" of rings - 32 leds, 18, 10, 4, 1.
+//    It's up to individual effects to take advantage of them but
+//    the drawing code provides APIs for "draw to LED x of RING q on
+//    FAZN number z" and so on for convenience.
+*/
     // Once you have a working project, selectively enable various additional features by setting
     // them to 1 in the list below.  This DEMO config assumes no audio (mic), or screen, etc.
 
     #define ENABLE_WIFI             1   // Connect to WiFi
-    #define INCOMING_WIFI_ENABLED   0   // Accepting incoming color data and commands
+    #define INCOMING_WIFI_ENABLED   1   // Accepting incoming color data and commands
     #define TIME_BEFORE_LOCAL       0   // How many seconds before the lamp times out and shows local contexnt
     #define ENABLE_NTP              1   // Set the clock from the web
     #define ENABLE_OTA              0   // Accept over the air flash updates
-    #define LED_PIN0                26
-    //#define LED_PIN0                14
+    #define LED_PIN0                14
 
     // The webserver serves files from its SPIFFS filesystem, such as index.html, and those files must be
     // uploaded to SPIFFS with the "Upload Filesystem Image" command before it can work.  When running
     // you should be able to see/select the list of effects by visiting the chip's IP in a browser.  You can
     // get the chip's IP by watching the serial output or checking your router for the DHCP given to 'LEDWifi'
 
-    #define ENABLE_WEBSERVER        1                                       // Turn on the internal webserver
+    #ifndef ENABLE_WEBSERVER
+        #define ENABLE_WEBSERVER        1   // Turn on the internal webserver
+    #endif
     #define ENABLE_REMOTE           0   // IR Remote 
-    //#define IR_REMOTE_PIN           27
+    #define IR_REMOTE_PIN           27
 
 
 #elif LANTERN

@@ -19,3 +19,4 @@ WebInstaller/web_projects.json
 tools/__pycache__
 site/yarn-error.log
 site/dist
+platformio.ini

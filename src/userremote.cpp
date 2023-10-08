@@ -1,5 +1,5 @@
 #include "globals.h"
-
+#if ENABLE_REMOTE
 int hexStringToInt (String hexString){
     //This function is used to a convert hex code stored into a string to an integer reprsenting the value of the hex code if it were a true hex code.
     int hexStringInt = 0;
@@ -120,5 +120,4 @@ void UserRemoteControl::getRemoteButtons() {
 
 }
 
-
-
+#endif

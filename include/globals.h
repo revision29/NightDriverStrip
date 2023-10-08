@@ -240,7 +240,7 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define PROJECT_NAME            "Joe Devkit"
     #endif
 
-    #define MATRIX_WIDTH            100
+    #define MATRIX_WIDTH            39
     #define MATRIX_HEIGHT           1
     #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
@@ -266,7 +266,8 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #elif LILYGOTDISPLAYS3
         #define LED_PIN0 21
     #else
-        #define LED_PIN0 5
+        #define LED_PIN0 5//heltec
+        //#define LED_PIN0 26//esp
     #endif
 
     // The webserver serves files that are baked into the device firmware. When running you should be able to
@@ -279,7 +280,8 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #endif
 
     #define ENABLE_REMOTE           1   // IR Remote 
-    #define IR_REMOTE_PIN   48
+    #define IR_REMOTE_PIN   48//heltec
+    //#define IR_REMOTE_PIN   14 //esp
 
 #elif CROSS
 
@@ -289,14 +291,15 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define PROJECT_NAME            "Cross"
     #endif
 
-    #define NUM_RINGS               4
-    #define RING_SIZE_0             15
-    #define RING_SIZE_1             8
-    #define RING_SIZE_2             8
-    #define RING_SIZE_3             8
+    //#define NUM_RINGS               4
+    //#define RING_SIZE_0             15
+    //#define RING_SIZE_1             8
+    //#define RING_SIZE_2             8
+    //#define RING_SIZE_3             8
     #define MATRIX_WIDTH            39
     #define MATRIX_HEIGHT           1
-    #define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
+    #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
+    //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
     #define NUM_CHANNELS            1
     #define ENABLE_AUDIO            0
 
@@ -311,13 +314,7 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define ENABLE_NTP              1   // Set the clock from the web
     #define ENABLE_OTA              1   // Accept over the air flash updates
 
-    #if M5STICKC
-        #define LED_PIN0 33
-    #elif M5STICKCPLUS || M5STACKCORE2
-        #define LED_PIN0 32
-    #else
-        #define LED_PIN0 5
-    #endif
+    #define LED_PIN0 5
 
     // The webserver serves files from its SPIFFS filesystem, such as index.html, and those files must be
     // uploaded to SPIFFS with the "Upload Filesystem Image" command before it can work.  When running
@@ -331,7 +328,7 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define ENABLE_REMOTE           1   // IR Remote 
     #define IR_REMOTE_PIN   48
 
-#elif CROSS
+#elif ESPCROSS
 
     // Wall Mounted Cross. 3 sets of 8 leds and one set of 15
 
@@ -339,35 +336,31 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define PROJECT_NAME            "Cross"
     #endif
 
-    #define NUM_RINGS               4
-    #define RING_SIZE_0             15
-    #define RING_SIZE_1             8
-    #define RING_SIZE_2             8
-    #define RING_SIZE_3             8
+    //#define NUM_RINGS               4
+    //#define RING_SIZE_0             15
+    //#define RING_SIZE_1             8
+    //#define RING_SIZE_2             8
+    //#define RING_SIZE_3             8
     #define MATRIX_WIDTH            39
     #define MATRIX_HEIGHT           1
-    #define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
+    //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
+    #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
     #define ENABLE_AUDIO            0
 
     #define POWER_LIMIT_MW       5000   // 1 amp supply at 5 volts assumed
+    //#define POWER_LIMIT_MW       15000   // 3 amp supply at 5 volts assumed
 
     // Once you have a working project, selectively enable various additional features by setting
     // them to 1 in the list below.  This DEMO config assumes no audio (mic), or screen, etc.
 
     #define ENABLE_WIFI             1   // Connect to WiFi
-    #define INCOMING_WIFI_ENABLED   1   // Accepting incoming color data and commands
+    #define INCOMING_WIFI_ENABLED   0   // Accepting incoming color data and commands
     #define TIME_BEFORE_LOCAL       0   // How many seconds before the lamp times out and shows local contexnt
     #define ENABLE_NTP              1   // Set the clock from the web
-    #define ENABLE_OTA              1   // Accept over the air flash updates
-
-    #if M5STICKC
-        #define LED_PIN0 33
-    #elif M5STICKCPLUS || M5STACKCORE2
-        #define LED_PIN0 32
-    #else
-        #define LED_PIN0 5
-    #endif
+    #define ENABLE_OTA              0   // Accept over the air flash updates
+    #define LED_PIN0                26
+    //#define LED_PIN0                14
 
     // The webserver serves files from its SPIFFS filesystem, such as index.html, and those files must be
     // uploaded to SPIFFS with the "Upload Filesystem Image" command before it can work.  When running
@@ -375,8 +368,8 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     // get the chip's IP by watching the serial output or checking your router for the DHCP given to 'LEDWifi'
 
     #define ENABLE_WEBSERVER        1                                       // Turn on the internal webserver
-    #define ENABLE_REMOTE           1   // IR Remote 
-    #define IR_REMOTE_PIN           48
+    #define ENABLE_REMOTE           0   // IR Remote 
+    //#define IR_REMOTE_PIN           27
 
 
 #elif LANTERN
@@ -1673,7 +1666,6 @@ inline bool SetSocketBlockingEnabled(int fd, bool blocking)
     
     //This is disabled to debug nullptr failure
     #include "userremote.h" //Load the user remote information before we laod the IR system
-    
     #include "remotecontrol.h"
 #endif
 

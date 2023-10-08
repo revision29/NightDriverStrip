@@ -176,9 +176,10 @@ void RemoteControl::handle()
                 effectManager.SetInterval(0);
             break;
             case DIY1:
-               
+               effectManager.NextEffect();
             break;
             case DIY2: 
+                effectManager.PreviousEffect();
                 
                 
             break;

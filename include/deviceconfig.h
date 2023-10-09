@@ -72,7 +72,7 @@ class DeviceConfig : public IJSONSerializable
     String  ntpServer = NTP_SERVER_DEFAULT;
     bool    rememberCurrentEffect = true;
     int     powerLimit = POWER_LIMIT_DEFAULT;
-    uint8_t brightness = BRIGHTNESS_MAX;
+    uint8_t brightness = 255;
 
     std::vector<SettingSpec, psram_allocator<SettingSpec>> settingSpecs;
     std::vector<std::reference_wrapper<SettingSpec>> settingSpecReferences;

@@ -33,7 +33,9 @@ enum ButtonActions{
     DIY3,
     DIY4,
     DIY5,
-    DIY6
+    DIY6,
+    NEXT_EFFECT,
+    PREVIOUS_EFFECT
 };
 
 

@@ -293,15 +293,17 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
 
     #define NUM_RINGS               4
     #define RING_SIZE_0             15
-    #define RING_SIZE_1             8
-    #define RING_SIZE_2             8
+    #define RING_SIZE_1             7
+    #define RING_SIZE_2             7
     #define RING_SIZE_3             8
-    #define MATRIX_WIDTH            39
+    #define MATRIX_WIDTH            37
     #define MATRIX_HEIGHT           1
     #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
     //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
     #define NUM_CHANNELS            1
     #define ENABLE_AUDIO            0
+    #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
+
 
     #define POWER_LIMIT_MW       5000   // 1 amp supply at 5 volts assumed
 
@@ -338,15 +340,16 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
 
     #define NUM_RINGS               4
     #define RING_SIZE_0             15
-    #define RING_SIZE_1             8
-    #define RING_SIZE_2             8
+    #define RING_SIZE_1             7
+    #define RING_SIZE_2             7
     #define RING_SIZE_3             8
-    #define MATRIX_WIDTH            39
+    #define MATRIX_WIDTH            37
     #define MATRIX_HEIGHT           1
     //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
     #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
     #define ENABLE_AUDIO            0
+    #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
 
     #define POWER_LIMIT_MW       5000   // 1 amp supply at 5 volts assumed
     //#define POWER_LIMIT_MW       15000   // 3 amp supply at 5 volts assumed
@@ -381,8 +384,8 @@ In addition to simple trips, the app handles matrixes as well.
     #ifndef ENABLE_WEBSERVER
         #define ENABLE_WEBSERVER        1   // Turn on the internal webserver
     #endif
-    #define ENABLE_REMOTE           0   // IR Remote 
-    #define IR_REMOTE_PIN           27
+    #define ENABLE_REMOTE           1   // IR Remote 
+    #define IR_REMOTE_PIN           26
 
 
 #elif LANTERN

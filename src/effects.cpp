@@ -30,6 +30,9 @@
 
 #include "effectsupport.h"
 
+#include "globals.h"
+#include "systemcontainer.h"
+
 // Include the effect classes we'll need later
 
 #include "effects/strip/fireeffect.h"          // fire effects
@@ -151,6 +154,8 @@ void LoadEffectFactories()
         return;
 
     g_ptrEffectFactories = make_unique_psram<EffectFactories>();
+    auto& deviceConfig = g_ptrSystem->DeviceConfig();
+    //deviceConfig.SetBrightness(100);
     
     //ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 6, 2);
     // Fill effect factories
@@ -192,13 +197,15 @@ void LoadEffectFactories()
     bool    bReversed;          // If reversed we draw from 0 outwards
     bool    bMirrored;          // If mirrored we split and duplicate the drawing*/
     # elif ESPCROSS
-        ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 2, 3, 150, 3, 10, false, false);
+        //ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 2, 3, 150, 3, 10, false, false);
+        
         ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, RedColors_p, 256 / 16, .1, 0,1,0);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, LavaColors_p, 256 / 16, .1, 0,1,0);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, ForestColors_p, 256 / 16, .1, 0,1,0);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,1,0);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,1,0);
+        //deviceConfig.SetBrightness(50);
     #elif LASERLINE
 
         ADD_EFFECT(EFFECT_STRIP_LASER_LINE, LaserLineEffect, 500, 20);

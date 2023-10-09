@@ -65,7 +65,11 @@ void RemoteControl::handle()
     */
     
     //debugI("Received IR Remote Code: 0x%08X, Decode: %08X\n", result, results.decode_type); // Uncomment to see the debug code in your terminal. 
- 
+    
+    /*
+    The following if stament was designed to allow the power button to repeat quickly to adjut the brightness.
+    We do need to introduce a rate limiter after we find a match for the code.
+    */
     if (0xFFFFFFFF == result || result == lastResult)
     {
         static uint lastRepeatTime = millis();
@@ -130,11 +134,14 @@ void RemoteControl::handle()
                 //g_Values.Brightness = std::max(0, (int) g_Values.Brightness - BRIGHTNESS_STEP);
                 effectManager.ClearRemoteColor();
             break;
+            case ButtonActions::NEXT_EFFECT: 
+                effectManager.NextEffect();
+            break;
             case ButtonActions::FILL_COLOR:
                 lastManualColor = hexToCrgb(thisButton.actionArgs);
                 lastManualColor.maximizeBrightness(myRemoteController.currentBrightness);
                 effectManager.SetGlobalColor(lastManualColor); 
-                debugI("Current FastLED brightness %i\n",FastLED.getBrightness());
+                //debugI("Current FastLED brightness %i\n",FastLED.getBrightness());
                 effectManager.SetInterval(0);
             break;
             

@@ -237,27 +237,28 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     // Please ensure you supply sufficent power to your strip, as even the DEMO of 144 LEDs, if set
     // to white, would overload a USB port.
     #ifndef PROJECT_NAME
-    #define PROJECT_NAME            "Demo"
+    #define PROJECT_NAME            "Joe Devkit"
     #endif
 
-    #define MATRIX_WIDTH            144
+    #define MATRIX_WIDTH            39
     #define MATRIX_HEIGHT           1
     #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
     #define ENABLE_AUDIO            0
 
-    #define POWER_LIMIT_MW       12 * 10 * 1000   // 10 amp supply at 5 volts assumed
+    //#define POWER_LIMIT_MW       12 * 10 * 1000   // 10 amp supply at 5 volts assumed
+    #define POWER_LIMIT_MW       12 * 3 * 1000   // 3 amp supply at 5 volts assumed
 
     // Once you have a working project, selectively enable various additional features by setting
     // them to 1 in the list below.  This DEMO config assumes no audio (mic), or screen, etc.
 
     #ifndef ENABLE_WIFI
-        #define ENABLE_WIFI             0   // Connect to WiFi
+        #define ENABLE_WIFI             1   // Connect to WiFi
     #endif
 
-    #define INCOMING_WIFI_ENABLED   0   // Accepting incoming color data and commands
-    #define TIME_BEFORE_LOCAL       0   // How many seconds before the lamp times out and shows local content
-    #define ENABLE_NTP              0   // Set the clock from the web
+    #define INCOMING_WIFI_ENABLED   1   // Accepting incoming color data and commands
+    #define TIME_BEFORE_LOCAL       1   // How many seconds before the lamp times out and shows local content
+    #define ENABLE_NTP              1   // Set the clock from the web
     #define ENABLE_OTA              0   // Accept over the air flash updates
 
     #if M5STICKC || M5STICKCPLUS || M5STACKCORE2
@@ -265,7 +266,8 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #elif LILYGOTDISPLAYS3
         #define LED_PIN0 21
     #else
-        #define LED_PIN0 5
+        #define LED_PIN0 5//heltec
+        //#define LED_PIN0 26//esp
     #endif
 
     // The webserver serves files that are baked into the device firmware. When running you should be able to
@@ -274,8 +276,117 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     // named "esp32-" followed by a seemingly random 6-digit hexadecimal number.
 
     #ifndef ENABLE_WEBSERVER
-        #define ENABLE_WEBSERVER        0   // Turn on the internal webserver
+        #define ENABLE_WEBSERVER        1   // Turn on the internal webserver
     #endif
+
+    #define ENABLE_REMOTE           1   // IR Remote 
+    #define IR_REMOTE_PIN   48//heltec
+    //#define IR_REMOTE_PIN   14 //esp
+
+#elif CROSS
+
+    // Wall Mounted Cross. 3 sets of 8 leds and one set of 15
+
+    #ifndef PROJECT_NAME
+    #define PROJECT_NAME            "Cross"
+    #endif
+
+    #define NUM_RINGS               4
+    #define RING_SIZE_0             15
+    #define RING_SIZE_1             7
+    #define RING_SIZE_2             7
+    #define RING_SIZE_3             8
+    #define MATRIX_WIDTH            37
+    #define MATRIX_HEIGHT           1
+    #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
+    //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
+    #define NUM_CHANNELS            1
+    #define ENABLE_AUDIO            0
+    #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
+
+
+    #define POWER_LIMIT_MW       5000   // 1 amp supply at 5 volts assumed
+
+    // Once you have a working project, selectively enable various additional features by setting
+    // them to 1 in the list below.  This DEMO config assumes no audio (mic), or screen, etc.
+
+    #define ENABLE_WIFI             1   // Connect to WiFi
+    #define INCOMING_WIFI_ENABLED   1   // Accepting incoming color data and commands
+    #define TIME_BEFORE_LOCAL       0   // How many seconds before the lamp times out and shows local contexnt
+    #define ENABLE_NTP              1   // Set the clock from the web
+    #define ENABLE_OTA              1   // Accept over the air flash updates
+
+    #define LED_PIN0 5
+
+    // The webserver serves files from its SPIFFS filesystem, such as index.html, and those files must be
+    // uploaded to SPIFFS with the "Upload Filesystem Image" command before it can work.  When running
+    // you should be able to see/select the list of effects by visiting the chip's IP in a browser.  You can
+    // get the chip's IP by watching the serial output or checking your router for the DHCP given to 'LEDWifi'
+
+    #ifndef ENABLE_WEBSERVER
+        #define ENABLE_WEBSERVER        1   // Turn on the internal webserver
+    #endif
+
+    #define ENABLE_REMOTE           1   // IR Remote 
+    #define IR_REMOTE_PIN   48
+
+#elif ESPCROSS
+
+    // Wall Mounted Cross. 3 sets of 8 leds and one set of 15
+
+    #ifndef PROJECT_NAME
+    #define PROJECT_NAME            "ESP Cross"
+    #endif
+
+    #define NUM_RINGS               4
+    #define RING_SIZE_0             15
+    #define RING_SIZE_1             7
+    #define RING_SIZE_2             7
+    #define RING_SIZE_3             8
+    #define MATRIX_WIDTH            37
+    #define MATRIX_HEIGHT           1
+    //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
+    #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
+    #define NUM_CHANNELS            1
+    #define ENABLE_AUDIO            0
+    #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
+
+    #define POWER_LIMIT_MW       5000   // 1 amp supply at 5 volts assumed
+    //#define POWER_LIMIT_MW       15000   // 3 amp supply at 5 volts assumed
+
+/*
+In addition to simple trips, the app handles matrixes as well.
+//    It also handles groups of rings.  In one incarnation, 10 RGB
+//    LED PC fans are connected in a LianLi case plus the 32 or so
+//    on the front of the case.  The fans are grouped into NUM_FANS
+//    fans.  It also supports concentrically nested rings of varying
+//    size, which I use for a Christmas-tree project where each tree
+//    is made up of a "stack" of rings - 32 leds, 18, 10, 4, 1.
+//    It's up to individual effects to take advantage of them but
+//    the drawing code provides APIs for "draw to LED x of RING q on
+//    FAZN number z" and so on for convenience.
+*/
+    // Once you have a working project, selectively enable various additional features by setting
+    // them to 1 in the list below.  This DEMO config assumes no audio (mic), or screen, etc.
+
+    #define ENABLE_WIFI             1   // Connect to WiFi
+    #define INCOMING_WIFI_ENABLED   1   // Accepting incoming color data and commands
+    #define TIME_BEFORE_LOCAL       0   // How many seconds before the lamp times out and shows local contexnt
+    #define ENABLE_NTP              1   // Set the clock from the web
+    #define ENABLE_OTA              0   // Accept over the air flash updates
+    #define LED_PIN0                14
+
+    // The webserver serves files from its SPIFFS filesystem, such as index.html, and those files must be
+    // uploaded to SPIFFS with the "Upload Filesystem Image" command before it can work.  When running
+    // you should be able to see/select the list of effects by visiting the chip's IP in a browser.  You can
+    // get the chip's IP by watching the serial output or checking your router for the DHCP given to 'LEDWifi'
+
+    #ifndef ENABLE_WEBSERVER
+        #define ENABLE_WEBSERVER        1   // Turn on the internal webserver
+    #endif
+    #define ENABLE_REMOTE           1   // IR Remote 
+    #define IR_REMOTE_PIN           26
+
 
 #elif LANTERN
 
@@ -1075,6 +1186,9 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
 
 #define STACK_SIZE (ESP_TASK_MAIN_STACK) // Stack size for each new thread
 #define TIME_CHECK_INTERVAL_MS (1000 * 60 * 5)   // How often in ms we resync the clock from NTP
+#define MIN_BRIGHTNESS  10
+#define MAX_BRIGHTNESS  255
+#define BRIGHTNESS_STEP 20          // Amount to step brightness on each remote control repeat
 #define MAX_RINGS       5
 
 
@@ -1553,3 +1667,18 @@ inline bool SetSocketBlockingEnabled(int fd, bool blocking)
     #include <TFT_eSPI.h>
     #include <SPI.h>
 #endif
+
+// Conditional includes depending on which project is being build
+#if USE_HUB75
+    #include "effects/matrix/PatternSubscribers.h"  // For subscriber count effect
+#endif
+
+#if ENABLE_WIFI && ENABLE_WEBSERVER
+    #include "webserver.h"
+#endif
+
+#if ENABLE_REMOTE
+    #include "userremote.h" //Load the user remote information before we laod the IR system; Added by Joe
+    #include "remotecontrol.h"
+#endif
+

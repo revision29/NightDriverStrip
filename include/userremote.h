@@ -14,6 +14,7 @@ enum ButtonActions{
     BRIGHTNESS_DOWN,
     POWER_ON,
     POWER_OFF,
+    POWER_TOGGLE,
     FILL_COLOR,
     TRIGGER_EFFECT,
     CHANGER,
@@ -35,11 +36,16 @@ enum ButtonActions{
     DIY5,
     DIY6,
     NEXT_EFFECT,
-    PREVIOUS_EFFECT
+    PREVIOUS_EFFECT,
+    ENABLE_MUSIC,
+    DISABLE_MUSIC,
+    TOGGLE_MUSIC
 };
 
 
 
+//We want to convert the remote button from a class to a struct
+//https://www.w3schools.com/cpp/cpp_structs.asp
 class RemoteButton
 {
     public:
@@ -64,6 +70,9 @@ enum RemoteTypes{
 };
 
 class UserRemoteControl {
+    //We want to change the buttons vectory to a map. A map is an associative array type of structure: https://www.geeksforgeeks.org/associative-arrays-in-cpp/
+    //The key for the button will be the remote key code
+
     public:
         //Eventually, the button type and / or button count will depend on a user setting / config file.
         std::vector<RemoteButton> buttons {}; 

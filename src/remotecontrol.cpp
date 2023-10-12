@@ -105,7 +105,7 @@ void RemoteControl::handle()
             }
         );
 
-
+//When we use a map for the buttons, we will just do: if myRemoteController.buttons.contains(result);
     if (keyCodeMatch != myRemoteController.buttons.end())
         {
         //debugV("We have a matching keycode 0x%08X \n", result);

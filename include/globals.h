@@ -240,8 +240,8 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define PROJECT_NAME            "Joe Devkit"
     #endif
 
-    #define MATRIX_WIDTH            39
-    #define MATRIX_HEIGHT           1
+    #define MATRIX_WIDTH            32
+    #define MATRIX_HEIGHT           8
     #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
     #define ENABLE_AUDIO            0
@@ -269,7 +269,7 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
         #define LED_PIN0 5//heltec
         //#define LED_PIN0 26//esp
     #endif
-
+    
     // The webserver serves files that are baked into the device firmware. When running you should be able to
     // see/select the list of effects by visiting the chip's IP in a browser.  You can get the chip's IP by
     // watching the serial output or checking your router for the DHCP given to a new device; often they're
@@ -301,7 +301,7 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
     //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
     #define NUM_CHANNELS            1
-    #define ENABLE_AUDIO            0
+    #define ENABLE_AUDIO            1
     #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
 
 
@@ -1503,7 +1503,9 @@ extern DRAM_ATTR const int g_aRingSizeTable[];
         #endif
     #endif
 #else
-    #define INPUT_PIN 0
+   // #define INPUT_PIN 0
+    #define INPUT_PIN 47
+
 #endif
 
 #ifndef IR_REMOTE_PIN

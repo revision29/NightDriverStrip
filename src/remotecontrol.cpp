@@ -36,7 +36,7 @@
 
 #define BRIGHTNESS_STEP     20
 
-UserRemoteControl myRemoteController (44);
+UserRemoteControl myRemoteController (44);//Loads remote and stock 
 
 //Repeat codes
 //Press and hold brightness up or down to wuickly adjust up. 
@@ -47,7 +47,7 @@ UserRemoteControl myRemoteController (44);
 void RemoteControl::handle()
 {
     decode_results results;
-    static int lastResult = 0;
+    static uint lastResult = 0;
 
     static CRGB lastManualColor = CRGB(0,0,0);
 
@@ -59,7 +59,7 @@ void RemoteControl::handle()
     int result = results.value;
     _IR_Receive.resume();
 
-auto searchResult = myRemoteController.buttons.find(result);
+    auto searchResult = myRemoteController.buttons.find(result);
     if (searchResult != myRemoteController.buttons.end()) 
     {
         debugI("We have a remote code result %08x", result);
@@ -211,6 +211,8 @@ auto searchResult = myRemoteController.buttons.find(result);
     {
         //There was no result, so just return.
         debugI("We do not have a remote code result %08x", result);
+        uint buttonCount = myRemoteController.buttons.size();
+        debugI("There are %i buttons in the remote", buttonCount);
         return;
     }
 }

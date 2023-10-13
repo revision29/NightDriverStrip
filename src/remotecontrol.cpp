@@ -59,9 +59,11 @@ void RemoteControl::handle()
     uint result = results.value;
     debugI("Received IR Remote Code: 0x%08X, Decode: %08X\n", result, results.decode_type);
     _IR_Receive.resume();
+    
+    
     if (result == 0xFFFFFFFF  )
     {
-        result = lastResult;
+    //    result = lastResult;
     }
 
     auto searchResult = myRemoteController.buttons.find(result);
@@ -71,9 +73,9 @@ void RemoteControl::handle()
         uint buttonCount = myRemoteController.buttons.size();
         debugI("There are %i buttons in the remote", buttonCount);
         RemoteButton thisButton = searchResult->second;
-        //Check for repeat
+        //Check for repeat. The repeat limiter code is broken and needs to be fixed
         //myRemoteController.buttons[result]
-        
+        /*
         if (result == lastResult) 
         {
             static uint lastRepeatTime = millis();
@@ -92,7 +94,7 @@ void RemoteControl::handle()
 
         }
         lastResult = result;
-
+        */
         //Process the code
         auto &effectManager = g_ptrSystem->EffectManager();
         
@@ -131,6 +133,7 @@ void RemoteControl::handle()
                 effectManager.NextEffect();
             break;
             case FILL_COLOR:
+                debugI("We are going to fill wth color %s\n",thisButton.actionArgs);
                 lastManualColor = hexToCrgb(thisButton.actionArgs);
                 effectManager.SetGlobalColor(lastManualColor); 
                 effectManager.SetInterval(0);
@@ -207,9 +210,10 @@ void RemoteControl::handle()
             //case SLOW:
             //break;
        }
-  
+    lastResult = result;
 
     }
+
     else
     {
         //There was no result, so just return.

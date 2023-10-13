@@ -59,7 +59,7 @@ CRGB hexToCrgb (String hexString)
             sscanf(rHexString.c_str(), "%x", &rHexInt);
             sscanf(gHexString.c_str(), "%x", &gHexInt); 
             sscanf(bHexString.c_str(), "%x", &bHexInt);
-             
+            debugI("r is %i, g is %i, b is %i", rHexInt, gHexInt,bHexInt);
             /*
             int rHexInt = hexStringToInt(rHexString);
             int bHexInt = hexStringToInt(bHexString);
@@ -104,7 +104,7 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.emplace(0xFF1AE5, RemoteButton ("Full Red",FILL_COLOR, "FF0000"));
     buttons.emplace(0xFF9A65, RemoteButton ("Full Green",FILL_COLOR, "00FF00"));
     buttons.emplace(0xFFA25D, RemoteButton ("Full Blue",FILL_COLOR, "0000FF"));
-    buttons.emplace(0xFF22DD, RemoteButton ("Full White",FILL_COLOR, "999999")); //because we don't want FULL white
+    buttons.emplace(0xFF22DD, RemoteButton ("Full White",FILL_COLOR, "AAAAAA")); //because we don't want FULL white
     //Row 3
     buttons.emplace(0xFF2AD5, RemoteButton ("Color 1",FILL_COLOR, "E18E28"));
     buttons.emplace(0xFFAA55, RemoteButton ("Color 2",FILL_COLOR, "1B9205"));

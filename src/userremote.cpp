@@ -52,7 +52,7 @@ CRGB hexToCrgb (String hexString)
         String rHexString = hexString.substring(0,2);
         String gHexString = hexString.substring(2,4);
         String bHexString = hexString.substring(4,6);
-        
+        debugI("Color we are sending to draw %s \n",hexString);
         
         if (rHexString.length() == 2 && gHexString.length() == 2 && bHexString.length() == 2 )
         {
@@ -96,6 +96,7 @@ void UserRemoteControl::getRemoteButtons() {
     //Row 1
     buttons.emplace(0xFF3AC5, RemoteButton("Brightness Up",BRIGHTNESS_UP));
     buttons.emplace(0xFFBA45, RemoteButton("Brightness Down",BRIGHTNESS_DOWN));
+    
     buttons.emplace(0xFF827D, RemoteButton("Next Effect",NEXT_EFFECT));
     buttons.emplace(0xFF02FD, RemoteButton("Power Off",POWER_OFF));
 

@@ -56,23 +56,28 @@ void RemoteControl::handle()
     if (!_IR_Receive.decode(&results))
         return;
 
-    int result = results.value;
+    uint result = results.value;
+    debugI("Received IR Remote Code: 0x%08X, Decode: %08X\n", result, results.decode_type);
     _IR_Receive.resume();
+    if (result == 0xFFFFFFFF  )
+    {
+        result = lastResult;
+    }
 
     auto searchResult = myRemoteController.buttons.find(result);
     if (searchResult != myRemoteController.buttons.end()) 
     {
-        debugI("We have a remote code result %08x", result);
+        debugI("We have a remote code result 0x%08X", result);
         uint buttonCount = myRemoteController.buttons.size();
         debugI("There are %i buttons in the remote", buttonCount);
-        RemoteButton thisButton =  searchResult->second;
+        RemoteButton thisButton = searchResult->second;
         //Check for repeat
         //myRemoteController.buttons[result]
-        /*
+        
         if (result == lastResult) 
         {
             static uint lastRepeatTime = millis();
-            const auto kMinRepeatms = (myRemoteController.buttons[result].buttonAction == BRIGHTNESS_DOWN || myRemoteController.buttons[result].buttonAction == BRIGHTNESS_UP) ? 150 : 250;
+            const auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 150 : 250;
             //We do not want to set the kMinRepeatms to 0 because some remotes send a code more than once and also there might be refelctive surfaces that will cause the signal to be recieved more than once in rapid succession.
             //250 will allow 4 units brightness changes over one second. That will be about 3 seconds to fully ramp the brightnss up or down
             if (millis() - lastRepeatTime > kMinRepeatms)
@@ -127,9 +132,7 @@ void RemoteControl::handle()
             break;
             case FILL_COLOR:
                 lastManualColor = hexToCrgb(thisButton.actionArgs);
-                lastManualColor.maximizeBrightness(myRemoteController.currentBrightness);
                 effectManager.SetGlobalColor(lastManualColor); 
-                //debugI("Current FastLED brightness %i\n",FastLED.getBrightness());
                 effectManager.SetInterval(0);
             break;
             
@@ -204,13 +207,13 @@ void RemoteControl::handle()
             //case SLOW:
             //break;
        }
-  */
+  
 
     }
     else
     {
         //There was no result, so just return.
-        debugI("We do not have a remote code result %08x", result);
+        debugI("We do not have a remote code result 0X%08X", result);
         uint buttonCount = myRemoteController.buttons.size();
         debugI("There are %i buttons in the remote", buttonCount);
         return;

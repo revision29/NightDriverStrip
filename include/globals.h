@@ -240,8 +240,11 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define PROJECT_NAME            "Joe Devkit"
     #endif
 
+    //#define MATRIX_WIDTH            32
+    //#define MATRIX_HEIGHT           8
     #define MATRIX_WIDTH            32
-    #define MATRIX_HEIGHT           8
+    #define MATRIX_HEIGHT           1
+
     #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
     #define ENABLE_AUDIO            0

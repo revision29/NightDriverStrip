@@ -178,7 +178,13 @@ void LoadEffectFactories()
     // Fill effect factories
     #elif DEMO
 
-        ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 6, 2);
+        //ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 6, 2);
+        ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, RedColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, LavaColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, ForestColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,1,0);
 
     # elif CROSS
         //debugI("NUmber of leds %i",NUM_LEDS);

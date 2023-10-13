@@ -1,0 +1,166 @@
+#include "globals.h"
+
+#if ENABLE_REMOTE
+
+int hexStringToInt (String hexString)
+    {
+        //This function is used to a convert hex code stored into a string to an integer reprsenting the value of the hex code if it were a true hex code.
+        /*
+        int hexStringInt = 0;
+        char c[hexString.length()+1];
+        hexString.toCharArray(c, hexString.length()+1);
+        hexStringInt = strtol(c, 0, 16);
+        return hexStringInt;
+
+*/
+        //string hexString = "7FF";
+        int hexNumber = 0;
+        sscanf(hexString.c_str(), "%x", &hexNumber);
+        return hexNumber;
+    }
+
+CRGB hexToCrgb (String hexString) 
+    {
+        //This function converts a hex code stored as a tring to a CRGB color object.
+        //It should no longer require the helper function: hexStringToInt. I rewrot that function and then incorporated the logic into this function because it was so simple.
+        CRGB myColor = CRGB(5,5,5);//The variable that we will return, with an arbitrary initial value.
+        int rHexInt = 0;
+        int bHexInt = 0;
+        int gHexInt = 0;
+
+        //We need to prpare the hex string for processing by removing any pound signs, spaces, and adding 0s if the string is less than 6 charactrs long.
+        //
+        hexString.replace("#","");
+        hexString.replace(" ","");
+        if (hexString.length() < 6 && hexString.length() != 3)
+        {
+            while (hexString.length() < 6 ) {
+                hexString += "0";
+            }
+        } 
+        else if (hexString.length() == 3)
+        {
+            //Sometimes an RGB hex can be 3 charactrs. That is when each of the three colors consist of two values that are the same. EX: 00FFAA ir rendered 0FA.
+
+            String r1 = hexString.substring(0,1);
+            String g1 = hexString.substring(1,2);
+            String b1 = hexString.substring(2,3);
+            hexString = r1 + r1 + g1 + g1 + b1 + b1;//Ugly yet effective
+
+        }
+
+        String rHexString = hexString.substring(0,2);
+        String gHexString = hexString.substring(2,4);
+        String bHexString = hexString.substring(4,6);
+        
+        
+        if (rHexString.length() == 2 && gHexString.length() == 2 && bHexString.length() == 2 )
+        {
+            sscanf(rHexString.c_str(), "%x", &rHexInt);
+            sscanf(gHexString.c_str(), "%x", &gHexInt); 
+            sscanf(bHexString.c_str(), "%x", &bHexInt);
+             
+            /*
+            int rHexInt = hexStringToInt(rHexString);
+            int bHexInt = hexStringToInt(bHexString);
+            int gHexInt = hexStringToInt(gHexString);
+            */
+            myColor = CRGB (rHexInt,gHexInt,bHexInt);
+        }
+        return myColor;
+    }
+
+void UserRemoteControl::getRemoteButtons() {
+    
+    //This populates the stock remote control buttons
+    debugI("We are creating the user remote\n");
+    /*
+    The ButtonActions ENUM in userremote.h defines what actions are available.
+
+    If these are ever stored with json or in a user settings file of some kind, there might be a problem with how keycodes are handled.
+    As is we are interafing with them as integers in hex notation. Settings file / json might require the numbers be formed as strings or as regular integers.
+
+    */
+  
+    /*
+    Here, buttons are being added to the "buttons" std::map using the emplace method. This allows th button to be added to the map with a single line.
+    The first argument is the key which we are using the key code for.
+    The second argument is the value. In this case the value is a RemoteButton object that we are creating in line.
+    
+    The remote button object takes three arguments. A label, button action (as defined in the ButtonActions enum), and action arguments (optional).
+    Some of the actions require an argument (FILL_COLOR or example), while others do not (such as BRIGHTNESS_UP).
+    If an action requires miltuple arguments, those will be formatted in a single string where each argument value is seperated by a comma. Example: "1,String Phrase,25". 
+    Your code for the action in remotecontrol.cpp will need to be able to parse the action arguments string and pass the arguments along as you desire. It's up to you to make that happen.
+    */
+
+    //Row 1
+    buttons.emplace(0xFF3AC5, RemoteButton("Brightness Up",BRIGHTNESS_UP));
+    buttons.emplace(0xFFBA45, RemoteButton("Brightness Down",BRIGHTNESS_DOWN));
+    buttons.emplace(0xFF827D, RemoteButton("Next Effect",NEXT_EFFECT));
+    buttons.emplace(0xFF02FD, RemoteButton("Power Off",POWER_OFF));
+
+    //Row 2
+    buttons.emplace(0xFF1AE5, RemoteButton ("Full Red",FILL_COLOR, "FF0000"));
+    buttons.emplace(0xFF9A65, RemoteButton ("Full Green",FILL_COLOR, "00FF00"));
+    buttons.emplace(0xFFA25D, RemoteButton ("Full Blue",FILL_COLOR, "0000FF"));
+    buttons.emplace(0xFF22DD, RemoteButton ("Full White",FILL_COLOR, "999999")); //because we don't want FULL white
+    //Row 3
+    buttons.emplace(0xFF2AD5, RemoteButton ("Color 1",FILL_COLOR, "E18E28"));
+    buttons.emplace(0xFFAA55, RemoteButton ("Color 2",FILL_COLOR, "1B9205"));
+    buttons.emplace(0xFF926D, RemoteButton ("Color 3",FILL_COLOR, "170C96"));
+    buttons.emplace(0xFF12ED, RemoteButton ("Color 4",FILL_COLOR, "F1BFDC"));
+
+    //Row 4
+    buttons.emplace(0xFF0AF5, RemoteButton ("Color 5",FILL_COLOR, "FBBE56"));
+    buttons.emplace(0xFF8A75, RemoteButton ("Color 6",FILL_COLOR, "229248"));
+    buttons.emplace(0xFFB24D, RemoteButton ("Color 7",FILL_COLOR, "200991"));
+    buttons.emplace(0xFF32CD, RemoteButton ("Color 8",FILL_COLOR, "D72FB9"));
+
+
+    //Row 5
+    buttons.emplace(0xFF38C7, RemoteButton ("Color 9",FILL_COLOR, "EDD917"));
+    buttons.emplace(0xFFB847, RemoteButton ("Color 10",FILL_COLOR, "2A92A1"));
+    buttons.emplace(0xFF7887, RemoteButton ("Color 11",FILL_COLOR, "7415B4"));
+    buttons.emplace(0xFFF807, RemoteButton ("Color 12",FILL_COLOR, "39AAC3"));
+
+    //Row 6
+    buttons.emplace(0xFF18E7, RemoteButton ("Color 13",FILL_COLOR, "D0E30F"));
+    buttons.emplace(0xFF9867, RemoteButton ("Color 14",FILL_COLOR, "2E7CC7"));
+    buttons.emplace(0xFF58A7, RemoteButton ("Color 15",FILL_COLOR, "C121B1"));
+    buttons.emplace(0xFFD827, RemoteButton ("Color 16",FILL_COLOR, "2D87D7"));
+
+    //Row 7
+    buttons.emplace(0xFF28D7, RemoteButton ("Jump 3",JUMP3));
+    buttons.emplace(0xFFA857, RemoteButton ("Jump 7",JUMP7));
+    buttons.emplace(0xFF6897, RemoteButton ("Fade 3",FADE3));
+    buttons.emplace(0xFFE817, RemoteButton ("Fade 7",FADE7));
+
+    //Row 8
+    buttons.emplace(0xFF08F7, RemoteButton ("Increase Red",CHANGER, "10"));
+    buttons.emplace(0xFF8877, RemoteButton ("Increase Green",CHANGEG, "10"));
+    buttons.emplace(0xFF48B7, RemoteButton ("Increase Blue",CHANGEB, "10"));
+    buttons.emplace(0xFFC837, RemoteButton ("Quick",QUICK));//fade speed is fast
+
+    //Row 9
+    buttons.emplace(0xFF30CF, RemoteButton ("Descrease Red",CHANGER, "-10"));
+    buttons.emplace(0xFFB04F, RemoteButton ("Descrease Green",CHANGEG, "-10"));
+    buttons.emplace(0xFF708F, RemoteButton ("Decrease Blue",CHANGEB, "-10"));
+    buttons.emplace(0xFFF00F, RemoteButton ("Slow",SLOW));//fade speed is slow
+
+    //Row 10
+    buttons.emplace(0xFF10EF, RemoteButton ("DIY 1",DIY1));
+    buttons.emplace(0xFF906F, RemoteButton ("DIY 2",DIY2));
+    buttons.emplace(0xFF50AF, RemoteButton ("DIY 3",DIY3));
+    buttons.emplace(0xFFD02F, RemoteButton ("Auto",AUTO));
+
+    //Row 11
+    buttons.emplace(0xFF20DF, RemoteButton ("DIY 4",DIY4));
+    buttons.emplace(0xFFA05F, RemoteButton ("DIY 5",DIY5));
+    buttons.emplace(0xFF609F, RemoteButton ("DIY 6",DIY6));
+    buttons.emplace(0xFFE01F, RemoteButton ("Flash",FLASH));
+
+    debugI("At button population there are %i buttons in the remote",  buttons.size());
+}
+
+
+#endif

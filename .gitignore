@@ -20,8 +20,5 @@ tools/__pycache__
 site/yarn-error.log
 site/dist
 src/effects.cpp
-src/userremote.cpp
-include/userremote.h
-src/remotecontrol.cpp
 platformio.ini
 include/globals.h

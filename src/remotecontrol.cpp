@@ -61,9 +61,12 @@ void RemoteControl::handle()
     _IR_Receive.resume();
     
     
-    if (result == 0xFFFFFFFF  )
+
+
+
+    if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF)
     {
-    //    result = lastResult;
+        result = lastResult;
     }
 
     auto searchResult = myRemoteController.buttons.find(result);
@@ -74,12 +77,12 @@ void RemoteControl::handle()
         debugI("There are %i buttons in the remote", buttonCount);
         RemoteButton thisButton = searchResult->second;
         //Check for repeat. The repeat limiter code is broken and needs to be fixed
-        //myRemoteController.buttons[result]
-        /*
+
+        
         if (result == lastResult) 
         {
             static uint lastRepeatTime = millis();
-            const auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 150 : 250;
+            static auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 100 : 200;
             //We do not want to set the kMinRepeatms to 0 because some remotes send a code more than once and also there might be refelctive surfaces that will cause the signal to be recieved more than once in rapid succession.
             //250 will allow 4 units brightness changes over one second. That will be about 3 seconds to fully ramp the brightnss up or down
             if (millis() - lastRepeatTime > kMinRepeatms)
@@ -94,10 +97,9 @@ void RemoteControl::handle()
 
         }
         lastResult = result;
-        */
+        
         //Process the code
         auto &effectManager = g_ptrSystem->EffectManager();
-        
         auto &myEffect = effectManager.GetCurrentEffect();
         
 
@@ -143,11 +145,16 @@ void RemoteControl::handle()
             
             break;
             case CHANGER:
-                if (lastManualColor.red + thisButton.actionArgs.toInt() > 255 ) {
+                if (lastManualColor.red + thisButton.actionArgs.toInt() > 255 ) 
+                {
                     lastManualColor.red = 255;
-                } else if (lastManualColor.red + thisButton.actionArgs.toInt() < 0) {
+                } 
+                else if (lastManualColor.red + thisButton.actionArgs.toInt() < 0)
+                {
                     lastManualColor.red = 0;
-                } else {
+                } 
+                else 
+                {
                     lastManualColor.red += thisButton.actionArgs.toInt();
                 }
                 effectManager.SetGlobalColor(lastManualColor); 
@@ -155,22 +162,31 @@ void RemoteControl::handle()
 
             break;
             case CHANGEG:
-                if (lastManualColor.green + thisButton.actionArgs.toInt() > 255 ) {
+                if (lastManualColor.green + thisButton.actionArgs.toInt() > 255 )
+                {
                     lastManualColor.green = 255;
-                } else if (lastManualColor.green + thisButton.actionArgs.toInt() < 0) {
+                } else if (lastManualColor.green + thisButton.actionArgs.toInt() < 0)
+                {
                     lastManualColor.green = 0;
-                } else {
+                }
+                else 
+                {
                     lastManualColor.green += thisButton.actionArgs.toInt();
                 }
                 effectManager.SetGlobalColor(lastManualColor);
                 effectManager.SetInterval(0);
             break;
             case CHANGEB:
-                if (lastManualColor.blue + thisButton.actionArgs.toInt() > 255 ) {
+                if (lastManualColor.blue + thisButton.actionArgs.toInt() > 255 ) 
+                {
                     lastManualColor.blue = 255;
-                } else if (lastManualColor.blue + thisButton.actionArgs.toInt() < 0) {
+                }
+                else if (lastManualColor.blue + thisButton.actionArgs.toInt() < 0)
+                {
                     lastManualColor.blue = 0;
-                } else {
+                } 
+                else
+                {
                     lastManualColor.blue += thisButton.actionArgs.toInt();
                 }
                 effectManager.SetGlobalColor(lastManualColor); 

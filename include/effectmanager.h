@@ -359,7 +359,27 @@ public:
             }
         #endif
     }
+    
+    // SetTemporaryStripEffect
+    //
+    // Sets a temporary effect for led strips. The effect is set as the "remote effect"
+    // making it have drawing precedence. 
+    void SetTemporaryStripEffect(std::shared_ptr<LEDStripEffect> tempEffect) 
+    {
+        if (tempEffect->Init(_gfx))
+            {
+                _tempEffect = tempEffect;
+                StartEffect();
+            }
+    }
 
+    void ClearTemporaryStripEffect()
+    {
+        _tempEffect = nullptr;
+        Update();
+    }
+    
+    
     void ClearRemoteColor(bool retainRemoteEffect = false)
     {
         if (!retainRemoteEffect)

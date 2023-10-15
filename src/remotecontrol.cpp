@@ -44,7 +44,8 @@ void RemoteControl::handle()
 {
     decode_results results;
     static uint lastResult = 0;
-    static CRGB lastManualColor = CRGB(0,0,0);
+    static CRGB lastManualColor = CRGB(128,0,0);
+    static boolean remoteEffectPower = false;
 
     auto& deviceConfig = g_ptrSystem->DeviceConfig();
 
@@ -123,26 +124,43 @@ void RemoteControl::handle()
                 debugI("After brightness down global brightness is  %i\n",g_Values.Brightness);
 
             break;
+            case POWER_TOGGLE:
+            {
+                if (remoteEffectPower)
+                {
+                    remoteEffectPower = false;
+                    effectManager.ClearTemporaryStripEffect();
+                    effectManager.ClearRemoteColor();
+                    effectManager.Update();
+                }
+                else 
+                {
+                    remoteEffectPower = true;
+                    effectManager.SetInterval(0);
+                    effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
+                    effectManager.StartEffect();
+                }
+            }
             case ButtonActions::POWER_ON:
-                effectManager.ClearRemoteColor();
                 effectManager.SetInterval(0);
-                effectManager.SetGlobalColor(lastManualColor);
+                effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
                 effectManager.StartEffect();
             break;
             case ButtonActions::POWER_OFF:
-                //effectManager.SetGlobalColor(CRGB(0,0,0));
-                //g_Values.Brightness = std::max(0, (int) g_Values.Brightness - BRIGHTNESS_STEP);
+                effectManager.ClearTemporaryStripEffect();
                 effectManager.ClearRemoteColor();
             break;
             case ButtonActions::NEXT_EFFECT: 
                 effectManager.NextEffect();
             break;
             case ButtonActions::FILL_COLOR:
+            {
                 lastManualColor = hexToCrgb(thisButton.actionArgs);
-                lastManualColor.maximizeBrightness(myRemoteController.currentBrightness);
-                effectManager.SetGlobalColor(lastManualColor); 
-                //debugI("Current FastLED brightness %i\n",FastLED.getBrightness());
+                //std::shared_ptr<LEDStripEffect> colorEffect = make_shared_psram<ColorFillEffect>(lastManualColor, 1);
+                effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
                 effectManager.SetInterval(0);
+                remoteEffectPower = true;
+            }
             break;
             
             case ButtonActions::TRIGGER_EFFECT:
@@ -156,8 +174,10 @@ void RemoteControl::handle()
                 } else {
                     lastManualColor.red += thisButton.actionArgs.toInt();
                 }
-                effectManager.SetGlobalColor(lastManualColor); 
+                //effectManager.SetGlobalColor(lastManualColor); 
+                effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
                 effectManager.SetInterval(0);
+                remoteEffectPower = true;
 
             break;
             case ButtonActions::CHANGEG:
@@ -168,8 +188,10 @@ void RemoteControl::handle()
                 } else {
                     lastManualColor.green += thisButton.actionArgs.toInt();
                 }
-                effectManager.SetGlobalColor(lastManualColor);
+                //effectManager.SetGlobalColor(lastManualColor);
+                effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
                 effectManager.SetInterval(0);
+                remoteEffectPower = true;
             break;
             case ButtonActions::CHANGEB:
                 if (lastManualColor.blue + thisButton.actionArgs.toInt() > 255 ) {
@@ -179,8 +201,10 @@ void RemoteControl::handle()
                 } else {
                     lastManualColor.blue += thisButton.actionArgs.toInt();
                 }
-                effectManager.SetGlobalColor(lastManualColor); 
+                //effectManager.SetGlobalColor(lastManualColor); 
+                effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
                 effectManager.SetInterval(0);
+                remoteEffectPower = true;
             break;
             case DIY1:
                effectManager.NextEffect();

@@ -62,7 +62,8 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.push_back(RemoteButton ("Brightness Up",0xFF3AC5,BRIGHTNESS_UP, ""));
     buttons.push_back(RemoteButton ("Brightness Down",0xFFBA45,BRIGHTNESS_DOWN, ""));
     buttons.push_back(RemoteButton ("NExt Effect",0xFF827D,NEXT_EFFECT, ""));
-    buttons.push_back(RemoteButton ("Power Toggle",0xFF02FD,POWER_TOGGLE, ""));
+    //buttons.push_back(RemoteButton ("Power off",0xFF02FD,POWER_OFF, ""));
+    buttons.push_back(RemoteButton ("Power",0xFF02FD,POWER_TOGGLE, ""));
     //Row 2
     buttons.push_back(RemoteButton ("Full Red",0xFF1AE5,FILL_COLOR, "FF0000"));
     buttons.push_back(RemoteButton ("Full Green",0xFF9A65,FILL_COLOR, "00FF00"));

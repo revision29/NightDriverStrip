@@ -126,15 +126,17 @@ void RemoteControl::handle()
             break;
             case POWER_TOGGLE:
             {
-                if (remoteEffectPower)
+                if (remoteEffectPower == true)
                 {
+                    debugI("Power is on, so w turn it off.\n");
                     remoteEffectPower = false;
                     effectManager.ClearTemporaryStripEffect();
                     effectManager.ClearRemoteColor();
-                    effectManager.Update();
+
                 }
                 else 
                 {
+                    debugI("Power is off, so we turn it on\n");
                     remoteEffectPower = true;
                     effectManager.SetInterval(0);
                     effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));

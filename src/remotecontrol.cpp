@@ -91,7 +91,7 @@ void RemoteControl::handle()
             return;
         }
     }
-    lastResult = result;
+    //lastResult = result;
 
     auto &effectManager = g_ptrSystem->EffectManager();
     
@@ -112,6 +112,27 @@ void RemoteControl::handle()
         //debugV("We have a matching keycode 0x%08X \n", result);
         auto index = std::distance(myRemoteController.buttons.begin(), keyCodeMatch);
         RemoteButton thisButton = myRemoteController.buttons[index];
+
+    if (result == lastResult) 
+        {
+            static uint lastRepeatTime = millis();
+            static auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 150 : 250;
+            //We do not want to set the kMinRepeatms to 0 because some remotes send a code more than once and also there might be refelctive surfaces that will cause the signal to be recieved more than once in rapid succession.
+            //250 will allow 4 units brightness changes over one second. That will be about 3 seconds to fully ramp the brightnss up or down
+            if (millis() - lastRepeatTime > kMinRepeatms)
+            {
+                debugV("Remote Repeat; lastResult == %08x, elapsed = %lu\n", lastResult, millis()-lastRepeatTime);
+                lastRepeatTime = millis();
+            }
+            else
+            {
+                return;
+            }   
+
+        }
+    lastResult = result;
+
+
         auto &myEffect = effectManager.GetCurrentEffect();
 
         switch (thisButton.buttonAction){

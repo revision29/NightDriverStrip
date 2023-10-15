@@ -60,10 +60,6 @@ void RemoteControl::handle()
     debugI("Received IR Remote Code: 0x%08X, Decode: %08X\n", result, results.decode_type);
     _IR_Receive.resume();
     
-    
-
-
-
     if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF)
     {
         result = lastResult;
@@ -72,9 +68,9 @@ void RemoteControl::handle()
     auto searchResult = myRemoteController.buttons.find(result);
     if (searchResult != myRemoteController.buttons.end()) 
     {
-        debugI("We have a remote code result 0x%08X", result);
-        uint buttonCount = myRemoteController.buttons.size();
-        debugI("There are %i buttons in the remote", buttonCount);
+        //debugI("We have a remote code result 0x%08X", result);
+        //uint buttonCount = myRemoteController.buttons.size();
+        //debugI("There are %i buttons in the remote", buttonCount);
         RemoteButton thisButton = searchResult->second;
         //Check for repeat. The repeat limiter code is broken and needs to be fixed
 
@@ -82,7 +78,7 @@ void RemoteControl::handle()
         if (result == lastResult) 
         {
             static uint lastRepeatTime = millis();
-            static auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 100 : 200;
+            static auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 150 : 250;
             //We do not want to set the kMinRepeatms to 0 because some remotes send a code more than once and also there might be refelctive surfaces that will cause the signal to be recieved more than once in rapid succession.
             //250 will allow 4 units brightness changes over one second. That will be about 3 seconds to fully ramp the brightnss up or down
             if (millis() - lastRepeatTime > kMinRepeatms)
@@ -135,10 +131,13 @@ void RemoteControl::handle()
                 effectManager.NextEffect();
             break;
             case FILL_COLOR:
+            {
                 debugI("We are going to fill wth color %s\n",thisButton.actionArgs);
                 lastManualColor = hexToCrgb(thisButton.actionArgs);
-                effectManager.SetGlobalColor(lastManualColor); 
-                effectManager.SetInterval(0);
+                //effectManager.SetGlobalColor(lastManualColor);
+                //std::shared_ptr<LEDStripEffect> effect = make_shared_psram<ColorFillEffect>(lastManualColor);
+                //effectManager.SetInterval(0);
+            }
             break;
             
             case TRIGGER_EFFECT:

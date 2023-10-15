@@ -242,7 +242,7 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
 
     //#define MATRIX_WIDTH            32
     //#define MATRIX_HEIGHT           8
-    #define MATRIX_WIDTH            32
+    #define MATRIX_WIDTH            40
     #define MATRIX_HEIGHT           1
 
     #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)

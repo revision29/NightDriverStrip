@@ -185,6 +185,7 @@ void LoadEffectFactories()
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, ForestColors_p, 256 / 16, .1, 0,1,0);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,1,0);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_COLOR_FILL, ColorFillEffect, CRGB::AliceBlue, 1);
 
     # elif CROSS
         //debugI("NUmber of leds %i",NUM_LEDS);

@@ -34,7 +34,6 @@
 #if USE_HUB75
 #include "TJpg_Decoder.h"
 #endif
-#include "effects.h"
 
 // SimpleRainbowTestEffect
 //
@@ -203,9 +202,9 @@ protected:
     }
 };
 
-// RainbowFillEffect
+// ColorFillEffect
 //
-// Fills the spokes with a rainbow palette
+// Fills all channels with a solid color.
 
 
 class ColorFillEffect : public LEDStripEffect
@@ -252,7 +251,15 @@ protected:
     {
         if (_everyNth != 1)
           fillSolidOnAllChannels(CRGB::Black);
-        fillSolidOnAllChannels(_color, 0, NUM_LEDS, _everyNth);
+        
+        if (g_Values.GlobalColor && g_Values.GlobalColor != CRGB::Black) 
+        {
+          fillSolidOnAllChannels(g_Values.GlobalColor, 0, NUM_LEDS, _everyNth);
+        } else 
+        {
+          fillSolidOnAllChannels(_color, 0, NUM_LEDS, _everyNth);
+        }
+        
     }
 };
 

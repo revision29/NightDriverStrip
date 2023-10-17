@@ -8,7 +8,7 @@ For now, we will hard code the items and let the user manually change.
 #include "systemcontainer.h"
 
 CRGB hexToCrgb (String hex);
-int hexStringToInt (String hexString);
+//int hexStringToInt (String hexString);
 
 enum ButtonActions
     {
@@ -68,18 +68,11 @@ class RemoteButton
 
 class UserRemoteControl 
     {
-        //We want to change the buttons vectory to a map. A map is an associative array type of structure: https://www.geeksforgeeks.org/associative-arrays-in-cpp/
-        //The key for the button will be the remote key code
-
         public:
-            //Eventually, the button type and / or button count will depend on a user setting / config file.
-            //std::vector<RemoteButton> buttons {}; 
-            //RemoteTypes remoteType;
             void getRemoteButtons();
             int buttonCount;
-            //int currentBrightness = g_ptrSystem->DeviceConfig().GetBrightness();
             std::map<uint, RemoteButton> buttons;
-            //UserRemoteControl (RemoteTypes remoteType, int buttonCount = 0) {
+            
             UserRemoteControl (int buttonCount = 0) 
             {
                 buttonCount = buttonCount;

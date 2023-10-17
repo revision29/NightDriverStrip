@@ -2,89 +2,15 @@
 
 #if ENABLE_REMOTE
 
-int hexStringToInt (String hexString)
-    {
-        //This function is used to a convert hex code stored into a string to an integer reprsenting the value of the hex code if it were a true hex code.
-        /*
-        int hexStringInt = 0;
-        char c[hexString.length()+1];
-        hexString.toCharArray(c, hexString.length()+1);
-        hexStringInt = strtol(c, 0, 16);
-        return hexStringInt;
-
-*/
-        //string hexString = "7FF";
-        int hexNumber = 0;
-        sscanf(hexString.c_str(), "%x", &hexNumber);
-        return hexNumber;
-    }
-
-CRGB hexToCrgb (String hexString) 
-    {
-        //This function converts a hex code stored as a tring to a CRGB color object.
-        //It should no longer require the helper function: hexStringToInt. I rewrot that function and then incorporated the logic into this function because it was so simple.
-        CRGB myColor = CRGB(5,5,5);//The variable that we will return, with an arbitrary initial value.
-        int rHexInt = 0;
-        int bHexInt = 0;
-        int gHexInt = 0;
-
-        //We need to prpare the hex string for processing by removing any pound signs, spaces, and adding 0s if the string is less than 6 charactrs long.
-        //
-        hexString.replace("#","");
-        hexString.replace(" ","");
-        if (hexString.length() < 6 && hexString.length() != 3)
-        {
-            while (hexString.length() < 6 ) {
-                hexString += "0";
-            }
-        } 
-        else if (hexString.length() == 3)
-        {
-            //Sometimes an RGB hex can be 3 charactrs. That is when each of the three colors consist of two values that are the same. EX: 00FFAA ir rendered 0FA.
-
-            String r1 = hexString.substring(0,1);
-            String g1 = hexString.substring(1,2);
-            String b1 = hexString.substring(2,3);
-            hexString = r1 + r1 + g1 + g1 + b1 + b1;//Ugly yet effective
-
-        }
-
-        String rHexString = hexString.substring(0,2);
-        String gHexString = hexString.substring(2,4);
-        String bHexString = hexString.substring(4,6);
-        debugI("Color we are sending to draw %s \n",hexString);
-        
-        if (rHexString.length() == 2 && gHexString.length() == 2 && bHexString.length() == 2 )
-        {
-            sscanf(rHexString.c_str(), "%x", &rHexInt);
-            sscanf(gHexString.c_str(), "%x", &gHexInt); 
-            sscanf(bHexString.c_str(), "%x", &bHexInt);
-            debugI("r is %i, g is %i, b is %i", rHexInt, gHexInt,bHexInt);
-            /*
-            int rHexInt = hexStringToInt(rHexString);
-            int bHexInt = hexStringToInt(bHexString);
-            int gHexInt = hexStringToInt(gHexString);
-            */
-            myColor = CRGB (rHexInt,gHexInt,bHexInt);
-        }
-        return myColor;
-    }
-
 void UserRemoteControl::getRemoteButtons() {
     
-    //This populates the stock remote control buttons
-    debugI("We are creating the user remote\n");
+    //This populates the remote control buttons
+    
     /*
     The ButtonActions ENUM in userremote.h defines what actions are available.
 
-    If these are ever stored with json or in a user settings file of some kind, there might be a problem with how keycodes are handled.
-    As is we are interafing with them as integers in hex notation. Settings file / json might require the numbers be formed as strings or as regular integers.
-
-    */
-  
-    /*
-    Here, buttons are being added to the "buttons" std::map using the emplace method. This allows th button to be added to the map with a single line.
-    The first argument is the key which we are using the key code for.
+    Here, buttons are being added to the "buttons" std::map using the emplace method. This allows the button to be added to the map with a single line.
+    The first argument is the key which. The value for key is the hex code for the IR button.
     The second argument is the value. In this case the value is a RemoteButton object that we are creating in line.
     
     The remote button object takes three arguments. A label, button action (as defined in the ButtonActions enum), and action arguments (optional).
@@ -93,10 +19,13 @@ void UserRemoteControl::getRemoteButtons() {
     Your code for the action in remotecontrol.cpp will need to be able to parse the action arguments string and pass the arguments along as you desire. It's up to you to make that happen.
     */
 
+    // This is for a 44 key remote. There is a set of definitions below for a 24 key remote.
+    // To disable the 44 button definitions use a block comment (slash-star) or comment out each line.
+    // To enable the 24 button definitions, uncomment the 23 key definition block.
+
     //Row 1
     buttons.emplace(0xFF3AC5, RemoteButton("Brightness Up",BRIGHTNESS_UP));
     buttons.emplace(0xFFBA45, RemoteButton("Brightness Down",BRIGHTNESS_DOWN));
-    
     buttons.emplace(0xFF827D, RemoteButton("Next Effect",NEXT_EFFECT));
     buttons.emplace(0xFF02FD, RemoteButton("Power Off",POWER_OFF));
 
@@ -116,7 +45,6 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.emplace(0xFF8A75, RemoteButton ("Color 6",FILL_COLOR, "229248"));
     buttons.emplace(0xFFB24D, RemoteButton ("Color 7",FILL_COLOR, "200991"));
     buttons.emplace(0xFF32CD, RemoteButton ("Color 8",FILL_COLOR, "D72FB9"));
-
 
     //Row 5
     buttons.emplace(0xFF38C7, RemoteButton ("Color 9",FILL_COLOR, "EDD917"));
@@ -160,8 +88,72 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.emplace(0xFF609F, RemoteButton ("DIY 6",DIY6));
     buttons.emplace(0xFFE01F, RemoteButton ("Flash",FLASH));
 
-    debugI("At button population there are %i buttons in the remote",  buttons.size());
+    //debugI("At button population there are %i buttons in the remote",  buttons.size());
+
+/*
+    // 24 Key Remote Buttons
+
+*/
+
 }
 
+
+
+/*
+int hexStringToInt (String hexString)
+    {
+        //This function is used to a convert hex code stored into a string to an integer reprsenting the value of the hex code if it were a true hex code.
+
+        //string hexString = "7FF";
+        int hexNumber = 0;
+        sscanf(hexString.c_str(), "%x", &hexNumber);
+        return hexNumber;
+    }
+*/
+
+CRGB hexToCRGB (String hexString) 
+{
+    //This function converts a hex code stored as a tring to a CRGB color object.
+    //It should no longer require the helper function: hexStringToInt. I rewrot that function and then incorporated the logic into this function because it was so simple.
+    CRGB myColor = CRGB(5,5,5);//The variable that we will return, with an arbitrary initial value.
+    int rHexInt = 0;
+    int bHexInt = 0;
+    int gHexInt = 0;
+
+    //We need to prpare the hex string for processing by removing any pound signs, spaces, and adding 0s if the string is less than 6 charactrs long.
+    hexString.replace("#","");
+    hexString.replace(" ","");
+    if (hexString.length() < 6 && hexString.length() != 3)
+    {
+        while (hexString.length() < 6 ) {
+            hexString += "0";
+        }
+    } 
+    else if (hexString.length() == 3)
+    {
+        //Sometimes an RGB hex can be 3 charactrs. That is when each of the three colors consist of two values that are the same. EX: 00FFAA ir rendered 0FA.
+
+        String r1 = hexString.substring(0,1);
+        String g1 = hexString.substring(1,2);
+        String b1 = hexString.substring(2,3);
+        hexString = r1 + r1 + g1 + g1 + b1 + b1;//Ugly yet effective
+
+    }
+
+    String rHexString = hexString.substring(0,2);
+    String gHexString = hexString.substring(2,4);
+    String bHexString = hexString.substring(4,6);
+    //debugI("Color we are sending to draw %s \n",hexString);
+    
+    if (rHexString.length() == 2 && gHexString.length() == 2 && bHexString.length() == 2 )
+    {
+        sscanf(rHexString.c_str(), "%x", &rHexInt);
+        sscanf(gHexString.c_str(), "%x", &gHexInt); 
+        sscanf(bHexString.c_str(), "%x", &bHexInt);
+        //debugI("r is %i, g is %i, b is %i", rHexInt, gHexInt,bHexInt);
+        myColor = CRGB (rHexInt,gHexInt,bHexInt);
+    }
+    return myColor;
+}
 
 #endif

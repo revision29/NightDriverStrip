@@ -72,7 +72,7 @@ class  EffectManager : public IJSONSerializable
     uint _effectInterval = 0;
     bool _bPlayAll;
     bool _bShowVU = true;
-    CRGB lastManualColor = CRGB::Red;
+    //CRGB lastManualColor = CRGB::Red; // This variable is being superceded by the pubic globalColor
     bool _clearTempEffectWhenExpired = false;
     bool _newFrameAvailable = false;
     int _effectSetVersion = 1;
@@ -122,6 +122,9 @@ class  EffectManager : public IJSONSerializable
 public:
     static const uint csFadeButtonSpeed = 15 * 1000;
     static const uint csSmoothButtonSpeed = 60 * 1000;
+
+    CRGB _globalColor = CRGB::Black;
+    CRGB _previousGlobalColor = CRGB::Black;
 
     EffectManager(std::shared_ptr<LEDStripEffect> effect, std::vector<std::shared_ptr<GFXBase>>& gfx)
         : _gfx(gfx)
@@ -326,14 +329,22 @@ public:
     void SetGlobalColor(CRGB color)
     {
         debugI("Setting Global Color");
-
+        
+        g_Values.LastGlobalColor = g_Values.GlobalColor;
+        g_Values.GlobalColor = color;
+/*
         CRGB oldColor = lastManualColor;
         lastManualColor = color;
 
+        _previousGlobalColor = _globalColor;
+        _globalColor = color;
+        
+*/
         #if (USE_HUB75)
                 auto pMatrix = g();
-                pMatrix->setPalette(CRGBPalette16(oldColor, color));
+                pMatrix->setPalette(CRGBPalette16(g_Values.LastGlobalColor, g_Values.GlobalColor));
                 pMatrix->PausePalette(true);
+        /*
         #else
             std::shared_ptr<LEDStripEffect> effect;
 
@@ -356,6 +367,8 @@ public:
                 _tempEffect = effect;
                 StartEffect();
             }
+            */
+           Update();
         #endif
     }
 
@@ -367,6 +380,20 @@ public:
         #if (USE_HUB75)
             g()->PausePalette(false);
         #endif
+        
+        g_Values.GlobalColor = CRGB::Black;
+        g_Values.LastGlobalColor = CRGB::Black;
+    }
+
+     void SetTemporaryStripEffect (std::shared_ptr<LEDStripEffect> tempEffect) 
+    {
+        _tempEffect = tempEffect;
+        //StartEffect();
+    }
+
+    void ClearTemporaryStripEffect()
+    {
+        _tempEffect = nullptr;
     }
 
     void StartEffect()

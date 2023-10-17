@@ -33,10 +33,12 @@
 #if ENABLE_REMOTE
 
 #include "systemcontainer.h"
-
 #define BRIGHTNESS_STEP     20
+/*
+We will need to define the user remote control
+*/
 
-UserRemoteControl myRemoteController (44);//Loads remote and stock 
+UserRemoteControl myRemoteController (44);//Loads remote and user defined buttons
 
 //Repeat codes
 //Press and hold brightness up or down to wuickly adjust up. 
@@ -44,26 +46,30 @@ UserRemoteControl myRemoteController (44);//Loads remote and stock
 //First check for a match. If no metch we just return.
 //If a match then we check against repeating then we trigger the button action
 
+
+/*
+!!! See ~/Development/Remote Code/Changes to effect manager.md for task list
+*/
 void RemoteControl::handle()
 {
     decode_results results;
     static uint lastResult = 0;
-
-    static CRGB lastManualColor = CRGB(0,0,0);
-
+    
+    static CRGB lastManualColor = CRGB::Black;
+    static boolean remoteEffectPower = false;
+    
     auto& deviceConfig = g_ptrSystem->DeviceConfig();
 
     if (!_IR_Receive.decode(&results))
         return;
 
-    uint result = results.value;
-    debugI("Received IR Remote Code: 0x%08X, Decode: %08X\n", result, results.decode_type);
+    uint result = results.value;    
     _IR_Receive.resume();
-    
+
     if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF)
     {
-        result = lastResult;
-    }
+            result = lastResult;
+            }
 
     auto searchResult = myRemoteController.buttons.find(result);
     if (searchResult != myRemoteController.buttons.end()) 
@@ -74,39 +80,37 @@ void RemoteControl::handle()
         RemoteButton thisButton = searchResult->second;
         //Check for repeat. The repeat limiter code is broken and needs to be fixed
 
-        
-        if (result == lastResult) 
-        {
-            static uint lastRepeatTime = millis();
-            static auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 150 : 250;
-            //We do not want to set the kMinRepeatms to 0 because some remotes send a code more than once and also there might be refelctive surfaces that will cause the signal to be recieved more than once in rapid succession.
-            //250 will allow 4 units brightness changes over one second. That will be about 3 seconds to fully ramp the brightnss up or down
-            if (millis() - lastRepeatTime > kMinRepeatms)
-            {
-                debugV("Remote Repeat; lastResult == %08x, elapsed = %lu\n", lastResult, millis()-lastRepeatTime);
-                lastRepeatTime = millis();
-            }
-            else
-            {
-                return;
-            }   
+/*
 
-        }
+ToDo:
+• Get repeat limiter to work properly
+• Edit PaletteFlameEffect to change the pallete based on global fill color(s)
+*/
+
+        if (result == lastResult) 
+            {
+                static uint lastRepeatTime = millis();
+                static auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 150 : 250;
+                //We do not want to set the kMinRepeatms to 0 because some remotes send a code more than once and also there might be refelctive surfaces that will cause the signal to be recieved more than once in rapid succession.
+                //250 will allow 4 units brightness changes over one second. That will be about 3 seconds to fully ramp the brightnss up or down
+                if (millis() - lastRepeatTime > kMinRepeatms)
+                {
+                    debugV("Remote Repeat; lastResult == %08x, elapsed = %lu\n", lastResult, millis()-lastRepeatTime);
+                    lastRepeatTime = millis();
+                }
+                else
+                {
+                    return;
+                }   
+
+            }
         lastResult = result;
-        
+
         //Process the code
         auto &effectManager = g_ptrSystem->EffectManager();
-        auto &myEffect = effectManager.GetCurrentEffect();
         
-
-        //As we create the switch, if we need to use variables inside the case, we enclose the case code in curley brackets
-        //    case TRIGGER_EFFECT:
-        //    {
-        //        //We can initialize variables here, including an array of the arguments passed to the effect
-        //    }
-        
-       switch (thisButton.buttonAction)
-       {
+        switch (thisButton.buttonAction)
+        {
             case BRIGHTNESS_UP:
                deviceConfig.SetBrightness((int)deviceConfig.GetBrightness() + BRIGHTNESS_STEP);
 
@@ -116,15 +120,33 @@ void RemoteControl::handle()
                 debugI("After brightness down global brightness is  %i\n",deviceConfig.GetBrightness());
 
             break;
-            case POWER_ON:
-                effectManager.ClearRemoteColor();
+            case POWER_TOGGLE:
+            {
+                if (remoteEffectPower == true)
+                {
+                    debugI("Power is on, so w turn it off.\n");
+                    remoteEffectPower = false;
+                    effectManager.ClearTemporaryStripEffect();
+                    effectManager.ClearRemoteColor();
+
+                } else 
+                {
+                    debugI("Power is off, so we turn it on\n");
+                    remoteEffectPower = true;
+                    effectManager.SetInterval(0);
+                    effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
+                    effectManager.StartEffect();
+                }
+            }
+            case ButtonActions::POWER_ON:
                 effectManager.SetInterval(0);
-                effectManager.SetGlobalColor(lastManualColor);
+                effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
                 effectManager.StartEffect();
             break;
             case POWER_OFF:
                 //effectManager.SetGlobalColor(CRGB(0,0,0));
                 //g_Values.Brightness = std::max(0, (int) g_Values.Brightness - BRIGHTNESS_STEP);
+                effectManager.ClearTemporaryStripEffect();
                 effectManager.ClearRemoteColor();
             break;
             case NEXT_EFFECT: 
@@ -132,11 +154,8 @@ void RemoteControl::handle()
             break;
             case FILL_COLOR:
             {
-                debugI("We are going to fill wth color %s\n",thisButton.actionArgs);
-                lastManualColor = hexToCrgb(thisButton.actionArgs);
-                //effectManager.SetGlobalColor(lastManualColor);
-                //std::shared_ptr<LEDStripEffect> effect = make_shared_psram<ColorFillEffect>(lastManualColor);
-                //effectManager.SetInterval(0);
+                lastManualColor = hexToCRGB(thisButton.actionArgs);
+                effectManager.SetGlobalColor(lastManualColor);
             }
             break;
             
@@ -156,8 +175,11 @@ void RemoteControl::handle()
                 {
                     lastManualColor.red += thisButton.actionArgs.toInt();
                 }
-                effectManager.SetGlobalColor(lastManualColor); 
-                effectManager.SetInterval(0);
+                //effectManager.SetGlobalColor(lastManualColor); 
+                //effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
+                //effectManager.SetInterval(0);
+                //remoteEffectPower = true;
+                effectManager.SetGlobalColor(lastManualColor);
 
             break;
             case CHANGEG:
@@ -167,13 +189,11 @@ void RemoteControl::handle()
                 } else if (lastManualColor.green + thisButton.actionArgs.toInt() < 0)
                 {
                     lastManualColor.green = 0;
-                }
-                else 
+                } else 
                 {
                     lastManualColor.green += thisButton.actionArgs.toInt();
                 }
-                effectManager.SetGlobalColor(lastManualColor);
-                effectManager.SetInterval(0);
+                    effectManager.SetGlobalColor(lastManualColor);
             break;
             case CHANGEB:
                 if (lastManualColor.blue + thisButton.actionArgs.toInt() > 255 ) 
@@ -189,10 +209,13 @@ void RemoteControl::handle()
                     lastManualColor.blue += thisButton.actionArgs.toInt();
                 }
                 effectManager.SetGlobalColor(lastManualColor); 
-                effectManager.SetInterval(0);
+                //effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
+                //effectManager.SetInterval(0);
+                //remoteEffectPower = true;
             break;
             case DIY1:
-               effectManager.NextEffect();
+               effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
+               effectManager.SetInterval(0);
             break;
             case DIY2: 
                 effectManager.PreviousEffect();
@@ -224,8 +247,8 @@ void RemoteControl::handle()
             //break;
             //case SLOW:
             //break;
-       }
-    lastResult = result;
+            }
+            lastResult = result;
 
     }
 
@@ -265,7 +288,7 @@ void RemoteControl::handle()
 
         if (millis() - lastRepeatTime > kMinRepeatms)
         {
-            debugV("Remote Repeat; lastResult == %08x, elapsed = %lu\n", lastResult, millis()-lastRepeatTime);
+        debugV("Remote Repeat; lastResult == %08x, elapsed = %lu\n", lastResult, millis()-lastRepeatTime);
             result = lastResult;
             lastRepeatTime = millis();
         }
@@ -321,18 +344,21 @@ void RemoteControl::handle()
     else if (IR_FADE == result)
     {
         effectManager.ShowVU( !effectManager.IsVUVisible() );
+    } else if (IR_BPLUS == result) {
+        
+
     }
 
-    for (int i = 0; i < ARRAYSIZE(RemoteColorCodes); i++)
+    
+    for (int i = 0; i < ARRAYSIZE(RemoteColorCodes); i++) 
     {
         if (RemoteColorCodes[i].code == result)
         {
             debugV("Changing Color via remote: %08X\n", (uint) RemoteColorCodes[i].color);
-            effectManager.SetGlobalColor(RemoteColorCodes[i].color);
+                        effectManager.SetGlobalColor(RemoteColorCodes[i].color);
             return;
         }
     }
-}
-*/
+    */
 
 #endif

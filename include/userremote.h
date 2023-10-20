@@ -7,7 +7,7 @@ For now, we will hard code the items and let the user manually change.
 #include "globals.h"
 #include "systemcontainer.h"
 
-CRGB hexToCrgb (String hex);
+CRGB hexToCRGB (String hex);
 //int hexStringToInt (String hexString);
 
 enum ButtonActions

@@ -239,10 +239,10 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #ifndef PROJECT_NAME
     #define PROJECT_NAME            "Joe Devkit"
     #endif
-
+    #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
     //#define MATRIX_WIDTH            32
     //#define MATRIX_HEIGHT           8
-    #define MATRIX_WIDTH            40
+    #define MATRIX_WIDTH            100
     #define MATRIX_HEIGHT           1
 
     #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)
@@ -285,6 +285,7 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define ENABLE_REMOTE           1   // IR Remote 
     #define IR_REMOTE_PIN   48//heltec
     //#define IR_REMOTE_PIN   14 //esp
+    
 
 #elif CROSS
 

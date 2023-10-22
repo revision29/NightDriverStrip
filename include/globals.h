@@ -392,6 +392,42 @@ In addition to simple trips, the app handles matrixes as well.
     #define IR_REMOTE_PIN           26
 
 
+#elif ESPCONE
+
+    // Wall Mounted Cross. 3 sets of 8 leds and one set of 15
+
+    #ifndef PROJECT_NAME
+    #define PROJECT_NAME            "ESP Cone"
+    #endif
+
+    #define MATRIX_WIDTH            100
+    #define MATRIX_HEIGHT           1
+    #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
+    #define NUM_CHANNELS            1
+    #define ENABLE_AUDIO            0
+    #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
+
+    #define POWER_LIMIT_MW       12 * 10 * 1000   // 10 amp supply at 5 volts assumed
+
+    #define ENABLE_WIFI             0   // Connect to WiFi
+    #define INCOMING_WIFI_ENABLED   0   // Accepting incoming color data and commands
+    #define TIME_BEFORE_LOCAL       0   // How many seconds before the lamp times out and shows local contexnt
+    #define ENABLE_NTP              1   // Set the clock from the web
+    #define ENABLE_OTA              0   // Accept over the air flash updates
+    #define LED_PIN0                14
+
+    // The webserver serves files from its SPIFFS filesystem, such as index.html, and those files must be
+    // uploaded to SPIFFS with the "Upload Filesystem Image" command before it can work.  When running
+    // you should be able to see/select the list of effects by visiting the chip's IP in a browser.  You can
+    // get the chip's IP by watching the serial output or checking your router for the DHCP given to 'LEDWifi'
+
+    #ifndef ENABLE_WEBSERVER
+        #define ENABLE_WEBSERVER        0   // Turn on the internal webserver
+    #endif
+    #define ENABLE_REMOTE           1   // IR Remote 
+    #define IR_REMOTE_PIN           26
+
+
 #elif LANTERN
 
     // A railway-style lantern with concentric rings of light (16+12+8+1)

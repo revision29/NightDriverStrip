@@ -68,18 +68,16 @@ void RemoteControl::handle()
 
     if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF)
     {
-            result = lastResult;
-            }
+        // Some remotes send 0xFFFFFFFF to indicate that the previous button is being held down. 
+        // If that is the case, this will set the current result to the lastResult so that the proper button code can be processed.
+        result = lastResult;
+    }
 
     auto searchResult = myRemoteController.buttons.find(result);
     if (searchResult != myRemoteController.buttons.end()) 
     {
-        //debugI("We have a remote code result 0x%08X", result);
-        //uint buttonCount = myRemoteController.buttons.size();
-        //debugI("There are %i buttons in the remote", buttonCount);
         RemoteButton thisButton = searchResult->second;
-        //Check for repeat. The repeat limiter code is broken and needs to be fixed
-
+    
 /*
 
 ToDo:
@@ -90,9 +88,9 @@ ToDo:
         if (result == lastResult) 
             {
                 static uint lastRepeatTime = millis();
-                static auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 150 : 250;
+                static auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 200 : 333;
                 //We do not want to set the kMinRepeatms to 0 because some remotes send a code more than once and also there might be refelctive surfaces that will cause the signal to be recieved more than once in rapid succession.
-                //250 will allow 4 units brightness changes over one second. That will be about 3 seconds to fully ramp the brightnss up or down
+                // Brightness adjustments will be allowed to repeat more often. 
                 if (millis() - lastRepeatTime > kMinRepeatms)
                 {
                     debugV("Remote Repeat; lastResult == %08x, elapsed = %lu\n", lastResult, millis()-lastRepeatTime);
@@ -104,7 +102,6 @@ ToDo:
                 }   
 
             }
-        lastResult = result;
 
         //Process the code
         auto &effectManager = g_ptrSystem->EffectManager();
@@ -209,26 +206,28 @@ ToDo:
                     lastManualColor.blue += thisButton.actionArgs.toInt();
                 }
                 effectManager.SetGlobalColor(lastManualColor); 
-                //effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
-                //effectManager.SetInterval(0);
-                //remoteEffectPower = true;
             break;
             case DIY1:
-               effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
-               effectManager.SetInterval(0);
+                effectManager.SetCurrentEffectIndex(0);
             break;
             case DIY2: 
-                effectManager.PreviousEffect();
-                
+                effectManager.SetCurrentEffectIndex(1);
                 
             break;
             case DIY3: 
-                
+                effectManager.SetCurrentEffectIndex(2);
             break;
             case DIY4: 
-                
+                effectManager.SetCurrentEffectIndex(3);
             break;
-
+            case DIY5: 
+                effectManager.SetCurrentEffectIndex(4);
+            break;
+            case DIY6: 
+                effectManager.SetCurrentEffectIndex(5);
+            break;
+            
+            // There are effects defined that will scroll throw different effects.
             //case JUMP3:
             //break;
             //case JUMP7:
@@ -239,8 +238,22 @@ ToDo:
             //break;
             //case STROBE:
             //break;
-            //case AUTO:
-            //break;
+            case AUTO:
+            {
+                if (effectManager.GetInterval() == 0) 
+                {
+                    effectManager.SetInterval(60000);
+                    effectManager.NextEffect();
+                } else
+                {
+                    effectManager.SetInterval(0);
+                    // To provide a little visual confirmation that something happened.
+                    effectManager.PreviousEffect();
+                    delay(100);
+                    effectManager.NextEffect();
+                }
+            }
+            break;
             //case FLASH:
             //break;
             //case QUICK:
@@ -248,7 +261,8 @@ ToDo:
             //case SLOW:
             //break;
             }
-            lastResult = result;
+            if (result != 0xFFFFFFFF )
+                lastResult = result;
 
     }
 

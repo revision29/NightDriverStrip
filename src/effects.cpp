@@ -183,6 +183,7 @@ void LoadEffectFactories()
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, LavaColors_p, 256 / 16, .1, 0,1,0);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PurpleColors_p, 256 / 16, .1, 0,1,0);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,1,0);
+
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,1,0);
         ADD_EFFECT(EFFECT_STRIP_METEOR, MeteorEffect, 4, 4, 10, 2.0, 2.0);
         ADD_EFFECT(EFFECT_STRIP_COLOR_FILL, ColorFillEffect, CRGB::Magenta, 1);
@@ -209,17 +210,42 @@ void LoadEffectFactories()
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,1,0);
     
     #elif ESPCONE
-        ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB(224, 108, 111), CRGB(224, 108, 111), CRGB(224, 108, 111), CRGB(224, 108, 111), CRGB(224, 108, 111), CRGB(45, 136, 57), CRGB(45, 136, 57), CRGB(45, 136, 57), CRGB(45, 136, 57), CRGB(45, 136, 57), CRGB(99, 92, 63), CRGB(99, 92, 63), CRGB(99, 92, 63), CRGB(99, 92, 63), CRGB(99, 92, 63), CRGB(99, 92, 63)), 256 / 32, .3, 0,4,0); // pallete, denisty, speed, ledspersecond, lightsizee, gapsize
         ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 6, 2);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, MagentaColors_p, 256 / 16, .1, 0,1,0);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, LavaColors_p, 256 / 16, .1, 0,1,0);
-        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PurpleColors_p, 256 / 16, .1, 0,1,0);
         ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,1,0);
-        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,1,0);
-        ADD_STARRY_NIGHT_EFFECT(LongLifeSparkleStar, "Blue Sparkle Stars", GreenColors_p, 2.0, 1, LINEARBLEND, 2.0, 0.0, 0.0, CRGB::Blue);       // Blue Sparkle
-        ADD_EFFECT(EFFECT_STRIP_METEOR, MeteorEffect, 4, 4, 10, 2.0, 2.0);
         ADD_EFFECT(EFFECT_STRIP_COLOR_FILL, ColorFillEffect, CRGB::Magenta, 1);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PurpleColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,1,0);
+        ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
+        ADD_EFFECT(EFFECT_STRIP_METEOR, MeteorEffect, 4, 4, 10, 2.0, 2.0);
+        #define EFFECT_SET_VERSION  1.6
 
+// pallete, denisty, speed, ledspersecond, lightsizee, gapsize
+/*
+const CRGBPalette16 & palette,
+                  float density = 1.0,
+                  float paletteSpeed = 1,
+                  float ledsPerSecond = 0,
+                  float lightSize = 1,
+                  float gapSize = 1,
+                  TBlendType blend = LINEARBLEND,
+                  bool  bErase = true,
+                  float brightness = 1.0)
+
+
+        _startIndex(0.0f),
+        _paletteIndex(0.0f),
+        _palette(palette),
+        _density(density),
+        _paletteSpeed(paletteSpeed),
+        _lightSize(lightSize),
+        _gapSize(gapSize),
+        _LEDSPerSecond(ledsPerSecond),
+        _blend(blend),
+        _bErase(bErase),
+        _brightness(brightness)*/
     #elif LASERLINE
 
         ADD_EFFECT(EFFECT_STRIP_LASER_LINE, LaserLineEffect, 500, 20);

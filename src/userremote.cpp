@@ -58,6 +58,8 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.emplace(0xFF58A7, RemoteButton ("Color 15",FILL_COLOR, "C121B1"));
     buttons.emplace(0xFFD827, RemoteButton ("Color 16",FILL_COLOR, "2D87D7"));
 
+    // Remote with 7th row as JUMP3, JUMP7...
+    /*
     //Row 7
     buttons.emplace(0xFF28D7, RemoteButton ("Jump 3",JUMP3));
     buttons.emplace(0xFFA857, RemoteButton ("Jump 7",JUMP7));
@@ -87,8 +89,38 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.emplace(0xFFA05F, RemoteButton ("DIY 5",DIY5));
     buttons.emplace(0xFF609F, RemoteButton ("DIY 6",DIY6));
     buttons.emplace(0xFFE01F, RemoteButton ("Flash",FLASH));
+    */
 
-    //debugI("At button population there are %i buttons in the remote",  buttons.size());
+    // Remote with 7th row as REDUP, GREENUP, ...
+    //Row 7
+    buttons.emplace(0xFF28D7, RemoteButton ("Increase Red", CHANGER, "10"));
+    buttons.emplace(0xFFA857, RemoteButton ("Increase Green", CHANGEG, "10"));
+    buttons.emplace(0xFF6897, RemoteButton ("Increase Blue", CHANGEB, "10"));
+    buttons.emplace(0xFFE817, RemoteButton ("Quick", QUICK));
+
+    //Row 8
+    buttons.emplace(0xFF08F7, RemoteButton ("Decrease Red",CHANGER, "-10"));
+    buttons.emplace(0xFF8877, RemoteButton ("Decrease Green",CHANGEG, "-10"));
+    buttons.emplace(0xFF48B7, RemoteButton ("Decrease Blue",CHANGEB, "-10"));
+    buttons.emplace(0xFFC837, RemoteButton ("Slow", SLOW));//fade speed is Slow
+
+    //Row 9
+    buttons.emplace(0xFF30CF, RemoteButton ("DIY 1", DIY1));
+    buttons.emplace(0xFFB04F, RemoteButton ("DIY 2", DIY2));
+    buttons.emplace(0xFF708F, RemoteButton ("DIY 3", DIY3));
+    buttons.emplace(0xFFF00F, RemoteButton ("Auto", AUTO));
+
+    //Row 10
+    buttons.emplace(0xFF10EF, RemoteButton ("DIY 4", DIY4));
+    buttons.emplace(0xFF906F, RemoteButton ("DIY 5", DIY5));
+    buttons.emplace(0xFF50AF, RemoteButton ("DIY 6", DIY6));
+    buttons.emplace(0xFFD02F, RemoteButton ("Flash", FLASH));
+
+    //Row 11
+    buttons.emplace(0xFF20DF, RemoteButton ("Jump 3", JUMP3));
+    buttons.emplace(0xFFA05F, RemoteButton ("Jump 7", JUMP7));
+    buttons.emplace(0xFF609F, RemoteButton ("Fade 3", FADE3));
+    buttons.emplace(0xFFE01F, RemoteButton ("Fade 7", FADE7));
 
 /*
     // 24 Key Remote Buttons

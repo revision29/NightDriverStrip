@@ -241,6 +241,11 @@ public:
 
         // "ivl" contains the effect interval in ms
         SetInterval(jsonObject.containsKey("ivl") ? jsonObject["ivl"] : DEFAULT_EFFECT_INTERVAL, true);
+        if (jsonObject.containsKey("ivl")){
+            debugI("json has ivl key value of %i", jsonObject["ivl"]);
+        } else {
+            debugI("json does not have ivl key");
+        }
 
         // Try to read the effectindex from its own file. If that fails, "cei" may contain the current effect index instead
         if (!ReadCurrentEffectIndex(_iCurrentEffect) && jsonObject.containsKey("cei"))

@@ -55,7 +55,7 @@ void RemoteControl::handle()
     decode_results results;
     static uint lastResult = 0;
     static uint lastProcessTime = millis();
-    static boolean processingRemoteButtonPress = false; // This will cause the method to ignore received IR codes while a button press is being processed. This is to reduce button bounce / reflections causing mutliuple IR signals being received rapidly and being processed nearly simultaniously..
+    //static boolean processingRemoteButtonPress = false; // This will cause the method to ignore received IR codes while a button press is being processed. This is to reduce button bounce / reflections causing mutliuple IR signals being received rapidly and being processed nearly simultaniously..
 
     
     static CRGB lastManualColor = CRGB::Black;
@@ -63,13 +63,13 @@ void RemoteControl::handle()
     
     auto& deviceConfig = g_ptrSystem->DeviceConfig();
 
-    if (!_IR_Receive.decode(&results) || processingRemoteButtonPress) // If there is a problem with decoding the IR code or if a code is currently being processed, the method exits.
-    //if (!_IR_Receive.decode(&results))
+    //if (!_IR_Receive.decode(&results) || processingRemoteButtonPress) // If there is a problem with decoding the IR code or if a code is currently being processed, the method exits.
+    if (!_IR_Receive.decode(&results))
         return;
 
     uint result = results.value;    
     _IR_Receive.resume();
-    processingRemoteButtonPress = true;
+    //processingRemoteButtonPress = true;
 
     if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF && lastResult != 0)
     {
@@ -79,7 +79,7 @@ void RemoteControl::handle()
     }
     else if (result == 0xFFFFFFFF && millis() - lastProcessTime > 100) {
         // The IR sensor did not receive the regular keycode before the remote started sending out 0xFFFFFFFF. Stop processing and try again at next press. 100 ms is an arbitrary number that should be greater than the remote's repeat interval and lower than rapid finger presses.
-        processingRemoteButtonPress = false;
+        //processingRemoteButtonPress = false;
         return;
     }
 
@@ -101,7 +101,7 @@ void RemoteControl::handle()
                 }
                 else
                 {
-                    processingRemoteButtonPress = false;
+                    //processingRemoteButtonPress = false;
                     return;
                 }   
 
@@ -210,15 +210,15 @@ void RemoteControl::handle()
             {
                 if (effectManager.GetInterval() == 0) 
                 {
-                    effectManager.SetInterval(60000);
+                    effectManager.SetInterval(30000);
                     effectManager.NextEffect();
                 } else
                 {
                     effectManager.SetInterval(0);
                     // To provide a little visual confirmation that something happened.
-                    effectManager.PreviousEffect();
-                    delay(100);
-                    effectManager.NextEffect();
+                    //effectManager.PreviousEffect();
+                    //delay(100);
+                    //effectManager.NextEffect();
                 }
             }
             break;
@@ -237,7 +237,7 @@ void RemoteControl::handle()
     }
     if (result != 0xFFFFFFFF )
                 lastResult = result;
-    processingRemoteButtonPress = false;
+    //processingRemoteButtonPress = false;
 }
 
 /*

@@ -205,8 +205,8 @@
 
 #define DRAWING_CORE            1
 #define NET_CORE                1
-#define AUDIO_CORE              1
-#define AUDIOSERIAL_CORE        0
+#define AUDIO_CORE              0
+#define AUDIOSERIAL_CORE        1
 #define SCREEN_CORE             0
 #define DEBUG_CORE              1
 #define SOCKET_CORE             1
@@ -352,10 +352,9 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
     #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
-    #define ENABLE_AUDIO            1
+    #define ENABLE_AUDIO            0
     #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
-
-    #define POWER_LIMIT_MW       12 * 2.4 * 1000   // 2.5 amp supply at 5 volts
+    #define POWER_LIMIT_MW  (5 * 2.4 * 1000)         // 2.4 amps at 5V
 
 /*
 In addition to simple trips, the app handles matrixes as well.
@@ -372,11 +371,11 @@ In addition to simple trips, the app handles matrixes as well.
     // Once you have a working project, selectively enable various additional features by setting
     // them to 1 in the list below.  This DEMO config assumes no audio (mic), or screen, etc.
 
-    #define ENABLE_WIFI             1   // Connect to WiFi
-    #define INCOMING_WIFI_ENABLED   1   // Accepting incoming color data and commands
+    #define ENABLE_WIFI             0   // Connect to WiFi
+    #define INCOMING_WIFI_ENABLED   0   // Accepting incoming color data and commands
     #define TIME_BEFORE_LOCAL       0   // How many seconds before the lamp times out and shows local contexnt
     #define ENABLE_NTP              1   // Set the clock from the web
-    #define ENABLE_OTA              1   // Accept over the air flash updates
+    #define ENABLE_OTA              0   // Accept over the air flash updates
     #define LED_PIN0                14
 
     // The webserver serves files from its SPIFFS filesystem, such as index.html, and those files must be
@@ -385,7 +384,7 @@ In addition to simple trips, the app handles matrixes as well.
     // get the chip's IP by watching the serial output or checking your router for the DHCP given to 'LEDWifi'
 
     #ifndef ENABLE_WEBSERVER
-        #define ENABLE_WEBSERVER        1   // Turn on the internal webserver
+        #define ENABLE_WEBSERVER        0   // Turn on the internal webserver
     #endif
     #define ENABLE_REMOTE           1   // IR Remote 
     #define IR_REMOTE_PIN           26

@@ -483,7 +483,6 @@ In addition to simple trips, the app handles matrixes as well.
     #define TOGGLE_BUTTON_2 39
 
     #define NUM_INFO_PAGES          2
-    #define ONSCREEN_SPECTRUM_PAGE  1   // Show a little spctrum analyzer on one of the info pages (slower)
 
 #elif TREESET
 
@@ -585,7 +584,6 @@ In addition to simple trips, the app handles matrixes as well.
     #define LED_PIN0 32
 
     #define NUM_INFO_PAGES          2
-    #define ONSCREEN_SPECTRUM_PAGE  1   // Show a little spectrum analyzer on one of the info pages (slower)
 
 #elif MESMERIZER
 
@@ -669,8 +667,7 @@ In addition to simple trips, the app handles matrixes as well.
     #define POWER_LIMIT_MW  (1 * 5 * 1000)         // Expects at least a 5V, 1A supply
 
     #define TOGGLE_BUTTON_1         35
-    #define NUM_INFO_PAGES          4
-    #define ONSCREEN_SPECTRUM_PAGE  2   // Show a little spectrum analyzer on one of the info pages (slower)
+    #define NUM_INFO_PAGES          2
 
 #elif XMASTREES
 
@@ -1008,7 +1005,6 @@ In addition to simple trips, the app handles matrixes as well.
 
     #if !(SPECTRUM_WROVER_KIT)
         #define NUM_INFO_PAGES          2
-        #define ONSCREEN_SPECTRUM_PAGE  1   // Show a little spectrum analyzer on one of the info pages (slower)
     #endif
 
 #elif FANSET
@@ -1060,7 +1056,6 @@ In addition to simple trips, the app handles matrixes as well.
 
     #if !(SPECTRUM_WROVER_KIT)
         #define NUM_INFO_PAGES          2
-        #define ONSCREEN_SPECTRUM_PAGE  1   // Show a little spectrum analyzer on one of the info pages (slower)
     #endif
 
 
@@ -1134,9 +1129,6 @@ In addition to simple trips, the app handles matrixes as well.
     #define TOGGLE_BUTTON_2 39
 
     #define NUM_INFO_PAGES          2
-    #define ONSCREEN_SPECTRUM_PAGE  1   // Show a little spectrum analyzer on one of the info pages (slower)
-
-
 
 #elif CUBE
 

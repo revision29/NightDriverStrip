@@ -91,7 +91,7 @@ private:
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<256> jsonDoc;
+        StaticJsonDocument<LEDStripEffect::_jsonSize + 128> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
@@ -100,6 +100,8 @@ private:
         jsonDoc["bls"] = _cBallSize;
         jsonDoc[PTY_MIRORRED] = _bMirrored;
         jsonDoc[PTY_ERASE] = _bErase;
+
+        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }

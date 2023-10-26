@@ -74,6 +74,10 @@ class LEDStripEffect : public IJSONSerializable
     size_t _maximumEffectTime = 0;
     std::vector<std::reference_wrapper<SettingSpec>> _settingSpecs;
 
+    // JSON document size used for serializations of this class. Should probably be made bigger for effects (i.e. subclasses)
+    //   that serialize additional properties.
+    static constexpr int _jsonSize = 192;
+
     std::vector<std::shared_ptr<GFXBase>> _GFX;
 
     // Macro that assigns a value to a property if two names match
@@ -482,7 +486,7 @@ class LEDStripEffect : public IJSONSerializable
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<192> jsonDoc;
+        StaticJsonDocument<_jsonSize> jsonDoc;
 
         jsonDoc[PTY_EFFECTNR]       = _effectNumber;
         jsonDoc["fn"]               = _friendlyName;
@@ -497,6 +501,8 @@ class LEDStripEffect : public IJSONSerializable
             jsonDoc["mt"]           = _maximumEffectTime;
         if (_coreEffect)
             jsonDoc[PTY_COREEFFECT] = 1;
+
+        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -535,11 +541,14 @@ class LEDStripEffect : public IJSONSerializable
     // that's serialized by this function.
     virtual bool SerializeSettingsToJSON(JsonObject& jsonObject)
     {
-        StaticJsonDocument<192> jsonDoc;
+        StaticJsonDocument<_jsonSize> jsonDoc;
 
         jsonDoc[ACTUAL_NAME_OF(_friendlyName)] = _friendlyName;
         jsonDoc[ACTUAL_NAME_OF(_maximumEffectTime)] = _maximumEffectTime;
         jsonDoc["hasMaximumEffectTime"] = HasMaximumEffectTime();
+
+        if (jsonDoc.overflowed())
+            debugE("JSON buffer overflow while serializing settings for LEDStripEffect - object incomplete!");
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }

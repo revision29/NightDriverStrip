@@ -125,7 +125,7 @@ DeviceConfig::ValidateResponse DeviceConfig::ValidateOpenWeatherAPIKey(const Str
 
         case HTTP_CODE_UNAUTHORIZED:
         {
-            AllocatedJsonDocument jsonDoc(_jsonSize);
+            AllocatedJsonDocument jsonDoc(1024);
             deserializeJson(jsonDoc, http.getString());
 
             String message = "";

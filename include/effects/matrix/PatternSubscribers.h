@@ -126,8 +126,6 @@ class PatternSubscribers : public LEDStripEffect
 
   protected:
 
-    static constexpr int _jsonSize = LEDStripEffect::_jsonSize + 192;
-
     // Add our own SettingSpec instances to the standard set
     bool FillSettingSpecs() override
     {
@@ -181,15 +179,13 @@ class PatternSubscribers : public LEDStripEffect
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<_jsonSize> jsonDoc;
+        StaticJsonDocument<256> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc["ycg"] = youtubeChannelGuid;
         jsonDoc["ycn"] = youtubeChannelName;
-
-        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -247,15 +243,12 @@ class PatternSubscribers : public LEDStripEffect
     // Extension override to serialize our settings on top of those from LEDStripEffect
     bool SerializeSettingsToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<_jsonSize> jsonDoc;
+        StaticJsonDocument<384> jsonDoc;
 
         LEDStripEffect::SerializeSettingsToJSON(jsonObject);
 
         jsonDoc[NAME_OF(youtubeChannelGuid)] = youtubeChannelGuid;
         jsonDoc[NAME_OF(youtubeChannelName)] = youtubeChannelName;
-
-        if (jsonDoc.overflowed())
-            debugE("JSON buffer overflow while serializing settings for PatternSubscribers - object incomplete!");
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }

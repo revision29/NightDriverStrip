@@ -28,7 +28,6 @@
 // History:     Jul-14-2021         Davepl      Moved out of main.cpp
 //---------------------------------------------------------------------------
 
-#include <algorithm>
 #include "globals.h"
 #include "systemcontainer.h"
 
@@ -47,11 +46,12 @@
 
 DRAM_ATTR std::mutex Screen::_screenMutex;              // The storage for the mutex of the screen class
 
-// How many screen pages do we have
-constexpr uint8_t g_InfoPageCount = std::clamp(NUM_INFO_PAGES, 1, 2);
-
 // What page of screen we are showing
-DRAM_ATTR uint8_t g_InfoPage = g_InfoPageCount - 1;      // Default to last page
+#if NUM_INFO_PAGES > 0
+DRAM_ATTR uint8_t g_InfoPage = NUM_INFO_PAGES - 1;      // Default to last page
+#else
+DRAM_ATTR uint8_t g_InfoPage = 0;                       // Default to first page
+#endif
 
 // BasicInfoSummary
 //
@@ -441,7 +441,7 @@ void IRAM_ATTR ScreenUpdateLoopEntry(void *)
 
             // When the button is pressed advance to the next information page on the little display
 
-            g_InfoPage = (g_InfoPage + 1) % g_InfoPageCount;
+            g_InfoPage = (g_InfoPage + 1) % NUM_INFO_PAGES;
             bRedraw = true;
         }
 #endif

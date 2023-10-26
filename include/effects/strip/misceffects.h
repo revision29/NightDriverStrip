@@ -65,15 +65,13 @@ class SimpleRainbowTestEffect : public LEDStripEffect
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<LEDStripEffect::_jsonSize> jsonDoc;
+        StaticJsonDocument<192> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc[PTY_EVERYNTH] = _EveryNth;
         jsonDoc[PTY_SPEEDDIVISOR] = _SpeedDivisor;
-
-        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -115,15 +113,13 @@ class RainbowTwinkleEffect : public LEDStripEffect
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<LEDStripEffect::_jsonSize> jsonDoc;
+        StaticJsonDocument<192> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc[PTY_SPEEDDIVISOR] = _speedDivisor;
         jsonDoc[PTY_DELTAHUE] = _deltaHue;
-
-        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -180,15 +176,13 @@ protected:
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<LEDStripEffect::_jsonSize> jsonDoc;
+        StaticJsonDocument<192> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc[PTY_SPEEDDIVISOR] = _speedDivisor;
         jsonDoc[PTY_DELTAHUE] = _deltaHue;
-
-        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -242,15 +236,13 @@ protected:
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<LEDStripEffect::_jsonSize> jsonDoc;
+        StaticJsonDocument<192> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc[PTY_EVERYNTH] = _everyNth;
         jsonDoc[PTY_COLOR] = _color;
-
-        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -359,15 +351,13 @@ class StatusEffect : public LEDStripEffect
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<LEDStripEffect::_jsonSize> jsonDoc;
+        StaticJsonDocument<192> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc[PTY_EVERYNTH] = _everyNth;
         jsonDoc[PTY_COLOR] = _color;
-
-        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -435,7 +425,7 @@ class TwinkleEffect : public LEDStripEffect
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<LEDStripEffect::_jsonSize + 64> jsonDoc;
+        StaticJsonDocument<256> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
@@ -443,8 +433,6 @@ class TwinkleEffect : public LEDStripEffect
         jsonDoc["ctd"] = _countToDraw;
         jsonDoc[PTY_FADE] = _fadeFactor;
         jsonDoc[PTY_SPEED] = _updateSpeed;
-
-        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }

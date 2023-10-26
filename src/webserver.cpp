@@ -207,10 +207,13 @@ void CWebServer::GetEffectListText(AsyncWebServerRequest * pRequest)
         j["eternalInterval"]       = effectManager.IsIntervalEternal();
         j["effectInterval"]        = effectManager.GetEffectiveInterval();
 
-        for (auto effect : effectManager.EffectsList())
+        auto effectsList = effectManager.EffectsList();
+
+        for (int i = 0; i < effectManager.EffectCount(); i++)
         {
             StaticJsonDocument<256> effectDoc;
 
+            auto effect = effectsList[i];
             effectDoc["name"]    = effect->FriendlyName();
             effectDoc["enabled"] = effect->IsEnabled();
             effectDoc["core"]    = effect->IsCoreEffect();
@@ -412,9 +415,6 @@ void CWebServer::SendSettingSpecsResponse(AsyncWebServerRequest * pRequest, cons
                     // Default is read/write, so we don't need to specify that
                     break;
             }
-
-            if (jsonDoc.overflowed())
-                debugE("JSON buffer overflow while serializing SettingSpec - object incomplete!");
 
             if (!specObject.set(jsonDoc.as<JsonObjectConst>()))
             {

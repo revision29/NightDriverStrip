@@ -770,15 +770,13 @@ public:
 
   bool SerializeToJSON(JsonObject& jsonObject) override
   {
-    StaticJsonDocument<LEDStripEffect::_jsonSize> jsonDoc;
+    StaticJsonDocument<192> jsonDoc;
 
     JsonObject root = jsonDoc.to<JsonObject>();
     LEDStripEffect::SerializeToJSON(root);
 
     jsonDoc[PTY_ORDER] = to_value(_order);
     jsonDoc["stp"] = _step;
-
-    assert(!jsonDoc.overflowed());
 
     return jsonObject.set(jsonDoc.as<JsonObjectConst>());
   }

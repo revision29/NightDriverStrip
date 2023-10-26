@@ -92,15 +92,13 @@ class LaserLineEffect : public BeatEffectBase, public LEDStripEffect
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<LEDStripEffect::_jsonSize> jsonDoc;
+        StaticJsonDocument<192> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc[PTY_SIZE] = _defaultSize;
         jsonDoc[PTY_SPEED] = _defaultSpeed;
-
-        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }

@@ -205,8 +205,8 @@
 
 #define DRAWING_CORE            1
 #define NET_CORE                1
-#define AUDIO_CORE              0
-#define AUDIOSERIAL_CORE        1
+#define AUDIO_CORE              1
+#define AUDIOSERIAL_CORE        0
 #define SCREEN_CORE             0
 #define DEBUG_CORE              1
 #define SOCKET_CORE             1
@@ -299,8 +299,8 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define RING_SIZE_0             15
     #define RING_SIZE_1             7
     #define RING_SIZE_2             7
-    #define RING_SIZE_3             8
-    #define MATRIX_WIDTH            37
+    #define RING_SIZE_3             7
+    #define MATRIX_WIDTH            36
     #define MATRIX_HEIGHT           1
     #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
     //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
@@ -336,8 +336,8 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
 
 #elif ESPCROSS
 
-    // Wall Mounted Cross. 3 sets of 8 leds and one set of 15
-
+    // Wall Mounted Cross. 3 sets of 7 leds and one set of 15
+    #define ATOFFICE        1
     #ifndef PROJECT_NAME
     #define PROJECT_NAME            "ESP Cross"
     #endif
@@ -346,17 +346,16 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define RING_SIZE_0             15
     #define RING_SIZE_1             7
     #define RING_SIZE_2             7
-    #define RING_SIZE_3             8
-    #define MATRIX_WIDTH            37
+    #define RING_SIZE_3             7
+    #define MATRIX_WIDTH            36
     #define MATRIX_HEIGHT           1
     //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
     #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
-    #define ENABLE_AUDIO            0
+    #define ENABLE_AUDIO            1
     #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
 
-    #define POWER_LIMIT_MW       5000   // 1 amp supply at 5 volts assumed
-    //#define POWER_LIMIT_MW       15000   // 3 amp supply at 5 volts assumed
+    #define POWER_LIMIT_MW       12 * 2.4 * 1000   // 2.5 amp supply at 5 volts
 
 /*
 In addition to simple trips, the app handles matrixes as well.
@@ -377,7 +376,7 @@ In addition to simple trips, the app handles matrixes as well.
     #define INCOMING_WIFI_ENABLED   1   // Accepting incoming color data and commands
     #define TIME_BEFORE_LOCAL       0   // How many seconds before the lamp times out and shows local contexnt
     #define ENABLE_NTP              1   // Set the clock from the web
-    #define ENABLE_OTA              0   // Accept over the air flash updates
+    #define ENABLE_OTA              1   // Accept over the air flash updates
     #define LED_PIN0                14
 
     // The webserver serves files from its SPIFFS filesystem, such as index.html, and those files must be
@@ -415,6 +414,10 @@ In addition to simple trips, the app handles matrixes as well.
     #define ENABLE_NTP              1   // Set the clock from the web
     #define ENABLE_OTA              0   // Accept over the air flash updates
     #define LED_PIN0                14
+    #define RING_SIZE_0 18
+    #define RING_SIZE_1 30
+    #define RING_SIZE_2 24
+    #define RING_SIZE_3 28
 
     // The webserver serves files from its SPIFFS filesystem, such as index.html, and those files must be
     // uploaded to SPIFFS with the "Upload Filesystem Image" command before it can work.  When running

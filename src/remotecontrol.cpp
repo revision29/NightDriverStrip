@@ -54,50 +54,54 @@ void RemoteControl::handle()
 {
     decode_results results;
     static uint lastResult = 0;
+    static uint lastProcessTime = millis();
+    static boolean processingRemoteButtonPress = false; // This will cause the method to ignore received IR codes while a button press is being processed. This is to reduce button bounce / reflections causing mutliuple IR signals being received rapidly and being processed nearly simultaniously..
+
     
     static CRGB lastManualColor = CRGB::Black;
     static boolean remoteEffectPower = false;
     
     auto& deviceConfig = g_ptrSystem->DeviceConfig();
 
-    if (!_IR_Receive.decode(&results))
+    if (!_IR_Receive.decode(&results) || processingRemoteButtonPress) // If there is a problem with decoding the IR code or if a code is currently being processed, the method exits.
+    //if (!_IR_Receive.decode(&results))
         return;
 
     uint result = results.value;    
     _IR_Receive.resume();
+    processingRemoteButtonPress = true;
 
-    if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF)
+    if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF && lastResult != 0)
     {
         // Some remotes send 0xFFFFFFFF to indicate that the previous button is being held down. 
         // If that is the case, this will set the current result to the lastResult so that the proper button code can be processed.
         result = lastResult;
+    }
+    else if (result == 0xFFFFFFFF && millis() - lastProcessTime > 100) {
+        // The IR sensor did not receive the regular keycode before the remote started sending out 0xFFFFFFFF. Stop processing and try again at next press. 100 ms is an arbitrary number that should be greater than the remote's repeat interval and lower than rapid finger presses.
+        processingRemoteButtonPress = false;
+        return;
     }
 
     auto searchResult = myRemoteController.buttons.find(result);
     if (searchResult != myRemoteController.buttons.end()) 
     {
         RemoteButton thisButton = searchResult->second;
-    
-/*
-
-ToDo:
-• Get repeat limiter to work properly
-• Edit PaletteFlameEffect to change the pallete based on global fill color(s)
-*/
-
         if (result == lastResult) 
             {
                 static uint lastRepeatTime = millis();
-                static auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 200 : 333;
+                auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 150 : 300;
+
                 //We do not want to set the kMinRepeatms to 0 because some remotes send a code more than once and also there might be refelctive surfaces that will cause the signal to be recieved more than once in rapid succession.
                 // Brightness adjustments will be allowed to repeat more often. 
                 if (millis() - lastRepeatTime > kMinRepeatms)
                 {
-                    debugV("Remote Repeat; lastResult == %08x, elapsed = %lu\n", lastResult, millis()-lastRepeatTime);
+                    //debugV("Remote Repeat; lastResult == %08x, elapsed = %lu, repeate time = %i \n", lastResult, millis()-lastRepeatTime, kMinRepeatms);
                     lastRepeatTime = millis();
                 }
                 else
                 {
+                    processingRemoteButtonPress = false;
                     return;
                 }   
 
@@ -141,8 +145,6 @@ ToDo:
                 effectManager.StartEffect();
             break;
             case POWER_OFF:
-                //effectManager.SetGlobalColor(CRGB(0,0,0));
-                //g_Values.Brightness = std::max(0, (int) g_Values.Brightness - BRIGHTNESS_STEP);
                 effectManager.ClearTemporaryStripEffect();
                 effectManager.ClearRemoteColor();
             break;
@@ -159,52 +161,18 @@ ToDo:
             case TRIGGER_EFFECT:
             
             break;
-            case CHANGER:
-                if (lastManualColor.red + thisButton.actionArgs.toInt() > 255 ) 
-                {
-                    lastManualColor.red = 255;
-                } 
-                else if (lastManualColor.red + thisButton.actionArgs.toInt() < 0)
-                {
-                    lastManualColor.red = 0;
-                } 
-                else 
-                {
-                    lastManualColor.red += thisButton.actionArgs.toInt();
-                }
-                //effectManager.SetGlobalColor(lastManualColor); 
-                //effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
-                //effectManager.SetInterval(0);
-                //remoteEffectPower = true;
+            case CHANGER: // The button can send a positive or negative value to adjust the color.
+                lastManualColor.red += thisButton.actionArgs.toInt();
                 effectManager.SetGlobalColor(lastManualColor);
 
             break;
-            case CHANGEG:
-                if (lastManualColor.green + thisButton.actionArgs.toInt() > 255 )
-                {
-                    lastManualColor.green = 255;
-                } else if (lastManualColor.green + thisButton.actionArgs.toInt() < 0)
-                {
-                    lastManualColor.green = 0;
-                } else 
-                {
-                    lastManualColor.green += thisButton.actionArgs.toInt();
-                }
-                    effectManager.SetGlobalColor(lastManualColor);
+            case CHANGEG: // The button can send a positive or negative value to adjust the color.
+                lastManualColor.green += thisButton.actionArgs.toInt();
+                effectManager.SetGlobalColor(lastManualColor);
+                    
             break;
-            case CHANGEB:
-                if (lastManualColor.blue + thisButton.actionArgs.toInt() > 255 ) 
-                {
-                    lastManualColor.blue = 255;
-                }
-                else if (lastManualColor.blue + thisButton.actionArgs.toInt() < 0)
-                {
-                    lastManualColor.blue = 0;
-                } 
-                else
-                {
-                    lastManualColor.blue += thisButton.actionArgs.toInt();
-                }
+            case CHANGEB: // The button can send a positive or negative value to adjust the color.
+                lastManualColor.blue += thisButton.actionArgs.toInt();
                 effectManager.SetGlobalColor(lastManualColor); 
             break;
             case DIY1:
@@ -260,20 +228,16 @@ ToDo:
             //break;
             //case SLOW:
             //break;
-            }
-            if (result != 0xFFFFFFFF )
-                lastResult = result;
+        } // End of Switch
 
-    }
-
-    else
+    } else
     {
-        //There was no result, so just return.
-        debugI("We do not have a remote code result 0X%08X", result);
-        uint buttonCount = myRemoteController.buttons.size();
-        debugI("There are %i buttons in the remote", buttonCount);
-        return;
+        // This block is only needed to help debug issues.
+        // debugI("We do not have a remote code result 0X%08X", result);
     }
+    if (result != 0xFFFFFFFF )
+                lastResult = result;
+    processingRemoteButtonPress = false;
 }
 
 /*

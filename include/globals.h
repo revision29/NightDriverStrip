@@ -206,7 +206,7 @@
 #define DRAWING_CORE            1
 #define NET_CORE                1
 #define AUDIO_CORE              1
-#define AUDIOSERIAL_CORE        0
+#define AUDIOSERIAL_CORE        1
 #define SCREEN_CORE             0
 #define DEBUG_CORE              1
 #define SOCKET_CORE             1
@@ -247,7 +247,7 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
 
     #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
-    #define ENABLE_AUDIO            0
+    #define ENABLE_AUDIO            1
 
     //#define POWER_LIMIT_MW       12 * 10 * 1000   // 10 amp supply at 5 volts assumed
     #define POWER_LIMIT_MW       12 * 3 * 1000   // 3 amp supply at 5 volts assumed
@@ -305,7 +305,6 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
     //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
     #define NUM_CHANNELS            1
-    #define ENABLE_AUDIO            1
     #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
 
 
@@ -314,6 +313,9 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     // Once you have a working project, selectively enable various additional features by setting
     // them to 1 in the list below.  This DEMO config assumes no audio (mic), or screen, etc.
 
+
+    #define ENABLE_AUDIO            1
+
     #define ENABLE_WIFI             1   // Connect to WiFi
     #define INCOMING_WIFI_ENABLED   1   // Accepting incoming color data and commands
     #define TIME_BEFORE_LOCAL       0   // How many seconds before the lamp times out and shows local contexnt
@@ -321,6 +323,8 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define ENABLE_OTA              1   // Accept over the air flash updates
 
     #define LED_PIN0 5
+
+
 
     // The webserver serves files from its SPIFFS filesystem, such as index.html, and those files must be
     // uploaded to SPIFFS with the "Upload Filesystem Image" command before it can work.  When running
@@ -331,8 +335,10 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
         #define ENABLE_WEBSERVER        1   // Turn on the internal webserver
     #endif
 
+
     #define ENABLE_REMOTE           1   // IR Remote 
     #define IR_REMOTE_PIN   48
+    
 
 #elif ESPCROSS
 

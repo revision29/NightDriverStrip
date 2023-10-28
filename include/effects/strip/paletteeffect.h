@@ -92,10 +92,11 @@ class PaletteEffect : public LEDStripEffect
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
         AllocatedJsonDocument jsonDoc(512);
-
+debugI("palette effect: creating json document\n");
         JsonObject root = jsonDoc.to<JsonObject>();
+        debugI("palette effect: LEDStripEffect::SerializeToJSON\n");
         LEDStripEffect::SerializeToJSON(root);
-
+debugI("palette effect: setting json fields\n");
         jsonDoc[PTY_PALETTE] = _palette;
         jsonDoc["dns"] = _density;
         jsonDoc[PTY_SPEED] = _paletteSpeed;
@@ -105,7 +106,14 @@ class PaletteEffect : public LEDStripEffect
         jsonDoc[PTY_BLEND] = to_value(_blend);
         jsonDoc[PTY_ERASE] = _bErase;
         jsonDoc["bns"] = _brightness;
+debugI("palette effect: about to return json object\n");
+if (jsonObject.set(jsonDoc.as<JsonObjectConst>())) {
+  debugI("palette effect: sonObject.set successful\n");
+} else {
+debugI("palette effect: sonObject.set FAIL FAIL FAIL\n");
+    }
 
+//return true;
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
 

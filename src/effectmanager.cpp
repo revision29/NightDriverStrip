@@ -235,6 +235,7 @@ std::shared_ptr<LEDStripEffect> EffectManager::CopyEffect(size_t index)
 void SaveEffectManagerConfig()
 {
     debugV("Saving effect manager config...");
+    debugI("Saving effect manager config...");
     // Default value for writer index is max value for size_t, so nothing will happen if writer has not yet been registered
     g_ptrSystem->JSONWriter().FlagWriter(l_EffectsManagerJSONWriterIndex);
 }

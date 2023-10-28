@@ -282,19 +282,27 @@ public:
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
+        debugI("From SerializeToJSON method\n");
         // Set JSON format version to be able to detect and manage future incompatible structural updates
         jsonObject[PTY_VERSION] = JSON_FORMAT_VERSION;
+        debugI("About to set the ivl object with interval %i\n",_effectInterval);
         jsonObject["ivl"] = _effectInterval;
         jsonObject[PTY_PROJECT] = PROJECT_NAME;
         jsonObject[PTY_EFFECTSETVER] = _effectSetVersion;
 
         JsonArray effectsArray = jsonObject.createNestedArray("efs");
-
+        debugI("About to iterate effects to create JSON objects\n");
         for (auto & effect : _vEffects)
         {
+            debugI("Serializing effect number %i", effect->EffectNumber());
             JsonObject effectObject = effectsArray.createNestedObject();
-            if (!(effect->SerializeToJSON(effectObject)))
+            //if (!(effect->SerializeToJSON(effectObject)))
+             //   return false;
+             if (!(effect->SerializeToJSON(effectObject)))
+            {
+                debugI("JSON serialization of effect \"%s\" with effect number %d failed!", effect->FriendlyName().c_str(), effect->EffectNumber());
                 return false;
+            }
         }
 
         return true;
@@ -334,7 +342,7 @@ public:
     void SetGlobalColor(CRGB color)
     {
         debugI("Setting Global Color");
-        
+        //g_ptrSystem->DeviceConfig.GlobalColor = color;
         g_Values.LastGlobalColor = g_Values.GlobalColor;
         g_Values.GlobalColor = color;
 /*

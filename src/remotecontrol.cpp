@@ -210,10 +210,12 @@ void RemoteControl::handle()
             {
                 if (effectManager.GetInterval() == 0) 
                 {
+                    debugI("Setting interval to 30 seconds\n");
                     effectManager.SetInterval(30000);
                     effectManager.NextEffect();
                 } else
                 {
+                    debugI("Setting interval to 0 seconds\n");
                     effectManager.SetInterval(0);
                     // To provide a little visual confirmation that something happened.
                     //effectManager.PreviousEffect();

@@ -206,7 +206,7 @@
 #define DRAWING_CORE            1
 #define NET_CORE                1
 #define AUDIO_CORE              1
-#define AUDIOSERIAL_CORE        1
+#define AUDIOSERIAL_CORE        0
 #define SCREEN_CORE             0
 #define DEBUG_CORE              1
 #define SOCKET_CORE             1
@@ -259,7 +259,7 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
         #define ENABLE_WIFI             1   // Connect to WiFi
     #endif
 
-    #define INCOMING_WIFI_ENABLED   1   // Accepting incoming color data and commands
+    #define INCOMING_WIFI_ENABLED   0   // Accepting incoming color data and commands
     #define TIME_BEFORE_LOCAL       1   // How many seconds before the lamp times out and shows local content
     #define ENABLE_NTP              1   // Set the clock from the web
     #define ENABLE_OTA              0   // Accept over the air flash updates
@@ -324,8 +324,6 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
 
     #define LED_PIN0 5
 
-
-
     // The webserver serves files from its SPIFFS filesystem, such as index.html, and those files must be
     // uploaded to SPIFFS with the "Upload Filesystem Image" command before it can work.  When running
     // you should be able to see/select the list of effects by visiting the chip's IP in a browser.  You can
@@ -358,7 +356,7 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
     #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
-    #define ENABLE_AUDIO            1
+    #define ENABLE_AUDIO            0
     #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
     #define POWER_LIMIT_MW  (5 * 2.4 * 1000)         // 2.4 amps at 5V
 

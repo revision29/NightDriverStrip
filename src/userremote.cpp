@@ -57,7 +57,7 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.emplace(0xFF9867, RemoteButton ("Color 14",FILL_COLOR, "2E7CC7"));
     buttons.emplace(0xFF58A7, RemoteButton ("Color 15",FILL_COLOR, "C121B1"));
     buttons.emplace(0xFFD827, RemoteButton ("Color 16",FILL_COLOR, "2D87D7"));
-
+/*
     // Remote with 7th row as JUMP3, JUMP7...
     
     //Row 7
@@ -89,8 +89,8 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.emplace(0xFFA05F, RemoteButton ("DIY 5",DIY5));
     buttons.emplace(0xFF609F, RemoteButton ("DIY 6",DIY6));
     buttons.emplace(0xFFE01F, RemoteButton ("Flash",FLASH));
-    
-/*
+    */
+
     // Remote with 7th row as REDUP, GREENUP, ...
     //Row 7
     buttons.emplace(0xFF28D7, RemoteButton ("Increase Red", CHANGER, "10"));
@@ -121,7 +121,7 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.emplace(0xFFA05F, RemoteButton ("Jump 7", JUMP7));
     buttons.emplace(0xFF609F, RemoteButton ("Fade 3", FADE3));
     buttons.emplace(0xFFE01F, RemoteButton ("Fade 7", FADE7));
-*/
+
 /*
     // 24 Key Remote Buttons
 

@@ -75,6 +75,9 @@ class DeviceConfig : public IJSONSerializable
     int     powerLimit = POWER_LIMIT_DEFAULT;
     uint8_t brightness = BRIGHTNESS_MAX;
 
+    CRGB GlobalColor = CRGB::Black;
+    CRGB LastGlobalColor = CRGB::Black;
+
     std::vector<SettingSpec, psram_allocator<SettingSpec>> settingSpecs;
     std::vector<std::reference_wrapper<SettingSpec>> settingSpecReferences;
     size_t writerIndex;

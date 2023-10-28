@@ -254,7 +254,8 @@ public:
     {
         construct();
     }
-
+    /*
+// Stock
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
         AllocatedJsonDocument jsonDoc(512);
@@ -262,6 +263,22 @@ public:
         FireEffect::SerializeToJSON(jsonObject);
 
         jsonObject[PTY_PALETTE] = _palette;
+
+        return jsonObject.set(jsonDoc.as<JsonObjectConst>());
+    }
+    
+   */
+   // Patch
+    bool SerializeToJSON(JsonObject& jsonObject) override
+    {
+        AllocatedJsonDocument jsonDoc(1024);
+
+        JsonObject root = jsonDoc.to<JsonObject>();
+        FireEffect::SerializeToJSON(root);
+
+        jsonDoc[PTY_PALETTE] = _palette;
+
+        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }

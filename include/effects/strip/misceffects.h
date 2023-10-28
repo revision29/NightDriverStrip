@@ -187,9 +187,9 @@ protected:
 
         jsonDoc[PTY_SPEEDDIVISOR] = _speedDivisor;
         jsonDoc[PTY_DELTAHUE] = _deltaHue;
-
+        //debugI("About to assert not overflowed\n");
         assert(!jsonDoc.overflowed());
-
+        //debugI("about to return the rainbow json object\n");
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
 

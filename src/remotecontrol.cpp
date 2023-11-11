@@ -82,7 +82,7 @@ void RemoteControl::handle()
         //processingRemoteButtonPress = false;
         return;
     }
-
+    debugI("Size of the buttons in memory%zu\n", sizeof(myRemoteController.buttons));
     auto searchResult = myRemoteController.buttons.find(result);
     if (searchResult != myRemoteController.buttons.end()) 
     {
@@ -104,7 +104,6 @@ void RemoteControl::handle()
                     //processingRemoteButtonPress = false;
                     return;
                 }   
-
             }
 
         //Process the code

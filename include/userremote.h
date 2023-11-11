@@ -67,13 +67,28 @@ class RemoteButton
         };
 };
 
+struct UserRemoteButton 
+{
+        UserRemoteButton(String buttonName, ButtonActions action, String args) : name(buttonName), buttonAction(action), actionArgs(args) {}
+        String name;
+        ButtonActions buttonAction;
+        String actionArgs;
+};
+
+struct category {
+        category(int i, const std::string& n): id(i), name(n) {}
+        int id;
+        std::string name;
+};
 
 class UserRemoteControl 
     {
         public:
             void getRemoteButtons();
+            void getRemoteButtonMap();
             int buttonCount;
             std::map<uint, RemoteButton> buttons;
+            std::map<uint, UserRemoteButton> buttonMap;
             
             UserRemoteControl (int buttonCount = 0) 
             {

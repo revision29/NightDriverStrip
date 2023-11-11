@@ -106,15 +106,32 @@ debugI("palette effect: setting json fields\n");
         jsonDoc[PTY_BLEND] = to_value(_blend);
         jsonDoc[PTY_ERASE] = _bErase;
         jsonDoc["bns"] = _brightness;
-debugI("palette effect: about to return json object\n");
+//debugI("palette effect jsonDoc memoray usage %i", jsonDoc.memoryUsage());
+//debugI("palette effect jsonDoc size %i", jsonDoc.size());
+//debugI("palette effect: about to jsonObject.set\n");
+/*
 if (jsonObject.set(jsonDoc.as<JsonObjectConst>())) {
   debugI("palette effect: sonObject.set successful\n");
+  return true;
 } else {
-debugI("palette effect: sonObject.set FAIL FAIL FAIL\n");
+  debugI("palette effect: sonObject.set FAIL FAIL FAIL\n");
+return false;
     }
+    */
 
+
+/*
+     
+        debugI("palette effect jsonDoc memoray usage %i", jsonDoc.memoryUsage());
+        debugI("rainbow About to assert not overflowed\n");
+        assert(!jsonDoc.overflowed());
+        debugI("about to return the rainbow json object\n");*/
 //return true;
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
+        //if (!jsonObject.set(jsonDoc.as<JsonObjectConst>()))
+        //  return false;
+        //return true;
+    
     }
 
     ~PaletteEffect()

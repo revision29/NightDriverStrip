@@ -57,7 +57,7 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.emplace(0xFF9867, RemoteButton ("Color 14",FILL_COLOR, "2E7CC7"));
     buttons.emplace(0xFF58A7, RemoteButton ("Color 15",FILL_COLOR, "C121B1"));
     buttons.emplace(0xFFD827, RemoteButton ("Color 16",FILL_COLOR, "2D87D7"));
-/*
+
     // Remote with 7th row as JUMP3, JUMP7...
     
     //Row 7
@@ -89,8 +89,9 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.emplace(0xFFA05F, RemoteButton ("DIY 5",DIY5));
     buttons.emplace(0xFF609F, RemoteButton ("DIY 6",DIY6));
     buttons.emplace(0xFFE01F, RemoteButton ("Flash",FLASH));
-    */
+    
 
+/*
     // Remote with 7th row as REDUP, GREENUP, ...
     //Row 7
     buttons.emplace(0xFF28D7, RemoteButton ("Increase Red", CHANGER, "10"));
@@ -121,9 +122,87 @@ void UserRemoteControl::getRemoteButtons() {
     buttons.emplace(0xFFA05F, RemoteButton ("Jump 7", JUMP7));
     buttons.emplace(0xFF609F, RemoteButton ("Fade 3", FADE3));
     buttons.emplace(0xFFE01F, RemoteButton ("Fade 7", FADE7));
+*/
+
+
+    // 24 Key Remote Buttons
+    //Row 1
+    buttons.emplace(0xF700FF, RemoteButton("Brightness Up",BRIGHTNESS_UP));
+    buttons.emplace(0xF7807F, RemoteButton("Brightness Down",BRIGHTNESS_DOWN));
+    buttons.emplace(0xF740BF, RemoteButton("Off", POWER_OFF));
+    buttons.emplace(0xF7C03F, RemoteButton("Power On", NEXT_EFFECT));
+
+    //Row 2
+    buttons.emplace(0xF720DF, RemoteButton ("Full Red",FILL_COLOR, "FF0000"));
+    buttons.emplace(0xF7A05F, RemoteButton ("Full Green",FILL_COLOR, "00FF00"));
+    buttons.emplace(0xF7609F, RemoteButton ("Full Blue",FILL_COLOR, "0000FF"));
+    buttons.emplace(0xF7E01F, RemoteButton ("Full White",FILL_COLOR, "AAAAAA")); //because we don't want FULL white
+    
+    //Row 3
+    buttons.emplace(0xF710EF, RemoteButton ("Color 1",FILL_COLOR, "E18E28"));
+    buttons.emplace(0xF7906F, RemoteButton ("Color 2",FILL_COLOR, "1B9205"));
+    buttons.emplace(0xF750AF, RemoteButton ("Color 3",FILL_COLOR, "170C96"));
+    buttons.emplace(0xF7D02F, RemoteButton ("Auto", AUTO));
+
+    //Row 4
+    buttons.emplace(0xF730CF, RemoteButton ("Color 4",FILL_COLOR, "FBBE56"));
+    buttons.emplace(0xF7B04F, RemoteButton ("Color 5",FILL_COLOR, "229248"));
+    buttons.emplace(0xF7708F, RemoteButton ("Color 6",FILL_COLOR, "200991"));
+    buttons.emplace(0xF7F00F, RemoteButton ("Strobe", STROBE));
+
+    //Row 5
+    buttons.emplace(0xF708F7, RemoteButton ("Color 7",FILL_COLOR, "EDD917"));
+    buttons.emplace(0xF78877, RemoteButton ("Color 8",FILL_COLOR, "2A92A1"));
+    buttons.emplace(0xF748B7, RemoteButton ("Color 9",FILL_COLOR, "7415B4"));
+    buttons.emplace(0xF7C837, RemoteButton ("Fade", FADE));
+/*
+#define IR_B10    0xF728D7  //
+#define IR_B11    0xF7A857  //
+#define IR_B12    0xF76897  //
+#define IR_SMOOTH 0xF7E817  //
+*/
+    //Row 6
+    buttons.emplace(0xFF18E7, RemoteButton ("Color 10",FILL_COLOR, "D0E30F"));
+    buttons.emplace(0xFF9867, RemoteButton ("Color 11",FILL_COLOR, "2E7CC7"));
+    buttons.emplace(0xFF58A7, RemoteButton ("Color 12",FILL_COLOR, "C121B1"));
+    buttons.emplace(0xFFD827, RemoteButton ("Smooth", SMOOTH, "2D87D7"));
+
 
 /*
     // 24 Key Remote Buttons
+
+    #if key24
+#define IR_BPLUS  0xF700FF  //
+#define IR_BMINUS 0xF7807F  //
+
+#define IR_OFF    0xF740BF  //
+#define IR_ON     0xF7C03F  //
+
+#define IR_R      0xF720DF  //
+#define IR_G      0xF7A05F  //
+#define IR_B      0xF7609F  //
+#define IR_W      0xF7E01F  //
+
+#define IR_B1     0xF710EF  //
+#define IR_B2     0xF7906F  //
+#define IR_B3     0xF750AF  //
+#define IR_FLASH  0xF7D02F  //
+
+#define IR_B4     0xF730CF  //
+#define IR_B5     0xF7B04F  //
+#define IR_B6     0xF7708F  //
+#define IR_STROBE 0xF7F00F  //
+
+#define IR_B7     0xF708F7  //
+#define IR_B8     0xF78877  //
+#define IR_B9     0xF748B7  //
+#define IR_FADE   0xF7C837  //
+
+#define IR_B10    0xF728D7  //
+#define IR_B11    0xF7A857  //
+#define IR_B12    0xF76897  //
+#define IR_SMOOTH 0xF7E817  //
+#endif
 
 */
 

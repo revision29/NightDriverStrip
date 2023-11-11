@@ -242,9 +242,9 @@ public:
         // "ivl" contains the effect interval in ms
         SetInterval(jsonObject.containsKey("ivl") ? jsonObject["ivl"] : DEFAULT_EFFECT_INTERVAL, true);
         if (jsonObject.containsKey("ivl")){
-            debugI("json has ivl key value of %i", jsonObject["ivl"]);
+            debugI("setinterval json has ivl key value of %i", jsonObject["ivl"]);
         } else {
-            debugI("json does not have ivl key");
+            debugI("setinterval json does not have ivl key");
         }
 
         // Try to read the effectindex from its own file. If that fails, "cei" may contain the current effect index instead
@@ -283,27 +283,76 @@ public:
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
         debugI("From SerializeToJSON method\n");
+        debugI("Size of received jsonObject is %i", jsonObject.size());
         // Set JSON format version to be able to detect and manage future incompatible structural updates
         jsonObject[PTY_VERSION] = JSON_FORMAT_VERSION;
-        debugI("About to set the ivl object with interval %i\n",_effectInterval);
+        debugI("After setting JSON Object PTY_VERSION it has size of %i \n", jsonObject.size());
+        if (jsonObject.size() == 0)
+        {
+            return false;
+            
+            /*
+            debugI("jsonObject has size of 0 and should be 1. Attempting to redefine jsonObject.");
+            debugI("cfreating new empty pJsonDoc\n");
+            std::unique_ptr<AllocatedJsonDocument> pJsonDoc(nullptr);
+            //pJsonDoc.reset(new AllocatedJsonDocument(JSON_BUFFER_BASE_SIZE));
+            debugI("about to set jsonObject to nullptr");
+            
+            debugI("about to redefine jsonObject from blank jSonDoc");
+            assert(jsonObject = pJsonDoc->to<JsonObject>());
+            debugI("About to set PTY_VERSION");
+            jsonObject[PTY_VERSION] = JSON_FORMAT_VERSION;
+            if (jsonObject.size() > 0 )
+            {
+                debugI("resetting jsonObject was successful");
+            }
+            */
+        }
+        //debugI("About to set the ivl object with interval %i\n",_effectInterval);
         jsonObject["ivl"] = _effectInterval;
         jsonObject[PTY_PROJECT] = PROJECT_NAME;
         jsonObject[PTY_EFFECTSETVER] = _effectSetVersion;
 
         JsonArray effectsArray = jsonObject.createNestedArray("efs");
         debugI("About to iterate effects to create JSON objects\n");
+        debugI("effect interval %i and jsonObject[\"ivl\"] is %i\n", _effectInterval, jsonObject["ivl"]);
+        debugI("Before iterating effects JSON Object has size of %i \n", jsonObject.size());
+        debugI("Before iterating effects JSON IVL is %i \n", jsonObject["ivl"]);
+        const char* projName = jsonObject[PTY_PROJECT];
+        if (projName){
+            debugI("Before iterating effects JSON PTY_PROJECT is %s \n", projName);
+        } else {
+            debugI("Before iterating effects JSON PTY_PROJECT is NULL: Failed \n");
+
+        }
+    
         for (auto & effect : _vEffects)
         {
-            debugI("Serializing effect number %i", effect->EffectNumber());
+            //debugI("Serializing effect number %i", effect->EffectNumber());
             JsonObject effectObject = effectsArray.createNestedObject();
+            
             //if (!(effect->SerializeToJSON(effectObject)))
-             //   return false;
+            //    return false;
+             debugI("In effect manager \"for auto & effect : _vEffects\" loop. effectObject memory usage %i", effectObject.memoryUsage());
+             //debugI("%s", );
              if (!(effect->SerializeToJSON(effectObject)))
             {
                 debugI("JSON serialization of effect \"%s\" with effect number %d failed!", effect->FriendlyName().c_str(), effect->EffectNumber());
+                debugI("JSON Object is using %i bytes", jsonObject.memoryUsage());
+                debugI("JSON Object has size of %i ", jsonObject.size());
+                debugI("JSON effectObject has size of %i ", effectObject.size());
                 return false;
+            } else 
+            {
+                debugI("JSON serialization of effect \"%s\" with effect number %d success!", effect->FriendlyName().c_str(), effect->EffectNumber());
+                debugI("JSON Object is using %i bytes", jsonObject.memoryUsage());
+                debugI("JSON Object has size of %i", jsonObject.size());
+                debugI("JSON effectObject has size of %i ", effectObject.size());
             }
         }
+        debugI("End of effects loop\n");
+        debugI("after effect loop JSON Object is using %i bytes", jsonObject.memoryUsage());
+        debugI("after JSON Object has size of %i", jsonObject.size());
 
         return true;
     }

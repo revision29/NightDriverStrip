@@ -72,7 +72,10 @@ void InitEffectsManager()
     LoadEffectFactories();
 
     l_EffectsManagerJSONWriterIndex = g_ptrSystem->JSONWriter().RegisterWriter(
-        [] { SaveToJSONFile(EFFECTS_CONFIG_FILE, g_EffectsManagerJSONBufferSize, g_ptrSystem->EffectManager()); }
+        [] { 
+            debugI("From Effect Manager json writer function\n"); 
+            SaveToJSONFile(EFFECTS_CONFIG_FILE, g_EffectsManagerJSONBufferSize, g_ptrSystem->EffectManager()); 
+            }
     );
     l_CurrentEffectWriterIndex = g_ptrSystem->JSONWriter().RegisterWriter(WriteCurrentEffectIndexFile);
 
@@ -82,7 +85,6 @@ void InitEffectsManager()
     if (jsonObject)
     {
         debugI("Creating EffectManager from JSON config");
-
         if (g_ptrSystem->HasEffectManager())
             g_ptrSystem->EffectManager().DeserializeFromJSON(jsonObject.value());
         else

@@ -24,6 +24,7 @@ enum ButtonActions
         CHANGEB,
         JUMP3,
         JUMP7,
+        FADE, // Toggle between fade 3 and 7
         FADE3,
         FADE7,
         STROBE,
@@ -37,6 +38,7 @@ enum ButtonActions
         DIY4,
         DIY5,
         DIY6,
+        SMOOTH, // Toggle between smooth transition or jump : i.e. transition speed
         NEXT_EFFECT,
         PREVIOUS_EFFECT,
         ENABLE_MUSIC,

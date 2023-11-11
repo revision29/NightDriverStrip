@@ -454,6 +454,7 @@ class WaveformEffect : public LEDStripEffect
         jsonDoc["inc"] = _increment;
 
         assert(!jsonDoc.overflowed());
+        
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }

@@ -92,52 +92,28 @@ void SerializeWithBufferSize(std::unique_ptr<AllocatedJsonDocument>& pJsonDoc, s
 {
     // Loop is here to deal with out-of-memory conditions
     int failCount = 0;
+    
     while(true)
     {
         pJsonDoc.reset(new AllocatedJsonDocument(bufferSize));
-        debugI("pJsonDoc capacity %zu", pJsonDoc->capacity());
         
-        if (pJsonDoc->capacity() == 0) // This means memory could not be allocated for the document.
+        if (pJsonDoc->capacity() == 0) // Memory could not be allocated for the document.
         {
-            debugI("pJsonDoc faild to allocate memory.");
-            //pJsonDoc.reset(new AllocatedJsonDocument(bufferSize));
-            //debugI("resetting pJsonDoc, pJsonDoc capacity %zu", pJsonDoc->capacity());
             failCount++;
-            
+            //debugI("Fail count %i\n", failCount);
         }
         else 
         {
             JsonObject jsonObject = pJsonDoc->to<JsonObject>();
-            debugI("after creating jsonObject, pJsonDoc capacity %zu", pJsonDoc->capacity());
-
-            debugI("About to run serializer of of the json object\n");
-            debugI("json object size: should be 0 and is %i", jsonObject.size());
-            debugI("json object memory %zu \n", jsonObject.memoryUsage());
-        /* 
-            if (!jsonObject.isNull()){
-                debugI("json object allocation: has been successfully allocated");
-            } else{
-                debugI("json object allocation: has failed to allocate");
-            }
-            */
             if (serializationFunction(jsonObject))
                 break;
-                
-            //jsonObject.clear();
-            debugI("Out of memory serializing object - increasing buffer to %zu bytes", bufferSize);
         }
 
-       
         pJsonDoc.reset(nullptr); 
-        if (failCount > 4) 
-        {
-            debugI("Failure limit reached. Leaving loop.");
-            pJsonDoc.reset(nullptr);
+        if (failCount > 5) 
             break;
-        }
         
         bufferSize += JSON_BUFFER_INCREMENT;
-        
     }
 }
 
@@ -145,65 +121,52 @@ bool SaveToJSONFile(const String & fileName, size_t& bufferSize, IJSONSerializab
 {
     if (bufferSize == 0)
         bufferSize = JSON_BUFFER_BASE_SIZE;
-    debugI("from jsonserializr.cpp SaveToJSONFile method. Working towards saving file name %s", fileName.c_str());
-    debugI("buffer size %zu", bufferSize);
+
     std::unique_ptr<AllocatedJsonDocument> pJsonDoc(nullptr);
- /*
-    if (!pJsonDoc){
-        debugI("There was a problem creating an empty AllocatedJsonDocument\n");
-        //return false;
-    } else{ 
-        debugI("Created the AllocatedJsonDocument with no problems \n");
-    }
-    */   
 
     SerializeWithBufferSize(pJsonDoc, bufferSize, [&object](JsonObject& jsonObject) { return object.SerializeToJSON(jsonObject); });
-    if (pJsonDoc->capacity() == 0)
-        {
-            debugI("There was a problem allocating memopry for pJsonDoc. Will skip writing file.");
-            //pJsonDoc.reset(new AllocatedJsonDocument(bufferSize));
-            //debugI("resetting pJsonDoc, pJsonDoc capacity %zu", pJsonDoc->capacity());
-            return false;
-            
-        }
-        else
-        {
-            SPIFFS.remove(fileName);
 
-            File file = SPIFFS.open(fileName, FILE_WRITE);
+    if (pJsonDoc->capacity() == 0) // pJsonDoc could not be allcoated to memory. Will skip saving file.
+    {
+        debugI("Could not allocate memory for pJsonDoc. Will skip writing file\n");
+        return false;
+    } 
+    
+    SPIFFS.remove(fileName);
 
-            if (!file)
-            {
-                debugE("Unable to open file %s to write JSON!", fileName.c_str());
-                return false;
-            }
+    File file = SPIFFS.open(fileName, FILE_WRITE);
 
-            size_t bytesWritten = serializeJson(*pJsonDoc, file);
-            debugI("Number of bytes written to JSON file %s: %zu", fileName.c_str(), bytesWritten);
+    if (!file)
+    {
+        debugE("Unable to open file %s to write JSON!", fileName.c_str());
+        return false;
+    }
 
-            file.flush();
-            file.close();
+    size_t bytesWritten = serializeJson(*pJsonDoc, file);
+    debugI("Number of bytes written to JSON file %s: %zu", fileName.c_str(), bytesWritten);
 
-            if (bytesWritten == 0)
-            {
-                debugE("Unable to write JSON to file %s!", fileName.c_str());
-                SPIFFS.remove(fileName);
-                return false;
-            }
+    file.flush();
+    file.close();
 
-        /*
-            file = SPIFFS.open(fileName);
-            if (file)
-            {
-                while (file.available())
-                    Serial.write(file.read());
+    if (bytesWritten == 0)
+    {
+        debugE("Unable to write JSON to file %s!", fileName.c_str());
+        SPIFFS.remove(fileName);
+        return false;
+    }
 
-                file.close();
-            }
-        */
+/*
+    file = SPIFFS.open(fileName);
+    if (file)
+    {
+        while (file.available())
+            Serial.write(file.read());
 
-            return true;
-        }
+        file.close();
+    }
+*/
+
+    return true;
 }
 
 bool RemoveJSONFile(const String & fileName)
@@ -275,14 +238,12 @@ void IRAM_ATTR JSONWriterTaskEntry(void *)
 
             notifyWait = pdMS_TO_TICKS(holdUntil - now);
         }
-        debugI("About to iterate json writers\n");
+
         for (auto &entry : g_ptrSystem->JSONWriter().writers)
         {
             // Unset flag before we do the actual write. This makes that we don't miss another flag raise if it happens while writing
             if (entry.flag.exchange(false))
-                debugI("About to trigger writer\n");
                 entry.writer();
-                
         }
     }
 }

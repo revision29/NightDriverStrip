@@ -94,44 +94,49 @@ void SerializeWithBufferSize(std::unique_ptr<AllocatedJsonDocument>& pJsonDoc, s
     int failCount = 0;
     while(true)
     {
-        // One of these next two lines failes occassionally, or the method that is calling this is sending a bad jsondoc
         pJsonDoc.reset(new AllocatedJsonDocument(bufferSize));
         debugI("pJsonDoc capacity %zu", pJsonDoc->capacity());
-        if (failCount > 4) 
-            break;
         
-        if (pJsonDoc->capacity() == 0)
+        if (pJsonDoc->capacity() == 0) // This means memory could not be allocated for the document.
         {
-            debugI("pJsonDoc faild to allocate memory. Going to try again.");
-            pJsonDoc.reset(new AllocatedJsonDocument(bufferSize));
-            debugI("resetting pJsonDoc, pJsonDoc capacity %zu", pJsonDoc->capacity());
+            debugI("pJsonDoc faild to allocate memory.");
+            //pJsonDoc.reset(new AllocatedJsonDocument(bufferSize));
+            //debugI("resetting pJsonDoc, pJsonDoc capacity %zu", pJsonDoc->capacity());
+            failCount++;
             
         }
-        JsonObject jsonObject = pJsonDoc->to<JsonObject>();
-        debugI("after creating jsonObject, pJsonDoc capacity %zu", pJsonDoc->capacity());
+        else 
+        {
+            JsonObject jsonObject = pJsonDoc->to<JsonObject>();
+            debugI("after creating jsonObject, pJsonDoc capacity %zu", pJsonDoc->capacity());
 
-        debugI("About to run serializer of of the json object\n");
-        debugI("json object size: should be 0 and is %i", jsonObject.size());
-        debugI("json object memory %zu \n", jsonObject.memoryUsage());
-       /* 
-        if (!jsonObject.isNull()){
-            debugI("json object allocation: has been successfully allocated");
-        } else{
-            debugI("json object allocation: has failed to allocate");
+            debugI("About to run serializer of of the json object\n");
+            debugI("json object size: should be 0 and is %i", jsonObject.size());
+            debugI("json object memory %zu \n", jsonObject.memoryUsage());
+        /* 
+            if (!jsonObject.isNull()){
+                debugI("json object allocation: has been successfully allocated");
+            } else{
+                debugI("json object allocation: has failed to allocate");
+            }
+            */
+            if (serializationFunction(jsonObject))
+                break;
+                
+            //jsonObject.clear();
+            debugI("Out of memory serializing object - increasing buffer to %zu bytes", bufferSize);
         }
-        */
-        if (serializationFunction(jsonObject))
+
+       
+        pJsonDoc.reset(nullptr); 
+        if (failCount > 4) 
+        {
+            debugI("Failure limit reached. Leaving loop.");
+            pJsonDoc.reset(nullptr);
             break;
-            
-        //jsonObject.clear();
-        pJsonDoc.reset(nullptr);
+        }
         
         bufferSize += JSON_BUFFER_INCREMENT;
-
-        debugI("Out of memory serializing object - increasing buffer to %zu bytes", bufferSize);
-        
-     
-        failCount++;
         
     }
 }
@@ -153,9 +158,9 @@ bool SaveToJSONFile(const String & fileName, size_t& bufferSize, IJSONSerializab
     */   
 
     SerializeWithBufferSize(pJsonDoc, bufferSize, [&object](JsonObject& jsonObject) { return object.SerializeToJSON(jsonObject); });
-    if (pJsonDoc->capacity() == 0 )
+    if (pJsonDoc->capacity() == 0)
         {
-            debugI("There was a problem allocating memopry for pJsonDoc. Will skip saving file.");
+            debugI("There was a problem allocating memopry for pJsonDoc. Will skip writing file.");
             //pJsonDoc.reset(new AllocatedJsonDocument(bufferSize));
             //debugI("resetting pJsonDoc, pJsonDoc capacity %zu", pJsonDoc->capacity());
             return false;

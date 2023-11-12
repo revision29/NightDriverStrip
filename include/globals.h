@@ -314,7 +314,7 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     // them to 1 in the list below.  This DEMO config assumes no audio (mic), or screen, etc.
 
 
-    #define ENABLE_AUDIO            1
+    #define ENABLE_AUDIO            0
 
     #define ENABLE_WIFI             1   // Connect to WiFi
     #define INCOMING_WIFI_ENABLED   1   // Accepting incoming color data and commands

@@ -291,14 +291,15 @@ protected:
         if (_everyNth != 1)
           fillSolidOnAllChannels(CRGB::Black);
         
-        if (g_Values.GlobalColor && g_Values.GlobalColor != CRGB::Black) 
+        if (g_ptrSystem->DeviceConfig().GetGlobalColor() != CRGB::Black) 
         {
-          fillSolidOnAllChannels(g_Values.GlobalColor, 0, NUM_LEDS, _everyNth);
+          fillSolidOnAllChannels(g_ptrSystem->DeviceConfig().GetGlobalColor(), 0, NUM_LEDS, _everyNth);
         } else 
         {
           fillSolidOnAllChannels(_color, 0, NUM_LEDS, _everyNth);
         }
         
+
     }
 };
 

@@ -32,7 +32,9 @@
 
 #if ENABLE_REMOTE
 
+
 #include "systemcontainer.h"
+
 #define BRIGHTNESS_STEP     20
 /*
 We will need to define the user remote control
@@ -133,15 +135,15 @@ void RemoteControl::handle()
                 {
                     debugI("Power is off, so we turn it on\n");
                     remoteEffectPower = true;
-                    effectManager.SetInterval(0);
-                    effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
-                    effectManager.StartEffect();
+                    //effectManager.SetInterval(0);
+                    //effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(deviceConfig.GetGlobalColor(), 1));
+                    //effectManager.StartEffect();
                 }
             }
             case ButtonActions::POWER_ON:
-                effectManager.SetInterval(0);
-                effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
-                effectManager.StartEffect();
+                //effectManager.SetInterval(0);
+                //effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
+                //effectManager.StartEffect();
             break;
             case POWER_OFF:
                 effectManager.ClearTemporaryStripEffect();
@@ -152,8 +154,8 @@ void RemoteControl::handle()
             break;
             case FILL_COLOR:
             {
-                lastManualColor = hexToCRGB(thisButton.actionArgs);
-                effectManager.SetGlobalColor(lastManualColor);
+                CRGB fillColor = hexToCRGB(thisButton.actionArgs);
+                effectManager.SetGlobalColor(fillColor);
             }
             break;
             
@@ -217,6 +219,7 @@ void RemoteControl::handle()
                 {
                     debugI("Setting interval to 0 seconds\n");
                     effectManager.SetInterval(0);
+                    
                     // To provide a little visual confirmation that something happened.
                     //effectManager.PreviousEffect();
                     //delay(100);

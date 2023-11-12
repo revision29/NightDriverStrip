@@ -43,8 +43,9 @@
 #include <math.h>
 
 #include "effectfactories.h"
-#include "effects/strip/misceffects.h"
-#include "effects/strip/fireeffect.h"
+
+//#include "effects/strip/misceffects.h"
+//#include "effects/strip/fireeffect.h"
 
 #define JSON_FORMAT_VERSION         1
 #define CURRENT_EFFECT_CONFIG_FILE  "/current.cfg"
@@ -388,66 +389,11 @@ public:
     // When a global color is set via the remote, we create a fill effect and assign it as the "remote effect"
     // which takes drawing precedence
 
-    void SetGlobalColor(CRGB color)
-    {
-        debugI("Setting Global Color");
-        //g_ptrSystem->DeviceConfig.GlobalColor = color;
-        g_Values.LastGlobalColor = g_Values.GlobalColor;
-        g_Values.GlobalColor = color;
-/*
-        CRGB oldColor = lastManualColor;
-        lastManualColor = color;
+    void SetGlobalColor(CRGB color); // Implemented in effectmanager.cpp to allow access to system container.
 
-        _previousGlobalColor = _globalColor;
-        _globalColor = color;
-        
-*/
-        #if (USE_HUB75)
-                auto pMatrix = g();
-                pMatrix->setPalette(CRGBPalette16(g_Values.LastGlobalColor, g_Values.GlobalColor));
-                pMatrix->PausePalette(true);
-        /*
-        #else
-            std::shared_ptr<LEDStripEffect> effect;
+    void ClearRemoteColor(bool retainRemoteEffect = false);
 
-            if (color == CRGB(CRGB::White))
-                effect = make_shared_psram<ColorFillEffect>(CRGB::White, 1);
-            else
-
-                #if ENABLE_AUDIO
-                    #if SPECTRUM
-                        effect = GetSpectrumAnalyzer(color, oldColor);
-                    #else
-                        effect = make_shared_psram<MusicalPaletteFire>("Custom Fire", CRGBPalette16(CRGB::Black, color, CRGB::Yellow, CRGB::White), NUM_LEDS, 1, 8, 50, 1, 24, true, false);
-                    #endif
-                #else
-                    effect = make_shared_psram<PaletteFlameEffect>("Custom Fire", CRGBPalette16(CRGB::Black, color, CRGB::Yellow, CRGB::White), NUM_LEDS, 1, 8, 50, 1, 24, true, false);
-                #endif
-
-            if (effect->Init(_gfx))
-            {
-                _tempEffect = effect;
-                StartEffect();
-            }
-            */
-           Update();
-        #endif
-    }
-
-    void ClearRemoteColor(bool retainRemoteEffect = false)
-    {
-        if (!retainRemoteEffect)
-            _tempEffect = nullptr;
-
-        #if (USE_HUB75)
-            g()->PausePalette(false);
-        #endif
-        
-        g_Values.GlobalColor = CRGB::Black;
-        g_Values.LastGlobalColor = CRGB::Black;
-    }
-
-     void SetTemporaryStripEffect (std::shared_ptr<LEDStripEffect> tempEffect) 
+    void SetTemporaryStripEffect (std::shared_ptr<LEDStripEffect> tempEffect) 
     {
         _tempEffect = tempEffect;
         //StartEffect();

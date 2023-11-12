@@ -32,7 +32,9 @@
 
 // Include the effect classes we'll need later
 
+#include "soundanalyzer.h"
 #include "effects/strip/fireeffect.h"          // fire effects
+#include "effects/strip/misceffects.h"
 #include "effects/strip/paletteeffect.h"       // palette effects
 #include "effects/strip/doublepaletteeffect.h" // double palette effect
 #include "effects/strip/meteoreffect.h"        // meteor blend effect

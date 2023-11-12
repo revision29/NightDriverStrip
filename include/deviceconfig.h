@@ -75,8 +75,8 @@ class DeviceConfig : public IJSONSerializable
     int     powerLimit = POWER_LIMIT_DEFAULT;
     uint8_t brightness = BRIGHTNESS_MAX;
 
-    CRGB GlobalColor = CRGB::Black;
-    CRGB LastGlobalColor = CRGB::Black;
+    CRGB globalColor = CRGB::Black;
+    CRGB lastGlobalColor = CRGB::Black;
 
     std::vector<SettingSpec, psram_allocator<SettingSpec>> settingSpecs;
     std::vector<std::reference_wrapper<SettingSpec>> settingSpecReferences;
@@ -121,6 +121,10 @@ class DeviceConfig : public IJSONSerializable
     static constexpr const char * PowerLimitTag = NAME_OF(powerLimit);
     static constexpr const char * BrightnessTag = NAME_OF(brightness);
 
+    static constexpr const char * GlobalColorTag = NAME_OF(globalColor);
+    static constexpr const char * LastGlobalColorTag = NAME_OF(lastGlobalColor);
+
+
     DeviceConfig();
 
     bool SerializeToJSON(JsonObject& jsonObject) override
@@ -143,6 +147,9 @@ class DeviceConfig : public IJSONSerializable
         jsonDoc[RememberCurrentEffectTag] = rememberCurrentEffect;
         jsonDoc[PowerLimitTag] = powerLimit;
         jsonDoc[BrightnessTag] = brightness;
+
+        jsonDoc[GlobalColorTag] = globalColor;
+        jsonDoc[LastGlobalColorTag] = lastGlobalColor;
 
         if (includeSensitive)
             jsonDoc[OpenWeatherApiKeyTag] = openWeatherApiKey;
@@ -170,6 +177,9 @@ class DeviceConfig : public IJSONSerializable
         SetIfPresentIn(jsonObject, rememberCurrentEffect, RememberCurrentEffectTag);
         SetIfPresentIn(jsonObject, powerLimit, PowerLimitTag);
         SetIfPresentIn(jsonObject, brightness, BrightnessTag);
+
+        SetIfPresentIn(jsonObject, globalColor, GlobalColorTag);
+        SetIfPresentIn(jsonObject, lastGlobalColor, LastGlobalColorTag);
 
         if (ntpServer.isEmpty())
             ntpServer = NTP_SERVER_DEFAULT;
@@ -262,6 +272,18 @@ class DeviceConfig : public IJSONSerializable
                 BRIGHTNESS_MIN,
                 BRIGHTNESS_MAX
             ).HasValidation = true;
+            settingSpecs.emplace_back(
+                NAME_OF(globalColor),
+                "Remember current global color",
+                "A ___ that represents the current global color",
+                SettingSpec::SettingType::Color
+            );
+            settingSpecs.emplace_back(
+                NAME_OF(lastGlobalColor),
+                "Remember current global color",
+                "A ___ that represents the previous global color",
+                SettingSpec::SettingType::Color
+            );
 
             auto& powerLimitSpec = settingSpecs.emplace_back(
                 NAME_OF(powerLimit),
@@ -408,5 +430,33 @@ class DeviceConfig : public IJSONSerializable
     {
         if (newPowerLimit >= POWER_LIMIT_MIN)
             SetAndSave(powerLimit, newPowerLimit);
+    }
+    void SetGlobalColor(CRGB newGlobalColor)
+    {
+        if (newGlobalColor != globalColor)
+        {
+            if (lastGlobalColor != globalColor)
+                lastGlobalColor = globalColor;
+            SetAndSave(globalColor, newGlobalColor);
+        }
+    }
+    const CRGB &GetGlobalColor() const
+    {
+        return globalColor;
+    }
+    
+    void SetLastGlobalColor(CRGB newLastGlobalColor)
+    {
+        SetAndSave(lastGlobalColor, newLastGlobalColor);
+    }
+    const CRGB &GetLastGlobalColor() const
+    {
+        return lastGlobalColor;
+    }
+    void ClearGlobalColor() 
+    {
+        CRGB clearColor = CRGB::Black;
+        globalColor = clearColor;
+        SetAndSave(globalColor, clearColor);
     }
 };

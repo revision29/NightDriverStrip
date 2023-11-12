@@ -59,8 +59,6 @@ void RemoteControl::handle()
     static uint lastProcessTime = millis();
     //static boolean processingRemoteButtonPress = false; // This will cause the method to ignore received IR codes while a button press is being processed. This is to reduce button bounce / reflections causing mutliuple IR signals being received rapidly and being processed nearly simultaniously..
 
-    
-    static CRGB lastManualColor = CRGB::Black;
     static boolean remoteEffectPower = false;
     
     auto& deviceConfig = g_ptrSystem->DeviceConfig();
@@ -144,6 +142,9 @@ void RemoteControl::handle()
                 //effectManager.SetInterval(0);
                 //effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(lastManualColor, 1));
                 //effectManager.StartEffect();
+                {
+                    
+                }
             break;
             case POWER_OFF:
                 effectManager.ClearTemporaryStripEffect();
@@ -163,18 +164,26 @@ void RemoteControl::handle()
             
             break;
             case CHANGER: // The button can send a positive or negative value to adjust the color.
-                lastManualColor.red += thisButton.actionArgs.toInt();
-                effectManager.SetGlobalColor(lastManualColor);
-
+                {
+                    CRGB tempColor = g_ptrSystem->DeviceConfig().GetGlobalColor();
+                    tempColor.red += thisButton.actionArgs.toInt();
+                    effectManager.SetGlobalColor(tempColor);
+                }
             break;
             case CHANGEG: // The button can send a positive or negative value to adjust the color.
-                lastManualColor.green += thisButton.actionArgs.toInt();
-                effectManager.SetGlobalColor(lastManualColor);
+                {
+                    CRGB tempColor = g_ptrSystem->DeviceConfig().GetGlobalColor();
+                    tempColor.green += thisButton.actionArgs.toInt();
+                    effectManager.SetGlobalColor(tempColor);
+                }
                     
             break;
             case CHANGEB: // The button can send a positive or negative value to adjust the color.
-                lastManualColor.blue += thisButton.actionArgs.toInt();
-                effectManager.SetGlobalColor(lastManualColor); 
+                {
+                    CRGB tempColor = g_ptrSystem->DeviceConfig().GetGlobalColor();
+                    tempColor.blue += thisButton.actionArgs.toInt();
+                    effectManager.SetGlobalColor(tempColor); 
+                }
             break;
             case DIY1:
                 effectManager.SetCurrentEffectIndex(0);
@@ -219,11 +228,6 @@ void RemoteControl::handle()
                 {
                     debugI("Setting interval to 0 seconds\n");
                     effectManager.SetInterval(0);
-                    
-                    // To provide a little visual confirmation that something happened.
-                    //effectManager.PreviousEffect();
-                    //delay(100);
-                    //effectManager.NextEffect();
                 }
             }
             break;

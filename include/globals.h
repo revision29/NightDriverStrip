@@ -1535,6 +1535,10 @@ extern DRAM_ATTR const int g_aRingSizeTable[];
 #define IR_REMOTE_PIN   25
 #endif
 
+#ifndef REQUIRE_EFFECTS_SERIALIZATION
+    #define REQUIRE_EFFECTS_SERIALIZATION 0
+#endif
+
 
 // Custom WiFi Commands
 //

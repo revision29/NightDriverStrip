@@ -71,13 +71,15 @@ void InitEffectsManager()
 
     LoadEffectFactories();
 
+  
     l_EffectsManagerJSONWriterIndex = g_ptrSystem->JSONWriter().RegisterWriter(
-        [] { 
-            debugI("From Effect Manager json writer function\n"); 
-            SaveToJSONFile(EFFECTS_CONFIG_FILE, g_EffectsManagerJSONBufferSize, g_ptrSystem->EffectManager()); 
-            }
+        []
+         {
+             if (!SaveToJSONFile(EFFECTS_CONFIG_FILE, g_EffectsManagerJSONBufferSize, g_ptrSystem->EffectManager()) && REQUIRE_EFFECTS_SERIALIZATION)
+                 throw std::runtime_error("Effects serialization failed");
+         }
     );
-    l_CurrentEffectWriterIndex = g_ptrSystem->JSONWriter().RegisterWriter(WriteCurrentEffectIndexFile);
+     l_CurrentEffectWriterIndex = g_ptrSystem->JSONWriter().RegisterWriter(WriteCurrentEffectIndexFile);
 
     std::unique_ptr<AllocatedJsonDocument> pJsonDoc;
     auto jsonObject = LoadEffectsJSONFile(pJsonDoc);
@@ -267,8 +269,8 @@ std::shared_ptr<LEDStripEffect> EffectManager::CopyEffect(size_t index)
 
     std::unique_ptr<AllocatedJsonDocument> ptrJsonDoc = nullptr;
 
-    SerializeWithBufferSize(ptrJsonDoc, jsonBufferSize,
-        [&sourceEffect](JsonObject &jsonObject) { return sourceEffect->SerializeToJSON(jsonObject); });
+    assert(SerializeWithBufferSize(ptrJsonDoc, jsonBufferSize,
+        [&sourceEffect](JsonObject &jsonObject) { return sourceEffect->SerializeToJSON(jsonObject); }));
 
     auto jsonEffectFactories = g_ptrEffectFactories->GetJSONFactories();
     auto factoryEntry = jsonEffectFactories.find(sourceEffect->EffectNumber());

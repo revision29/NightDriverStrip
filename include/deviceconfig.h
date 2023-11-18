@@ -274,14 +274,15 @@ class DeviceConfig : public IJSONSerializable
             ).HasValidation = true;
             settingSpecs.emplace_back(
                 NAME_OF(globalColor),
-                "Remember current global color",
-                "A ___ that represents the current global color",
+                "Global color.",
+                "Effects can utilize the color to override default options for more dynamic effects..",
                 SettingSpec::SettingType::Color
             );
             settingSpecs.emplace_back(
                 NAME_OF(lastGlobalColor),
-                "Remember current global color",
-                "A ___ that represents the previous global color",
+                "Previous global color",
+                "Effects can utilize both the global color and the previous global color "
+                "to override default colors for more dynamic effects.",
                 SettingSpec::SettingType::Color
             );
 

@@ -55,21 +55,19 @@ UserRemoteControl myRemoteController (44);//Loads remote and user defined button
 void RemoteControl::handle()
 {
     decode_results results;
-    static uint lastResult = 0;
-    static uint lastProcessTime = millis();
-    //static boolean processingRemoteButtonPress = false; // This will cause the method to ignore received IR codes while a button press is being processed. This is to reduce button bounce / reflections causing mutliuple IR signals being received rapidly and being processed nearly simultaniously..
-
-    static boolean remoteEffectPower = false;
-    
     auto& deviceConfig = g_ptrSystem->DeviceConfig();
 
-    //if (!_IR_Receive.decode(&results) || processingRemoteButtonPress) // If there is a problem with decoding the IR code or if a code is currently being processed, the method exits.
+    static uint lastResult = 0;
+    static uint lastProcessTime = millis();
+    static int currentBrightness = deviceConfig.GetBrightness() == 0 ? 255 : deviceConfig.GetBrightness();
+
+    static boolean remotePower = true;
+    
     if (!_IR_Receive.decode(&results))
         return;
 
     uint result = results.value;    
     _IR_Receive.resume();
-    //processingRemoteButtonPress = true;
 
     if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF && lastResult != 0)
     {
@@ -77,7 +75,7 @@ void RemoteControl::handle()
         // If that is the case, this will set the current result to the lastResult so that the proper button code can be processed.
         result = lastResult;
     }
-    else if (result == 0xFFFFFFFF && millis() - lastProcessTime > 100) {
+    else if (result == 0xFFFFFFFF && millis() - lastProcessTime < 100) {
         // The IR sensor did not receive the regular keycode before the remote started sending out 0xFFFFFFFF. Stop processing and try again at next press. 100 ms is an arbitrary number that should be greater than the remote's repeat interval and lower than rapid finger presses.
         //processingRemoteButtonPress = false;
         return;
@@ -122,20 +120,24 @@ void RemoteControl::handle()
             break;
             case POWER_TOGGLE:
             {
-                if (remoteEffectPower == true)
+                if (remotePower == true)
                 {
                     debugI("Power is on, so w turn it off.\n");
-                    remoteEffectPower = false;
-                    effectManager.ClearTemporaryStripEffect();
-                    effectManager.ClearRemoteColor();
-
+                    remotePower = false;
+                    if (deviceConfig.GetBrightness() != 0) 
+                        currentBrightness = deviceConfig.GetBrightness();
+                    else
+                        currentBrightness = 255;
+                    deviceConfig.SetBrightness(0);
+                    deviceConfig.ClearGlobalColor();
+                    
                 } else 
                 {
                     debugI("Power is off, so we turn it on\n");
-                    remoteEffectPower = true;
-                    //effectManager.SetInterval(0);
-                    //effectManager.SetTemporaryStripEffect(make_shared_psram<ColorFillEffect>(deviceConfig.GetGlobalColor(), 1));
-                    //effectManager.StartEffect();
+                    remotePower = false;
+                    if (currentBrightness == 0)
+                        currentBrightness = 255;
+                    deviceConfig.SetBrightness(currentBrightness);
                 }
             }
             case ButtonActions::POWER_ON:
@@ -156,12 +158,15 @@ void RemoteControl::handle()
             case FILL_COLOR:
             {
                 CRGB fillColor = hexToCRGB(thisButton.actionArgs);
-                effectManager.SetGlobalColor(fillColor);
+                if (deviceConfig.GetGlobalColor() == fillColor)
+                    effectManager.ClearRemoteColor();
+                else
+                    effectManager.SetGlobalColor(fillColor);
             }
             break;
             
             case TRIGGER_EFFECT:
-            
+                
             break;
             case CHANGER: // The button can send a positive or negative value to adjust the color.
                 {

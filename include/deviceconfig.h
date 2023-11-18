@@ -76,7 +76,7 @@ class DeviceConfig : public IJSONSerializable
     uint8_t brightness = BRIGHTNESS_MAX;
 
     CRGB globalColor = CRGB::Black;
-    CRGB lastGlobalColor = CRGB::Black;
+    CRGB previousGlobalColor = CRGB::Black;
 
     std::vector<SettingSpec, psram_allocator<SettingSpec>> settingSpecs;
     std::vector<std::reference_wrapper<SettingSpec>> settingSpecReferences;
@@ -122,7 +122,7 @@ class DeviceConfig : public IJSONSerializable
     static constexpr const char * BrightnessTag = NAME_OF(brightness);
 
     static constexpr const char * GlobalColorTag = NAME_OF(globalColor);
-    static constexpr const char * LastGlobalColorTag = NAME_OF(lastGlobalColor);
+    static constexpr const char * PreviousGlobalColorTag = NAME_OF(previousGlobalColor);
 
 
     DeviceConfig();
@@ -149,7 +149,7 @@ class DeviceConfig : public IJSONSerializable
         jsonDoc[BrightnessTag] = brightness;
 
         jsonDoc[GlobalColorTag] = globalColor;
-        jsonDoc[LastGlobalColorTag] = lastGlobalColor;
+        jsonDoc[PreviousGlobalColorTag] = previousGlobalColor;
 
         if (includeSensitive)
             jsonDoc[OpenWeatherApiKeyTag] = openWeatherApiKey;
@@ -179,7 +179,7 @@ class DeviceConfig : public IJSONSerializable
         SetIfPresentIn(jsonObject, brightness, BrightnessTag);
 
         SetIfPresentIn(jsonObject, globalColor, GlobalColorTag);
-        SetIfPresentIn(jsonObject, lastGlobalColor, LastGlobalColorTag);
+        SetIfPresentIn(jsonObject, previousGlobalColor, PreviousGlobalColorTag);
 
         if (ntpServer.isEmpty())
             ntpServer = NTP_SERVER_DEFAULT;
@@ -279,7 +279,7 @@ class DeviceConfig : public IJSONSerializable
                 SettingSpec::SettingType::Color
             );
             settingSpecs.emplace_back(
-                NAME_OF(lastGlobalColor),
+                NAME_OF(previousGlobalColor),
                 "Previous global color",
                 "Effects can utilize both the global color and the previous global color "
                 "to override default colors for more dynamic effects.",
@@ -436,8 +436,8 @@ class DeviceConfig : public IJSONSerializable
     {
         if (newGlobalColor != globalColor)
         {
-            if (lastGlobalColor != globalColor)
-                lastGlobalColor = globalColor;
+            if (previousGlobalColor != globalColor)
+                previousGlobalColor = globalColor;
             SetAndSave(globalColor, newGlobalColor);
         }
     }
@@ -446,18 +446,19 @@ class DeviceConfig : public IJSONSerializable
         return globalColor;
     }
     
-    void SetLastGlobalColor(CRGB newLastGlobalColor)
+    void SetPreviousGlobalColor(CRGB newPreviousGlobalColor) // Just in case someone wants to set the previous color manually.
     {
-        SetAndSave(lastGlobalColor, newLastGlobalColor);
+        SetAndSave(previousGlobalColor, newPreviousGlobalColor);
     }
-    const CRGB &GetLastGlobalColor() const
+    const CRGB &GetPreviousGlobalColor() const
     {
-        return lastGlobalColor;
+        return previousGlobalColor;
     }
-    void ClearGlobalColor() 
+    void ClearGlobalColor(bool clearPrevious = true) 
     {
         CRGB clearColor = CRGB::Black;
-        globalColor = clearColor;
+        if (clearPrevious) 
+            previousGlobalColor = clearColor;
         SetAndSave(globalColor, clearColor);
     }
 };

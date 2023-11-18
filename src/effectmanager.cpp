@@ -251,7 +251,6 @@ void EffectManager::ClearRemoteColor(bool retainRemoteEffect)
         g()->PausePalette(false);
     #endif
     g_ptrSystem->DeviceConfig().ClearGlobalColor();
-    
 
 }
 

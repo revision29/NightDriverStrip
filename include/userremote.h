@@ -64,11 +64,12 @@ class UserRemoteControl
     {
         public:
             void getRemoteButtons();
-            int buttonCount;
+            //int buttonCount;
             std::map<uint, RemoteButton> buttons;
-            UserRemoteControl (int buttonCount = 0) 
+            //UserRemoteControl (int buttonCount = 0) 
+            UserRemoteControl() 
             {
-                buttonCount = buttonCount;
+                //buttonCount = buttonCount;
                 getRemoteButtons(); //Loads default button configuration
             };
     };

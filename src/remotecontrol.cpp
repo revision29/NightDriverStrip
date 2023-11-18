@@ -35,12 +35,16 @@
 
 #include "systemcontainer.h"
 
+// Include any effects you will directly trigger with the remote.
+#include "effects/strip/misceffects.h"
+#include "effects/strip/paletteeffect.h"
+
 #define BRIGHTNESS_STEP     20
 /*
 We will need to define the user remote control
 */
 
-UserRemoteControl myRemoteController (44);//Loads remote and user defined buttons
+UserRemoteControl myRemoteController = UserRemoteControl();//Loads remote and user defined buttons
 
 //Repeat codes
 //Press and hold brightness up or down to wuickly adjust up. 
@@ -166,6 +170,9 @@ void RemoteControl::handle()
             break;
             
             case TRIGGER_EFFECT:
+                {
+                    auto effect = make_shared_psram<ColorFillEffect>(CRGB::White, 1);
+                }
                 
             break;
             case CHANGER: // The button can send a positive or negative value to adjust the color.
@@ -211,9 +218,18 @@ void RemoteControl::handle()
             break;
             
             // There are effects defined that will scroll throw different effects.
-            //case JUMP3:
-            //break;
+            case JUMP3:
+            {
+            // Fade speed is 0
+            // 3 colors
+
+                //ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Blue, CRGB::MediumPurple, CRGB::Azure), 256 / 32, .3, 0,4,0);
+                auto effect = make_shared_psram<PaletteEffect>(CRGBPalette16(CRGB::Blue, CRGB::MediumPurple, CRGB::Azure), 256 / 32, .3, 0,4,0);
+            }
+            break;
             //case JUMP7:
+            //Fade speed is 0
+            //Colors are 7
             //break;
             //case FADE3:
             //break;

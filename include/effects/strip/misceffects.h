@@ -188,40 +188,10 @@ protected:
         jsonDoc[PTY_SPEEDDIVISOR] = _speedDivisor;
         jsonDoc[PTY_DELTAHUE] = _deltaHue;
         
-        debugI("rainbow jsonDoc size %i", jsonDoc.size());
-        debugI("rainbow jsonDoc memoray usage %i", jsonDoc.memoryUsage());
-        debugI("rainbow About to assert not overflowed\n");
         assert(!jsonDoc.overflowed());
-        debugI("rainbow: jsondoc not overflowed\n");
-        //debugI("about to return the rainbow json object\n");
-        //debugI("rainbow about to jsonObject.set\n");
-        //return jsonObject.set(jsonDoc.as<JsonObjectConst>());
-        //if (!jsonObject.set(jsonDoc.as<JsonObjectConst>()))
-        //  return false;
-        //return true;
-        debugI("rainbow: jsondoc is the effect json schema");
-        debugI("rainbow: jsonObject is the master json schema of all effects");
-        
-          debugI("rainbow: before jsonObject.set json doc capacity: %i\n", jsonDoc.capacity());
-          debugI("rainbow: before jsonObject.set json doc memory usage: %i\n", jsonDoc.memoryUsage());
-          debugI("rainbow: before jsonObject.set json object memory %i\n", jsonObject.memoryUsage());
-          debugI("rainbow: before jsonObject.set json object size %i\n", jsonObject.size());
-        if (jsonObject.set(jsonDoc.as<JsonObjectConst>())) 
-        {
-          debugI("rainbow: sonObject.set successful\n");
-          debugI("rainbow: json object memory %i\n", jsonObject.memoryUsage());
-          debugI("rainbow: after jsonObject.set json object size %i\n", jsonObject.size());
-          debugI("rainbow: json doc capacity: %i\n", jsonDoc.capacity());
-          debugI("rainbow: json doc memory usage: %i\n", jsonDoc.memoryUsage());
-          return true;
-        } else {
-          debugI("rainbow: sonObject.set FAIL FAIL FAIL\n");
-          debugI("rainbow: json object memory %i\n", jsonObject.memoryUsage());
-          debugI("rainbow: after jsonObject.set json object size %i\n", jsonObject.size());
-          debugI("rainbow: json doc capacity: %i\n", jsonDoc.capacity());
-          debugI("rainbow: json doc memory usage: %i\n", jsonDoc.memoryUsage());
+        if (!jsonObject.set(jsonDoc.as<JsonObjectConst>()))
           return false;
-        }
+        return true;
     }
 
     void Draw() override

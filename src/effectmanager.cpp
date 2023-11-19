@@ -212,7 +212,7 @@ void EffectManager::SetGlobalColor(CRGB color)
 
     #if (USE_HUB75)
             auto pMatrix = g();
-            pMatrix->setPalette(CRGBPalette16(g_ptrSystem->DeviceConfig().GetLastGlobalColor(), g_ptrSystem->DeviceConfig().GetGlobalColor()));
+            pMatrix->setPalette(CRGBPalette16(g_ptrSystem->DeviceConfig().GetPreviousGlobalColor(), g_ptrSystem->DeviceConfig().GetGlobalColor()));
             pMatrix->PausePalette(true);
     /*
     #else

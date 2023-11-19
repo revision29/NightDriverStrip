@@ -63,50 +63,56 @@ void RemoteControl::handle()
 
     static uint lastResult = 0;
     static uint lastProcessTime = millis();
-    static int currentBrightness = deviceConfig.GetBrightness() == 0 ? 255 : deviceConfig.GetBrightness();
+    //static int currentBrightness = deviceConfig.GetBrightness() == 0 ? 255 : deviceConfig.GetBrightness();
+    static int currentBrightness = deviceConfig.GetBrightness();
 
     static boolean remotePower = true;
     
     if (!_IR_Receive.decode(&results))
         return;
 
-    uint result = results.value;    
+    uint result = results.value;
+    //debugI("Remote code %08x", result);
     _IR_Receive.resume();
-
-    if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF && lastResult != 0)
+    //debugI("Now %i, lastProcessTime %i\n", millis(), lastProcessTime);
+    uint timeDiff = millis() - lastProcessTime;
+    //debugI("Process time diff %i\n", timeDiff);
+    /*
+    if (result == 0xFFFFFFFF)
     {
-        // Some remotes send 0xFFFFFFFF to indicate that the previous button is being held down. 
-        // If that is the case, this will set the current result to the lastResult so that the proper button code can be processed.
-        result = lastResult;
+        debugI("We have a repeat code\n");
     }
-    else if (result == 0xFFFFFFFF && millis() - lastProcessTime < 100) {
-        // The IR sensor did not receive the regular keycode before the remote started sending out 0xFFFFFFFF. Stop processing and try again at next press. 100 ms is an arbitrary number that should be greater than the remote's repeat interval and lower than rapid finger presses.
-        //processingRemoteButtonPress = false;
+    */
+
+    if (result == 0xFFFFFFFF && timeDiff < 100) 
         return;
-    }
-    debugI("Size of the buttons in memory%zu\n", sizeof(myRemoteController.buttons));
+    if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF && lastResult != 0) // Repeat code sent by remote. Treat like it was the previous button code processed.
+        result = lastResult;
+
     auto searchResult = myRemoteController.buttons.find(result);
     if (searchResult != myRemoteController.buttons.end()) 
     {
         RemoteButton thisButton = searchResult->second;
         if (result == lastResult) 
-            {
-                static uint lastRepeatTime = millis();
-                auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 150 : 300;
+        {
+            static uint lastRepeatTime = millis();
+            auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 150 : 300;
 
-                //We do not want to set the kMinRepeatms to 0 because some remotes send a code more than once and also there might be refelctive surfaces that will cause the signal to be recieved more than once in rapid succession.
-                // Brightness adjustments will be allowed to repeat more often. 
-                if (millis() - lastRepeatTime > kMinRepeatms)
-                {
-                    //debugV("Remote Repeat; lastResult == %08x, elapsed = %lu, repeate time = %i \n", lastResult, millis()-lastRepeatTime, kMinRepeatms);
-                    lastRepeatTime = millis();
-                }
-                else
-                {
-                    //processingRemoteButtonPress = false;
-                    return;
-                }   
+            //We do not want to set the kMinRepeatms to 0 because some remotes send a code more than once and also there might be refelctive surfaces that will cause the signal to be recieved more than once in rapid succession.
+            // Brightness adjustments will be allowed to repeat more often. 
+            if (millis() - lastRepeatTime > kMinRepeatms)
+            {
+                //debugI("Remote Repeat; lastResult == %08x, elapsed = %lu, repeate time = %i \n", lastResult, millis()-lastRepeatTime, kMinRepeatms);
+                lastRepeatTime = millis();
             }
+            else
+            {
+                //debugI("Remote Repeat, not repeating; lastResult == %08x, elapsed = %lu, repeate time = %i \n", lastResult, millis()-lastRepeatTime, kMinRepeatms);
+                //processingRemoteButtonPress = false;
+                //debugI("The code was sent too soon. Exiting.\n");
+                return;
+            }   
+        }
 
         //Process the code
         auto &effectManager = g_ptrSystem->EffectManager();
@@ -115,15 +121,29 @@ void RemoteControl::handle()
         {
             case BRIGHTNESS_UP:
                deviceConfig.SetBrightness((int)deviceConfig.GetBrightness() + BRIGHTNESS_STEP);
+               currentBrightness = deviceConfig.GetBrightness();
 
             break;
             case BRIGHTNESS_DOWN:
                 deviceConfig.SetBrightness((int)deviceConfig.GetBrightness() - BRIGHTNESS_STEP);
-                debugI("After brightness down global brightness is  %i\n",deviceConfig.GetBrightness());
+                if (deviceConfig.GetBrightness() != 0)
+                    currentBrightness = deviceConfig.GetBrightness();
+                //debugI("After brightness down global brightness is  %i\n",deviceConfig.GetBrightness());
 
             break;
             case POWER_TOGGLE:
             {
+                if (deviceConfig.GetBrightness() == 0)
+                {
+                    if (currentBrightness == 0)
+                        currentBrightness = 20;
+                    deviceConfig.SetBrightness(currentBrightness);
+                } else
+                {
+                    currentBrightness = deviceConfig.GetBrightness();
+                    deviceConfig.SetBrightness(0);
+                }
+/*
                 if (remotePower == true)
                 {
                     debugI("Power is on, so w turn it off.\n");
@@ -133,7 +153,7 @@ void RemoteControl::handle()
                     else
                         currentBrightness = 255;
                     deviceConfig.SetBrightness(0);
-                    deviceConfig.ClearGlobalColor();
+                    //deviceConfig.ClearGlobalColor();
                     
                 } else 
                 {
@@ -143,6 +163,7 @@ void RemoteControl::handle()
                         currentBrightness = 255;
                     deviceConfig.SetBrightness(currentBrightness);
                 }
+                */
             }
             case ButtonActions::POWER_ON:
                 //effectManager.SetInterval(0);
@@ -241,13 +262,13 @@ void RemoteControl::handle()
             {
                 if (effectManager.GetInterval() != 30000) 
                 {
-                    debugI("Setting interval to 30 seconds\n");
+                    //debugI("Setting interval to 30 seconds\n");
                     effectManager.SetInterval(30000, true);
-                    debugI("Triggering Next Effect\n");
+                   // debugI("Triggering Next Effect\n");
                     effectManager.NextEffect();
                 } else
                 {
-                    debugI("Setting interval to 0 seconds\n");
+                    //debugI("Setting interval to 0 seconds\n");
                     effectManager.SetInterval(0);
                 }
             }
@@ -259,15 +280,16 @@ void RemoteControl::handle()
             //case SLOW:
             //break;
         } // End of Switch
-
+        lastProcessTime = millis();
     } else
     {
         // This block is only needed to help debug issues.
         // debugI("We do not have a remote code result 0X%08X", result);
     }
     if (result != 0xFFFFFFFF )
-                lastResult = result;
+        lastResult = result;
     //processingRemoteButtonPress = false;
+    //debugI("end of IR handle time: %i", millis());
 }
 
 /*

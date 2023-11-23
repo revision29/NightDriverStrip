@@ -92,11 +92,8 @@ class PaletteEffect : public LEDStripEffect
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
         AllocatedJsonDocument jsonDoc(512);
-debugI("palette effect: creating json document\n");
         JsonObject root = jsonDoc.to<JsonObject>();
-        debugI("palette effect: LEDStripEffect::SerializeToJSON\n");
         LEDStripEffect::SerializeToJSON(root);
-debugI("palette effect: setting json fields\n");
         jsonDoc[PTY_PALETTE] = _palette;
         jsonDoc["dns"] = _density;
         jsonDoc[PTY_SPEED] = _paletteSpeed;
@@ -106,27 +103,6 @@ debugI("palette effect: setting json fields\n");
         jsonDoc[PTY_BLEND] = to_value(_blend);
         jsonDoc[PTY_ERASE] = _bErase;
         jsonDoc["bns"] = _brightness;
-//debugI("palette effect jsonDoc memoray usage %i", jsonDoc.memoryUsage());
-//debugI("palette effect jsonDoc size %i", jsonDoc.size());
-//debugI("palette effect: about to jsonObject.set\n");
-/*
-if (jsonObject.set(jsonDoc.as<JsonObjectConst>())) {
-  debugI("palette effect: sonObject.set successful\n");
-  return true;
-} else {
-  debugI("palette effect: sonObject.set FAIL FAIL FAIL\n");
-return false;
-    }
-    */
-
-
-/*
-     
-        debugI("palette effect jsonDoc memoray usage %i", jsonDoc.memoryUsage());
-        debugI("rainbow About to assert not overflowed\n");
-        assert(!jsonDoc.overflowed());
-        debugI("about to return the rainbow json object\n");*/
-//return true;
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
         //if (!jsonObject.set(jsonDoc.as<JsonObjectConst>()))
         //  return false;

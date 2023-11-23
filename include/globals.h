@@ -242,12 +242,12 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
     //#define MATRIX_WIDTH            32
     //#define MATRIX_HEIGHT           8
-    #define MATRIX_WIDTH            100
-    #define MATRIX_HEIGHT           1
+    #define MATRIX_WIDTH            6
+    #define MATRIX_HEIGHT           8
 
     #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
-    #define ENABLE_AUDIO            1
+    #define ENABLE_AUDIO            0
 
     //#define POWER_LIMIT_MW       12 * 10 * 1000   // 10 amp supply at 5 volts assumed
     #define POWER_LIMIT_MW       12 * 3 * 1000   // 3 amp supply at 5 volts assumed
@@ -295,13 +295,16 @@ extern RemoteDebug Debug;           // Let everyone in the project know about it
     #define PROJECT_NAME            "Cross"
     #endif
 
-    #define NUM_RINGS               4
-    #define RING_SIZE_0             15
-    #define RING_SIZE_1             7
-    #define RING_SIZE_2             7
-    #define RING_SIZE_3             7
-    #define MATRIX_WIDTH            36
-    #define MATRIX_HEIGHT           1
+    //#define NUM_RINGS               4
+    //#define RING_SIZE_0             15
+    //#define RING_SIZE_1             7
+    //#define RING_SIZE_2             7
+    //#define RING_SIZE_3             7
+    //#define MATRIX_WIDTH            36
+    //#define MATRIX_HEIGHT           1
+    #define MATRIX_WIDTH            6
+    #define MATRIX_HEIGHT           8
+
     #define NUM_LEDS                (MATRIX_WIDTH * MATRIX_HEIGHT)
     //#define NUM_LEDS                (RING_SIZE_0 + RING_SIZE_1 + RING_SIZE_2 + RING_SIZE_3)
     #define NUM_CHANNELS            1
@@ -1757,7 +1760,6 @@ inline bool SetSocketBlockingEnabled(int fd, bool blocking)
 #endif
 
 #if ENABLE_REMOTE
-    #include "userremote.h" //Load the user remote information before we laod the IR system; Added by Joe
     #include "remotecontrol.h"
 #endif
 

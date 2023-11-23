@@ -31,9 +31,9 @@
 #include "globals.h"
 
 #if ENABLE_REMOTE
-
-
+#include "userremote.h"
 #include "systemcontainer.h"
+
 
 // Include any effects you will directly trigger with the remote.
 #include "effects/strip/misceffects.h"
@@ -46,15 +46,26 @@ We will need to define the user remote control
 
 UserRemoteControl myRemoteController = UserRemoteControl();//Loads remote and user defined buttons
 
-//Repeat codes
-//Press and hold brightness up or down to wuickly adjust up. 
-//Otherwise acknolwedge the keypress only every 200ms or.
-//First check for a match. If no metch we just return.
-//If a match then we check against repeating then we trigger the button action
-
-
 /*
 !!! See ~/Development/Remote Code/Changes to effect manager.md for task list
+
+New taask list
+
+After pulling new code base:
+- [ ] change efect manager to not make random effects, but fill global color when setting and applying global color
+- [ ] Push that change
+
+- [ ] port over my remote control code
+- [ ] hook my remove control code to the new global color methods
+
+then adjust to the following:
+- [ ] when pressing a color it sets te color and applies it (with new codebase)
+- [ ] pressing next effect button will 
+    - [ ] if applyglobal color is true it will toggle to false and return back to whatever effect is triggered while retaining the global color
+    - [ ] if apply global is false we will go to the next effect
+- [ ] IN effects.cpp have a solid color that is changed by global color
+- [ ] in effects.cpp have a solid color that is not changed by the global color
+- [ ] build out the rest of the button actions in remotecontrol.cpp
 */
 void RemoteControl::handle()
 {
@@ -295,104 +306,5 @@ void RemoteControl::handle()
     //processingRemoteButtonPress = false;
     //debugI("end of IR handle time: %i", millis());
 }
-
-/*
-//The old remote handling code
-void RemoteControl::handle()
-{
-    decode_results results;
-    static uint lastResult = 0;
-
-    if (!_IR_Receive.decode(&results))
-        return;
-
-    uint result = results.value;
-    _IR_Receive.resume();
-
-    debugV("Received IR Remote Code: 0x%08X, Decode: %08X\n", result, results.decode_type);
-
-    if (0xFFFFFFFF == result || result == lastResult)
-    {
-        static uint lastRepeatTime = millis();
-
-        // Only the OFF key runs at the full unbounded speed, so you can rapidly dim.  But everything
-        // else has its repeat rate clamped here.
-
-        const auto kMinRepeatms = (lastResult == IR_OFF) ? 0 : 200;
-
-        if (millis() - lastRepeatTime > kMinRepeatms)
-        {
-        debugV("Remote Repeat; lastResult == %08x, elapsed = %lu\n", lastResult, millis()-lastRepeatTime);
-            result = lastResult;
-            lastRepeatTime = millis();
-        }
-        else
-        {
-            return;
-        }
-    }
-    lastResult = result;
-
-    auto &effectManager = g_ptrSystem->EffectManager();
-
-    if (IR_ON == result)
-    {
-        debugV("Turning ON via remote");
-        effectManager.ClearGlobalColor();
-        effectManager.SetInterval(0);
-        effectManager.StartEffect();
-        g_ptrSystem->DeviceConfig().SetBrightness(BRIGHTNESS_MAX);
-        return;
-    }
-    else if (IR_OFF == result)
-    {
-        auto& deviceConfig = g_ptrSystem->DeviceConfig();
-        deviceConfig.SetBrightness((int)deviceConfig.GetBrightness() - BRIGHTNESS_STEP);
-        return;
-    }
-    else if (IR_BPLUS == result)
-    {
-        effectManager.ClearGlobalColor();
-        effectManager.NextEffect();
-        return;
-    }
-    else if (IR_BMINUS == result)
-    {
-        effectManager.ClearGlobalColor();
-        effectManager.PreviousEffect();
-        return;
-    }
-    else if (IR_SMOOTH == result)
-    {
-        effectManager.ClearGlobalColor();
-        effectManager.SetInterval(EffectManager::csSmoothButtonSpeed);
-    }
-    else if (IR_STROBE == result)
-    {
-        effectManager.NextPalette();
-    }
-    else if (IR_FLASH == result)
-    {
-        effectManager.PreviousPalette();
-    }
-    else if (IR_FADE == result)
-    {
-        effectManager.ShowVU( !effectManager.IsVUVisible() );
-    } else if (IR_BPLUS == result) {
-        
-
-    }
-
-    
-    for (int i = 0; i < ARRAYSIZE(RemoteColorCodes); i++) 
-    {
-        if (RemoteColorCodes[i].code == result)
-        {
-            debugV("Changing Color via remote: %08X\n", (uint) RemoteColorCodes[i].color);
-                        effectManager.SetGlobalColor(RemoteColorCodes[i].color);
-            return;
-        }
-    }
-    */
 
 #endif

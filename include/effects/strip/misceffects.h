@@ -30,6 +30,7 @@
 //---------------------------------------------------------------------------
 
 #pragma once
+#include "systemcontainer.h"
 
 #if USE_HUB75
 #include "TJpg_Decoder.h"

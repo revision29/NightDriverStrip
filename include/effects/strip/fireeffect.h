@@ -32,6 +32,7 @@
 #pragma once
 
 #include "globals.h"
+#include "systemcontainer.h"
 #include "musiceffect.h"
 #include "soundanalyzer.h"
 

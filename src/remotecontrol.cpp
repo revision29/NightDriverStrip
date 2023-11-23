@@ -175,7 +175,7 @@ void RemoteControl::handle()
             break;
             case POWER_OFF:
                 effectManager.ClearTemporaryStripEffect();
-                effectManager.ClearRemoteColor();
+                effectManager.ClearGlobalColor();
             break;
             case NEXT_EFFECT: 
                 effectManager.NextEffect();
@@ -183,10 +183,13 @@ void RemoteControl::handle()
             case FILL_COLOR:
             {
                 CRGB fillColor = hexToCRGB(thisButton.actionArgs);
+                effectManager.SetGlobalColor(fillColor);
+                /*
                 if (deviceConfig.GetGlobalColor() == fillColor)
-                    effectManager.ClearRemoteColor();
+                    effectManager.ClearGlobalColor();
                 else
                     effectManager.SetGlobalColor(fillColor);
+                */
             }
             break;
             
@@ -273,8 +276,9 @@ void RemoteControl::handle()
                 }
             }
             break;
-            //case FLASH:
-            //break;
+            case FLASH:
+                effectManager.ClearGlobalColor();
+            break;
             //case QUICK:
             //break;
             //case SLOW:
@@ -334,7 +338,7 @@ void RemoteControl::handle()
     if (IR_ON == result)
     {
         debugV("Turning ON via remote");
-        effectManager.ClearRemoteColor();
+        effectManager.ClearGlobalColor();
         effectManager.SetInterval(0);
         effectManager.StartEffect();
         g_ptrSystem->DeviceConfig().SetBrightness(BRIGHTNESS_MAX);
@@ -348,19 +352,19 @@ void RemoteControl::handle()
     }
     else if (IR_BPLUS == result)
     {
-        effectManager.ClearRemoteColor();
+        effectManager.ClearGlobalColor();
         effectManager.NextEffect();
         return;
     }
     else if (IR_BMINUS == result)
     {
-        effectManager.ClearRemoteColor();
+        effectManager.ClearGlobalColor();
         effectManager.PreviousEffect();
         return;
     }
     else if (IR_SMOOTH == result)
     {
-        effectManager.ClearRemoteColor();
+        effectManager.ClearGlobalColor();
         effectManager.SetInterval(EffectManager::csSmoothButtonSpeed);
     }
     else if (IR_STROBE == result)

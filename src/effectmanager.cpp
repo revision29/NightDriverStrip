@@ -33,6 +33,8 @@
 #include "globals.h"
 #include "systemcontainer.h"
 
+#include "effects/strip/fireeffect.h"
+#include "effects/strip/misceffects.h"
 // Variables we need further down
 
 extern DRAM_ATTR std::unique_ptr<EffectFactories> g_ptrEffectFactories;
@@ -237,12 +239,13 @@ void EffectManager::SetGlobalColor(CRGB color)
             _tempEffect = effect;
             StartEffect();
         }
-        */
+        
         Update();
+    */
     #endif
 }
 
-void EffectManager::ClearRemoteColor(bool retainRemoteEffect)
+void EffectManager::ClearGlobalColor(bool retainRemoteEffect)
 {
     if (!retainRemoteEffect)
         _tempEffect = nullptr;

@@ -156,7 +156,7 @@ public:
 
     ~EffectManager()
     {
-        ClearRemoteColor();
+        ClearGlobalColor();
         ClearEffects();
     }
 
@@ -391,7 +391,7 @@ public:
 
     void SetGlobalColor(CRGB color); // Implemented in effectmanager.cpp to allow access to system container.
 
-    void ClearRemoteColor(bool retainRemoteEffect = false);
+    void ClearGlobalColor(bool retainRemoteEffect = false);
 
     void SetTemporaryStripEffect (std::shared_ptr<LEDStripEffect> tempEffect) 
     {
@@ -434,7 +434,7 @@ public:
         if (!effect->IsEnabled())
         {
             if (!AreEffectsEnabled())
-                ClearRemoteColor(true);
+                ClearGlobalColor(true);
 
             effect->SetEnabled(true);
 

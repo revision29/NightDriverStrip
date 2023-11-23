@@ -287,10 +287,22 @@ public:
     {
         temp = min(1.0f, temp);
         int index = map(temp, 0.0f, 1.0f, 0.0f, 240.0f);
-        return ColorFromPalette(_palette, index, 255);
+        // Modified to work with global colors
+        CRGBPalette16 tempPalette = _palette;
+        if (g_ptrSystem->DeviceConfig().GetGlobalColor() != CRGB::Black)
+            tempPalette[1] = g_ptrSystem->DeviceConfig().GetGlobalColor();
+        if (g_ptrSystem->DeviceConfig().GetPreviousGlobalColor() != CRGB::Black)
+            tempPalette[2] = g_ptrSystem->DeviceConfig().GetPreviousGlobalColor();
+        //End global color mods
 
+        return ColorFromPalette(_palette, index, 255);
         //        uint8_t heatramp = (uint8_t)(t192 & 0x3F);
         //        heatramp <<=2;
+    }
+    void Draw() override
+    {
+        FastLED.clear(false);
+        DrawFire();
     }
 };
 

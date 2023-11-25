@@ -98,7 +98,7 @@ class RemoteButton
 
 std::map<uint, RemoteButton> GetRemoteButtons()
 {
-    return std::map<uint, RemoteButton> 
+     std::map<uint, RemoteButton> buttons
     {
         //Row 1
         {0xFF3AC5, {"Brightness Up",BRIGHTNESS_UP}},
@@ -166,7 +166,7 @@ std::map<uint, RemoteButton> GetRemoteButtons()
         {0xFF20DF, {"DIY 4",DIY4}},
         {0xFFA05F, {"DIY 5",DIY5}},
         {0xFF609F, {"DIY 6",DIY6}},
-        {0xFFE01F, {"Flash",FLASH}},
+        {0xFFE01F, {"Flash",FLASH}}
 
 
         /*
@@ -202,7 +202,7 @@ std::map<uint, RemoteButton> GetRemoteButtons()
         {0xFFE01F, {"Fade 7", FADE7}},
         */
 
-
+        /*
         // 24 Key Remote Buttons
         //Row 1
         {0xF700FF, {"Brightness Up",BRIGHTNESS_UP}},
@@ -239,6 +239,8 @@ std::map<uint, RemoteButton> GetRemoteButtons()
         {0xFF9867, {"Color 11",FILL_COLOR, "2E7CC7"}},
         {0xFF58A7, {"Color 12",FILL_COLOR, "C121B1"}},
         {0xFFD827, {"Smooth", SMOOTH, "2D87D7"}}
+        */
     };
+    return buttons;
 }
 #endif

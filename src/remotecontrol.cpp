@@ -170,7 +170,7 @@ void RemoteControl::handle()
                 {
                     currentBrightness = deviceConfig.GetBrightness() == 0 ? 127 :  deviceConfig.GetBrightness();
                     deviceConfig.SetBrightness(0);
-                    effectManager.ClearTemporaryStripEffect();
+                    effectManager.ClearTemporaryEffect();
                 }
             break;
             case NEXT_EFFECT: 
@@ -251,6 +251,7 @@ void RemoteControl::handle()
 
                 //ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Blue, CRGB::MediumPurple, CRGB::Azure), 256 / 32, .3, 0,4,0);
                 auto effect = make_shared_psram<PaletteEffect>(CRGBPalette16(CRGB::Blue, CRGB::MediumPurple, CRGB::Azure), 256 / 32, .3, 0,4,0);
+                effectManager.SetTemporaryEffect(effect); //This method (and ) needs to be added to the upstream codebase
             }
             break;
             //case JUMP7:
@@ -265,14 +266,15 @@ void RemoteControl::handle()
             //break;
             case AUTO:
             {
-                if (effectManager.GetInterval() != 30000) 
+                if (effectManager.GetInterval() != (DEFAULT_EFFECT_INTERVAL != 0 ? DEFAULT_EFFECT_INTERVAL : 3000)) 
                 {
                     //debugI("Setting interval to 30 seconds\n");
-                    
-                    effectManager.SetInterval(30000, true);
+                    // effectManager.ClearRemoteColor(); // To be uncommented when on current codebase
+                    effectManager.SetInterval(DEFAULT_EFFECT_INTERVAL != 0 ? DEFAULT_EFFECT_INTERVAL : 3000, true);
                    // debugI("Triggering Next Effect\n");
                     effectManager.NextEffect();
-                } else
+                } 
+                else
                 {
                     //debugI("Setting interval to 0 seconds\n");
                     effectManager.SetInterval(0);

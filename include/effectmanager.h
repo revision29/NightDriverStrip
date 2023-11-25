@@ -393,13 +393,12 @@ public:
 
     void ClearGlobalColor(bool retainRemoteEffect = false);
 
-    void SetTemporaryStripEffect (std::shared_ptr<LEDStripEffect> tempEffect) 
+    void SetTemporaryEffect (std::shared_ptr<LEDStripEffect> tempEffect) 
     {
         _tempEffect = tempEffect;
-        //StartEffect();
     }
 
-    void ClearTemporaryStripEffect()
+    void ClearTemporaryEffect()
     {
         _tempEffect = nullptr;
     }

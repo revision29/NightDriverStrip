@@ -8,10 +8,11 @@ For now, we will hard code the items and let the user manually change.
 class UserRemoteControl 
 {
     public:
-        std::map<uint, RemoteButton> buttons;
+        //std::map<uint, RemoteButton> buttons;
         
         UserRemoteControl()
         {
+            /*
             //Row 1
         buttons.emplace(0xFF3AC5, RemoteButton("Brightness Up",BRIGHTNESS_UP));
         buttons.emplace(0xFFBA45, RemoteButton("Brightness Down",BRIGHTNESS_DOWN));
@@ -78,6 +79,7 @@ class UserRemoteControl
         buttons.emplace(0xFFA05F, RemoteButton ("DIY 5",DIY5));
         buttons.emplace(0xFF609F, RemoteButton ("DIY 6",DIY6));
         buttons.emplace(0xFFE01F, RemoteButton ("Flash",FLASH));
+        */
         
 
     /*
@@ -113,7 +115,7 @@ class UserRemoteControl
         buttons.emplace(0xFFE01F, RemoteButton ("Fade 7", FADE7));
     */
 
-
+/*
         // 24 Key Remote Buttons
         //Row 1
         buttons.emplace(0xF700FF, RemoteButton("Brightness Up",BRIGHTNESS_UP));
@@ -150,7 +152,7 @@ class UserRemoteControl
         buttons.emplace(0xFF9867, RemoteButton ("Color 11",FILL_COLOR, "2E7CC7"));
         buttons.emplace(0xFF58A7, RemoteButton ("Color 12",FILL_COLOR, "C121B1"));
         buttons.emplace(0xFFD827, RemoteButton ("Smooth", SMOOTH, "2D87D7"));
-
+        */
         debugI("Creating user remote control.\n");
         }
 };

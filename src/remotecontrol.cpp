@@ -91,28 +91,34 @@ void RemoteControl::handle()
         {0xFF1AE5, {"Full Red",FILL_COLOR, "FF0000"}},
         {0xFF9A65, {"Full Green",FILL_COLOR, "00FF00"}},
         {0xFFA25D, {"Full Blue",FILL_COLOR, "0000FF"}},
-        {0xFF22DD, {"Full White",FILL_COLOR, "FFFFFF"}}
-        /*
+        {0xFF22DD, {"Full White",FILL_COLOR, "FFFFFF"}},
+        
         //Row 8
         {0xFF08F7, {"Increase Red",CHANGER, "10"}},
         {0xFF8877, {"Increase Green",CHANGEG, "10"}},
-        {0xFF48B7, {"Increase Blue",CHANGEB, "10"}},
-        {0xFFC837, {"Quick",QUICK}},//fade speed is fast
+        {0xFF48B7, {"Increase Blue", CHANGEB, "10"}},
+        {0xFFC837, {"Quick", QUICK}},//fade speed is fast
+        
         //Row 9
         {0xFF30CF, {"Descrease Red",CHANGER, "-10"}},
         {0xFFB04F, {"Descrease Green",CHANGEG, "-10"}},
         {0xFF708F, {"Decrease Blue",CHANGEB, "-10"}},
-        {0xFFF00F, {"Slow",SLOW}},//fade speed is slow
+        {0xFFF00F, {"Slow",SLOW}}//fade speed is slow
+        /*
         //Row 10
         {0xFF10EF, {"DIY 1",DIY1}},
         {0xFF906F, {"DIY 2",DIY2}},
         {0xFF50AF, {"DIY 3",DIY3}},
-        {0xFFD02F, {"Auto",AUTO}},
+        {0xFFD02F, {"Auto",AUTO}}
+        */
+/*
         //Row 11
         {0xFF20DF, {"DIY 4",DIY4}},
         {0xFFA05F, {"DIY 5",DIY5}},
         {0xFF609F, {"DIY 6",DIY6}},
-        {0xFFE01F, {"Flash",FLASH}}*/
+        {0xFFE01F, {"Flash",FLASH}}
+        */
+    
     };
     static boolean remotePower = true;
     

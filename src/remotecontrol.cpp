@@ -175,16 +175,22 @@ void RemoteControl::handle()
             break;
             case NEXT_EFFECT: 
                 effectManager.NextEffect();
+                // Soon to be implemented with fresh codebase
+                /*
+                if (deviceConfig.ApplyGlobalColors())
+                    effectManager.ClearRemoteColor();
+                else
+                    effectManager.NextEffect();
+                return;
+                */
             break;
             case FILL_COLOR:
             {
                 CRGB fillColor = hexToCRGB(thisButton.actionArgs);
-                effectManager.SetGlobalColor(fillColor); //to be repalced by: 
+                effectManager.SetGlobalColor(fillColor); 
+                //to be repalced by: 
                 /*
-                if (deviceConfig.GetGlobalColor() == fillColor)
-                    effectManager.ClearGlobalColor();
-                else
-                    effectManager.SetGlobalColor(fillColor);
+                effectManager.ApplyGlobalColor(fillColor);
                 */
             }
             break;
@@ -262,6 +268,7 @@ void RemoteControl::handle()
                 if (effectManager.GetInterval() != 30000) 
                 {
                     //debugI("Setting interval to 30 seconds\n");
+                    
                     effectManager.SetInterval(30000, true);
                    // debugI("Triggering Next Effect\n");
                     effectManager.NextEffect();
@@ -269,6 +276,11 @@ void RemoteControl::handle()
                 {
                     //debugI("Setting interval to 0 seconds\n");
                     effectManager.SetInterval(0);
+                    int tempBrightness = deviceConfig.GetBrightness();
+                    deviceConfig.SetBrightness(tempBrightness/2);
+                    sleep(200);
+                    deviceConfig.SetBrightness(tempBrightness);
+
                 }
             }
             break;

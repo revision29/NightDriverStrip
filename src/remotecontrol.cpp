@@ -72,8 +72,8 @@ void RemoteControl::handle()
 {
     decode_results results;
     auto &deviceConfig = g_ptrSystem->DeviceConfig();
-    static std::map<uint, RemoteButton> buttons = GetRemoteButtons(); // Defined in remotecontrolhelpers.h.
-
+    //static std::map<uint, RemoteButton> buttons = GetRemoteButtons(); // Defined in remotecontrolhelpers.h.
+    static UserRemoteControl myRemoteController = UserRemoteControl();//Loads remote and user defined buttons
     static uint lastResult = 0;
     static uint lastProcessTime = millis();
     static int currentBrightness = deviceConfig.GetBrightness();
@@ -101,8 +101,8 @@ void RemoteControl::handle()
     if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF && lastResult != 0) // Repeat code sent by remote. Treat like it was the previous button code processed.
         result = lastResult;
 
-    auto searchResult = buttons.find(result);
-    if (searchResult != buttons.end()) 
+    auto searchResult = myRemoteController.buttons.find(result);
+    if (searchResult != myRemoteController.buttons.end()) 
     {
         RemoteButton thisButton = searchResult->second;
         if (result == lastResult) 
@@ -271,7 +271,6 @@ void RemoteControl::handle()
                     //debugI("Setting interval to 30 seconds\n");
                     // effectManager.ClearRemoteColor(); // To be uncommented when on current codebase
                     effectManager.SetInterval(DEFAULT_EFFECT_INTERVAL != 0 ? DEFAULT_EFFECT_INTERVAL : 3000, true);
-                   // debugI("Triggering Next Effect\n");
                     effectManager.NextEffect();
                 } 
                 else

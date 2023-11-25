@@ -1,6 +1,6 @@
 #pragma once
-#include "userremote.h"
-
+//#include "userremote.h"
+#if ENABLE_REMOTE
 CRGB hexToCRGB (String hexString) 
 {
     //This function converts a hex code stored as a tring to a CRGB color object.
@@ -241,3 +241,4 @@ std::map<uint, RemoteButton> GetRemoteButtons()
         {0xFFD827, {"Smooth", SMOOTH, "2D87D7"}}
     };
 }
+#endif

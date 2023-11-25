@@ -6,7 +6,7 @@ For now, we will hard code the items and let the user manually change.
 #pragma once
 
 
-/*
+
 
 class UserRemoteControl 
 {
@@ -114,7 +114,6 @@ class UserRemoteControl
             {0xFFE01F, {"Fade 7", FADE7}},
             */
 
-/*
             // 24 Key Remote Buttons
             //Row 1
             {0xF700FF, {"Brightness Up",BRIGHTNESS_UP}},
@@ -152,9 +151,9 @@ class UserRemoteControl
             {0xFF58A7, {"Color 12",FILL_COLOR, "C121B1"}},
             {0xFFD827, {"Smooth", SMOOTH, "2D87D7"}}
         };
+        
         UserRemoteControl()
         {
-
+        debugI("Creating user remote control.\n");
         }
 };
-*/

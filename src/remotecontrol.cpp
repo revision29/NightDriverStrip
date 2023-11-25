@@ -31,6 +31,7 @@
 #include "globals.h"
 
 #if ENABLE_REMOTE
+#include "remotecontrolhelpers.h"
 #include "userremote.h"
 #include "systemcontainer.h"
 
@@ -44,7 +45,7 @@
 We will need to define the user remote control
 */
 
-UserRemoteControl myRemoteController = UserRemoteControl();//Loads remote and user defined buttons
+//UserRemoteControl myRemoteController = UserRemoteControl();//Loads remote and user defined buttons
 
 /*
 !!! See ~/Development/Remote Code/Changes to effect manager.md for task list
@@ -70,11 +71,11 @@ then adjust to the following:
 void RemoteControl::handle()
 {
     decode_results results;
-    auto& deviceConfig = g_ptrSystem->DeviceConfig();
+    auto &deviceConfig = g_ptrSystem->DeviceConfig();
+    static std::map<uint, RemoteButton> buttons = GetRemoteButtons(); // Defined in remotecontrolhelpers.h.
 
     static uint lastResult = 0;
     static uint lastProcessTime = millis();
-    //static int currentBrightness = deviceConfig.GetBrightness() == 0 ? 255 : deviceConfig.GetBrightness();
     static int currentBrightness = deviceConfig.GetBrightness();
 
     static boolean remotePower = true;
@@ -100,8 +101,8 @@ void RemoteControl::handle()
     if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF && lastResult != 0) // Repeat code sent by remote. Treat like it was the previous button code processed.
         result = lastResult;
 
-    auto searchResult = myRemoteController.buttons.find(result);
-    if (searchResult != myRemoteController.buttons.end()) 
+    auto searchResult = buttons.find(result);
+    if (searchResult != buttons.end()) 
     {
         RemoteButton thisButton = searchResult->second;
         if (result == lastResult) 
@@ -154,27 +155,6 @@ void RemoteControl::handle()
                     currentBrightness = deviceConfig.GetBrightness();
                     deviceConfig.SetBrightness(0);
                 }
-/*
-                if (remotePower == true)
-                {
-                    debugI("Power is on, so w turn it off.\n");
-                    remotePower = false;
-                    if (deviceConfig.GetBrightness() != 0) 
-                        currentBrightness = deviceConfig.GetBrightness();
-                    else
-                        currentBrightness = 255;
-                    deviceConfig.SetBrightness(0);
-                    //deviceConfig.ClearGlobalColor();
-                    
-                } else 
-                {
-                    debugI("Power is off, so we turn it on\n");
-                    remotePower = false;
-                    if (currentBrightness == 0)
-                        currentBrightness = 255;
-                    deviceConfig.SetBrightness(currentBrightness);
-                }
-                */
             }
             case ButtonActions::POWER_ON:
                 //effectManager.SetInterval(0);
@@ -185,8 +165,13 @@ void RemoteControl::handle()
                 }
             break;
             case POWER_OFF:
-                effectManager.ClearTemporaryStripEffect();
-                effectManager.ClearGlobalColor();
+                //effectManager.ClearTemporaryStripEffect();
+                //effectManager.ClearGlobalColor();
+                {
+                    currentBrightness = deviceConfig.GetBrightness() == 0 ? 127 :  deviceConfig.GetBrightness();
+                    deviceConfig.SetBrightness(0);
+                    effectManager.ClearTemporaryStripEffect();
+                }
             break;
             case NEXT_EFFECT: 
                 effectManager.NextEffect();
@@ -194,7 +179,7 @@ void RemoteControl::handle()
             case FILL_COLOR:
             {
                 CRGB fillColor = hexToCRGB(thisButton.actionArgs);
-                effectManager.SetGlobalColor(fillColor);
+                effectManager.SetGlobalColor(fillColor); //to be repalced by: 
                 /*
                 if (deviceConfig.GetGlobalColor() == fillColor)
                     effectManager.ClearGlobalColor();

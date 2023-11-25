@@ -5,100 +5,8 @@ For now, we will hard code the items and let the user manually change.
 */
 #pragma once
 
-CRGB hexToCRGB (String hexString) 
-{
-    //This function converts a hex code stored as a tring to a CRGB color object.
-    //It should no longer require the helper function: hexStringToInt. I rewrot that function and then incorporated the logic into this function because it was so simple.
-    CRGB myColor = CRGB(5,5,5);//The variable that we will return, with an arbitrary initial value.
-    int rHexInt = 0;
-    int bHexInt = 0;
-    int gHexInt = 0;
 
-    //We need to prpare the hex string for processing by removing any pound signs, spaces, and adding 0s if the string is less than 6 charactrs long.
-    hexString.replace("#","");
-    hexString.replace(" ","");
-    if (hexString.length() < 6 && hexString.length() != 3)
-    {
-        while (hexString.length() < 6 ) {
-            hexString += "0";
-        }
-    } 
-    else if (hexString.length() == 3)
-    {
-        //Sometimes an RGB hex can be 3 charactrs. That is when each of the three colors consist of two values that are the same. EX: 00FFAA ir rendered 0FA.
-
-        String r1 = hexString.substring(0,1);
-        String g1 = hexString.substring(1,2);
-        String b1 = hexString.substring(2,3);
-        hexString = r1 + r1 + g1 + g1 + b1 + b1;//Ugly yet effective
-
-    }
-
-    String rHexString = hexString.substring(0,2);
-    String gHexString = hexString.substring(2,4);
-    String bHexString = hexString.substring(4,6);
-    //debugI("Color we are sending to draw %s \n",hexString);
-    
-    if (rHexString.length() == 2 && gHexString.length() == 2 && bHexString.length() == 2 )
-    {
-        sscanf(rHexString.c_str(), "%x", &rHexInt);
-        sscanf(gHexString.c_str(), "%x", &gHexInt); 
-        sscanf(bHexString.c_str(), "%x", &bHexInt);
-        //debugI("r is %i, g is %i, b is %i", rHexInt, gHexInt,bHexInt);
-        myColor = CRGB (rHexInt,gHexInt,bHexInt);
-    }
-    return myColor;
-}
-
-enum ButtonActions
-    {
-        BRIGHTNESS_UP,
-        BRIGHTNESS_DOWN,
-        POWER_ON,
-        POWER_OFF,
-        POWER_TOGGLE,
-        FILL_COLOR,
-        TRIGGER_EFFECT,
-        CHANGER,
-        CHANGEG,
-        CHANGEB,
-        JUMP3,
-        JUMP7,
-        FADE, // Toggle between fade 3 and 7
-        FADE3,
-        FADE7,
-        STROBE,
-        AUTO,
-        FLASH,
-        QUICK,
-        SLOW,
-        DIY1,
-        DIY2,
-        DIY3,
-        DIY4,
-        DIY5,
-        DIY6,
-        SMOOTH, // Toggle between smooth transition or jump : i.e. transition speed
-        NEXT_EFFECT,
-        PREVIOUS_EFFECT,
-        ENABLE_MUSIC,
-        DISABLE_MUSIC,
-        TOGGLE_MUSIC
-    };
-
-class RemoteButton
-{
-    public:
-        String name;
-        ButtonActions buttonAction;
-        String actionArgs;
-        RemoteButton (String _name, ButtonActions _buttonAction, String _actionArgs = "") 
-        {
-            name = _name;
-            buttonAction = _buttonAction;
-            actionArgs = _actionArgs;
-        };
-};
+/*
 
 class UserRemoteControl 
 {
@@ -206,7 +114,7 @@ class UserRemoteControl
             {0xFFE01F, {"Fade 7", FADE7}},
             */
 
-
+/*
             // 24 Key Remote Buttons
             //Row 1
             {0xF700FF, {"Brightness Up",BRIGHTNESS_UP}},
@@ -249,3 +157,4 @@ class UserRemoteControl
 
         }
 };
+*/

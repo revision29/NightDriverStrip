@@ -31,10 +31,10 @@
 #include "globals.h"
 
 #if ENABLE_REMOTE
-#include "remotecontrolhelpers.h"
-#include "userremote.h"
-#include "systemcontainer.h"
 
+#include "systemcontainer.h"
+#include "remotecontrolhelpers.h"
+//#include "userremote.h"
 
 // Include any effects you will directly trigger with the remote.
 #include "effects/strip/misceffects.h"
@@ -78,48 +78,7 @@ void RemoteControl::handle()
     static uint lastResult = 0;
     static uint lastProcessTime = millis();
     static int currentBrightness = deviceConfig.GetBrightness();
-    //static std::map<uint, RemoteButton> tempButtons = GetRemoteButtons();
-    static std::map<uint, RemoteButton> buttons
-    {
-        //Row 1
-        {0xFF3AC5, {"Brightness Up",BRIGHTNESS_UP}},
-        {0xFFBA45, {"Brightness Down",BRIGHTNESS_DOWN}},
-        {0xFF827D, {"Next Effect",NEXT_EFFECT}},
-        {0xFF02FD, {"Power Off",POWER_TOGGLE}},
-
-        //Row 2
-        {0xFF1AE5, {"Full Red",FILL_COLOR, "FF0000"}},
-        {0xFF9A65, {"Full Green",FILL_COLOR, "00FF00"}},
-        {0xFFA25D, {"Full Blue",FILL_COLOR, "0000FF"}},
-        {0xFF22DD, {"Full White",FILL_COLOR, "FFFFFF"}},
-        
-        //Row 8
-        {0xFF08F7, {"Increase Red",CHANGER, "10"}},
-        {0xFF8877, {"Increase Green",CHANGEG, "10"}},
-        {0xFF48B7, {"Increase Blue", CHANGEB, "10"}},
-        {0xFFC837, {"Quick", QUICK}},//fade speed is fast
-        
-        //Row 9
-        {0xFF30CF, {"Descrease Red",CHANGER, "-10"}},
-        {0xFFB04F, {"Descrease Green",CHANGEG, "-10"}},
-        {0xFF708F, {"Decrease Blue",CHANGEB, "-10"}},
-        {0xFFF00F, {"Slow",SLOW}}//fade speed is slow
-        /*
-        //Row 10
-        {0xFF10EF, {"DIY 1",DIY1}},
-        {0xFF906F, {"DIY 2",DIY2}},
-        {0xFF50AF, {"DIY 3",DIY3}},
-        {0xFFD02F, {"Auto",AUTO}}
-        */
-/*
-        //Row 11
-        {0xFF20DF, {"DIY 4",DIY4}},
-        {0xFFA05F, {"DIY 5",DIY5}},
-        {0xFF609F, {"DIY 6",DIY6}},
-        {0xFFE01F, {"Flash",FLASH}}
-        */
     
-    };
     static boolean remotePower = true;
     
     if (!_IR_Receive.decode(&results))
@@ -144,8 +103,8 @@ void RemoteControl::handle()
     if (result == 0xFFFFFFFF  && lastResult != 0xFFFFFFFF && lastResult != 0) // Repeat code sent by remote. Treat like it was the previous button code processed.
         result = lastResult;
     debugI("about to search buttons");
-    auto searchResult = buttons.find(result);
-    if (searchResult != buttons.end()) 
+    auto searchResult = remoteButtons.find(result);
+    if (searchResult != remoteButtons.end()) 
     {
 
         debugI("we have a button match");
@@ -269,23 +228,48 @@ void RemoteControl::handle()
                 }
             break;
             case DIY1:
+                debugI("DIY 1 pressed. Effect count is %i\n", effectManager.EffectCount());
                 effectManager.SetCurrentEffectIndex(0);
+                
+                
             break;
             case DIY2: 
-                effectManager.SetCurrentEffectIndex(1);
+            {
+                debugI("DIY 2 pressed. Effect count is %i\n", effectManager.EffectCount());
+                //if (effectManager.EffectCount() > 1)
+                //    effectManager.SetCurrentEffectIndex(1);
+            }
                 
             break;
             case DIY3: 
-                effectManager.SetCurrentEffectIndex(2);
+            {
+                debugI("DIY 3 pressed. Effect count is %i\n", effectManager.EffectCount());
+                //if (effectManager.EffectCount() > 2)
+                //    effectManager.SetCurrentEffectIndex(2);
+            }
             break;
             case DIY4: 
-                effectManager.SetCurrentEffectIndex(3);
+            {
+                debugI("DIY 4 pressed. Effect count is %i\n", effectManager.EffectCount());
+                //if (effectManager.EffectCount() > 3)
+                //    effectManager.SetCurrentEffectIndex(3);
+            }
+
             break;
             case DIY5: 
-                effectManager.SetCurrentEffectIndex(4);
+            {
+                debugI("DIY 5 pressed. Effect count is %i\n", effectManager.EffectCount());
+                //if (effectManager.EffectCount() > 4)
+                 //   effectManager.SetCurrentEffectIndex(4);
+            }
+            
             break;
             case DIY6: 
-                effectManager.SetCurrentEffectIndex(5);
+            {
+                debugI("DIY 6 pressed. Effect count is %i\n", effectManager.EffectCount());
+                //if (effectManager.EffectCount() > 5)
+                    //effectManager.SetCurrentEffectIndex(5);
+            }
             break;
             
             // There are effects defined that will scroll throw different effects.
@@ -295,8 +279,8 @@ void RemoteControl::handle()
             // 3 colors
 
                 //ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Blue, CRGB::MediumPurple, CRGB::Azure), 256 / 32, .3, 0,4,0);
-                auto effect = make_shared_psram<PaletteEffect>(CRGBPalette16(CRGB::Blue, CRGB::MediumPurple, CRGB::Azure), 256 / 32, .3, 0,4,0);
-                effectManager.SetTemporaryEffect(effect); //This method (and ) needs to be added to the upstream codebase
+                //auto effect = make_shared_psram<PaletteEffect>(CRGBPalette16(CRGB::Blue, CRGB::MediumPurple, CRGB::Azure), 256 / 32, .3, 0,4,0);
+                //effectManager.SetTemporaryEffect(effect); //This method (and ) needs to be added to the upstream codebase
             }
             break;
             //case JUMP7:
@@ -309,7 +293,7 @@ void RemoteControl::handle()
             //break;
             //case STROBE:
             //break;
-            case AUTO:
+            case AUTO_SCROLL:
             {
                 if (effectManager.GetInterval() != (DEFAULT_EFFECT_INTERVAL != 0 ? DEFAULT_EFFECT_INTERVAL : 3000)) 
                 {

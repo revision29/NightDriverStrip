@@ -85,6 +85,7 @@ void RemoteControl::handle()
         return;
 
     uint result = results.value;
+    debugI("start of IR handle time: %i", millis());
     debugI("received Remote Code");
     debugI("Remote code %08x", result);
     _IR_Receive.resume();

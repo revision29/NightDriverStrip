@@ -44,12 +44,16 @@ class RemoteButton
     public:
         String name;
         ButtonActions buttonAction;
-        String actionArgs;
-        RemoteButton (String _name, ButtonActions _buttonAction, String _actionArgs = "") 
+        String actionArgs; // In case someone wants to pass along a string of arguments that they might want to break apart and use to create an effect, call a function, etc.
+        CRGB color; // Stores a color associated with a remote button.
+        
+        RemoteButton (String _name, ButtonActions _buttonAction, String _actionArgs = "", CRGB _color = CRGB::Black) 
         {
             name = _name;
             buttonAction = _buttonAction;
             actionArgs = _actionArgs;
+            if (_color != CRGB::Black)
+                color = _color;
         };
 };
 
@@ -63,9 +67,9 @@ std::map<uint, RemoteButton> remoteButtons
     {0xFF02FD, {"Power Off",POWER_TOGGLE}},
 
     //Row 2
-    {0xFF1AE5, {"Full Red",FILL_COLOR, "FF0000"}},
-    {0xFF9A65, {"Full Green",FILL_COLOR, "00FF00"}},
-    {0xFFA25D, {"Full Blue",FILL_COLOR, "0000FF"}},
+    {0xFF1AE5, {"Full Red",FILL_COLOR, "FF0000", CRGB(0xFF0000)}},
+    {0xFF9A65, {"Full Green",FILL_COLOR, "00FF00", CRGB(0x00FF00)}},
+    {0xFFA25D, {"Full Blue",FILL_COLOR, "0000FF", CRGB(0x0000FF)}},
     {0xFF22DD, {"Full White",FILL_COLOR, "FFFFFF"}},
     
     //Row 3

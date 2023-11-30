@@ -109,11 +109,11 @@ void RemoteControl::handle()
     {
 
         debugI("we have a button match");
-        RemoteButton thisButton = searchResult->second;
+        RemoteButton button = searchResult->second;
         if (result == lastResult) 
         {
             static uint lastRepeatTime = millis();
-            auto kMinRepeatms = (thisButton.buttonAction == BRIGHTNESS_DOWN || thisButton.buttonAction == BRIGHTNESS_UP) ? 150 : 300;
+            auto kMinRepeatms = (button.buttonAction == BRIGHTNESS_DOWN || button.buttonAction == BRIGHTNESS_UP) ? 150 : 300;
 
             //We do not want to set the kMinRepeatms to 0 because some remotes send a code more than once and also there might be refelctive surfaces that will cause the signal to be recieved more than once in rapid succession.
             // Brightness adjustments will be allowed to repeat more often. 
@@ -134,7 +134,7 @@ void RemoteControl::handle()
         //Process the code
         auto &effectManager = g_ptrSystem->EffectManager();
         
-        switch (thisButton.buttonAction)
+        switch (button.buttonAction)
         {
             case BRIGHTNESS_UP:
                deviceConfig.SetBrightness((int)deviceConfig.GetBrightness() + BRIGHTNESS_STEP);
@@ -191,8 +191,15 @@ void RemoteControl::handle()
             break;
             case FILL_COLOR:
             {
-                CRGB fillColor = hexToCRGB(thisButton.actionArgs);
-                effectManager.SetGlobalColor(fillColor); 
+                if (button.color)
+                {
+                    effectManager.SetGlobalColor(button.color); 
+                }
+                else
+                {
+                    CRGB fillColor = hexToCRGB(button.actionArgs);
+                    effectManager.SetGlobalColor(fillColor); 
+                }
                 //to be repalced by: 
                 /*
                 effectManager.ApplyGlobalColor(fillColor);
@@ -209,14 +216,14 @@ void RemoteControl::handle()
             case CHANGER: // The button can send a positive or negative value to adjust the color.
                 {
                     CRGB tempColor = g_ptrSystem->DeviceConfig().GetGlobalColor();
-                    tempColor.red += thisButton.actionArgs.toInt();
+                    tempColor.red += button.actionArgs.toInt();
                     effectManager.SetGlobalColor(tempColor);
                 }
             break;
             case CHANGEG: // The button can send a positive or negative value to adjust the color.
                 {
                     CRGB tempColor = g_ptrSystem->DeviceConfig().GetGlobalColor();
-                    tempColor.green += thisButton.actionArgs.toInt();
+                    tempColor.green += button.actionArgs.toInt();
                     effectManager.SetGlobalColor(tempColor);
                 }
                     
@@ -224,7 +231,7 @@ void RemoteControl::handle()
             case CHANGEB: // The button can send a positive or negative value to adjust the color.
                 {
                     CRGB tempColor = g_ptrSystem->DeviceConfig().GetGlobalColor();
-                    tempColor.blue += thisButton.actionArgs.toInt();
+                    tempColor.blue += button.actionArgs.toInt();
                     effectManager.SetGlobalColor(tempColor); 
                 }
             break;

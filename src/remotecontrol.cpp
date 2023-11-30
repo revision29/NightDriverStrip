@@ -198,7 +198,7 @@ void RemoteControl::handle()
                 else
                 {
                     CRGB fillColor = hexToCRGB(button.actionArgs);
-                    effectManager.SetGlobalColor(fillColor); 
+                    effectManager.SetGlobalColor(fillColor);
                 }
                 //to be repalced by: 
                 /*

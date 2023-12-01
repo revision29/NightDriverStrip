@@ -1,75 +1,19 @@
-//+--------------------------------------------------------------------------
-//
-// File:        remotecontrol.cpp
-//
-// NightDriverStrip - (c) 2018 Plummer's Software LLC.  All Rights Reserved.
-//
-// This file is part of the NightDriver software project.
-//
-//    NightDriver is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
-//
-//    NightDriver is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with Nightdriver.  It is normally found in copying.txt
-//    If not, see <https://www.gnu.org/licenses/>.
-//
-//
-// Description:
-//
-//    Handles a simple IR remote for changing effects, brightness, etc.
-//
-// History:     Jun-14-2023     Rbergen        Extracted handle() from header
-//---------------------------------------------------------------------------
-
 #include "globals.h"
 
 #if ENABLE_REMOTE
 
 #include "systemcontainer.h"
-#include "remotecontrolhelpers.h"
+#include "custom_remote_helpers.h"
 //#include "userremote.h"
 
 // Include any effects you will directly trigger with the remote.
 #include "effects/strip/misceffects.h"
 #include "effects/strip/paletteeffect.h"
 
+
 #define BRIGHTNESS_STEP     20
-/*
-We will need to define the user remote control
-*/
 
-//UserRemoteControl myRemoteController = UserRemoteControl();//Loads remote and user defined buttons
-
-/*
-!!! See ~/Development/Remote Code/Changes to effect manager.md for task list
-
-New taask list
-
-After pulling new code base:
-- [ ] change efect manager to not make random effects, but fill global color when setting and applying global color
-- [ ] Push that change
-
-- [ ] port over my remote control code
-- [ ] hook my remove control code to the new global color methods
-
-then adjust to the following:
-- [ ] when pressing a color it sets te color and applies it (with new codebase)
-- [ ] pressing next effect button will 
-    - [ ] if applyglobal color is true it will toggle to false and return back to whatever effect is triggered while retaining the global color
-    - [ ] if apply global is false we will go to the next effect
-- [ ] IN effects.cpp have a solid color that is changed by global color
-- [ ] in effects.cpp have a solid color that is not changed by the global color
-- [ ] build out the rest of the button actions in remotecontrol.cpp
-*/
-/*
-void RemoteControl::handle_old()
+void RemoteControl::handle()
 {
     decode_results results;
     auto &deviceConfig = g_ptrSystem->DeviceConfig();
@@ -92,7 +36,13 @@ void RemoteControl::handle_old()
     _IR_Receive.resume();
     //debugI("Now %i, lastProcessTime %i\n", millis(), lastProcessTime);
     uint timeDiff = millis() - lastProcessTime;
-  
+    //debugI("Process time diff %i\n", timeDiff);
+    /*
+    if (result == 0xFFFFFFFF)
+    {
+        debugI("We have a repeat code\n");
+    }
+    */
 
     if (result == 0xFFFFFFFF && timeDiff < 100) 
         return;
@@ -176,13 +126,13 @@ void RemoteControl::handle_old()
             case NEXT_EFFECT: 
                 effectManager.NextEffect();
                 // Soon to be implemented with fresh codebase
-                
-                //if (deviceConfig.ApplyGlobalColors())
-                //    effectManager.ClearRemoteColor();
-                //else
-                //    effectManager.NextEffect();
-                //return;
-                
+                /*
+                if (deviceConfig.ApplyGlobalColors())
+                    effectManager.ClearRemoteColor();
+                else
+                    effectManager.NextEffect();
+                return;
+                */
             break;
             case FILL_COLOR:
             {
@@ -196,9 +146,9 @@ void RemoteControl::handle_old()
                     effectManager.SetGlobalColor(fillColor);
                 }
                 //to be repalced by: 
-                
-                //effectManager.ApplyGlobalColor(fillColor);
-                
+                /*
+                effectManager.ApplyGlobalColor(fillColor);
+                */
             }
             break;
             
@@ -336,6 +286,5 @@ void RemoteControl::handle_old()
     //processingRemoteButtonPress = false;
     debugI("end of IR handle time: %i", millis());
 }
-*/
-#include "custom_remote.h"
+
 #endif

@@ -1,5 +1,5 @@
 #pragma once
-
+#define BRIGHTNESS_MIN uint8_t(0)
 #if DEMO
 
     // This is a simple demo configuration.  To build, simply connect the data lead from a WS2812B

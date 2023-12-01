@@ -1,6 +1,5 @@
 #pragma once
 #include "effectsupport.h"
-
 // Include the effect classes we'll need later
 
 #include "soundanalyzer.h"
@@ -90,11 +89,22 @@
 #if USE_HUB75 && ENABLE_WIFI
     std::vector<SettingSpec, psram_allocator<SettingSpec>> PatternSubscribers::mySettingSpecs = {};
 #endif
-
+/*
+    PaletteEffect(const CRGBPalette16 & palette,
+                  float density = 1.0,
+                  float paletteSpeed = 1,
+                  float ledsPerSecond = 0,
+                  float lightSize = 1,
+                  float gapSize = 1,
+                  TBlendType blend = LINEARBLEND,
+                  bool  bErase = true,
+                  float brightness = 1.0)*/
 #if DEMO
-    ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
-    ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 6, 2);
-    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, MagentaColors_p, 256 / 16, .1, 0,1,0);
+    debugI("setting effects from external file");
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Blue, CRGB::Purple, CRGB::Blue), 16, .1, 0, NUM_LEDS, 0, LINEARBLEND, false);
+    //ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
+    //ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 6, 2);
+    //ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, MagentaColors_p, 256 / 16, .1, 0,1,0);
     ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, LavaColors_p, 256 / 16, .1, 0,1,0);
     ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PurpleColors_p, 256 / 16, .1, 0,1,0);
     ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,1,0);
@@ -103,6 +113,9 @@
     ADD_EFFECT(EFFECT_STRIP_METEOR, MeteorEffect, 4, 4, 10, 2.0, 2.0);
     ADD_EFFECT(EFFECT_STRIP_COLOR_FILL, ColorFillEffect, CRGB::Magenta, 1);
     ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 3, 10, 100, 3, 15, false, false); //t(const String & strName, int ledCount = NUM_LEDS, int cellsPerLED = 1, int cooling = 20, int sparking = 100, int sparks = 3, int sparkHeight = 4,  bool breversed = false, bool bmirrored = false)
+    #ifndef EFFECT_SET_VERSION
+            #define EFFECT_SET_VERSION  2.5   // Bump version if default set changes in a meaningful way
+    #endif
 
 # elif CROSS
     //debugI("NUmber of leds %i",NUM_LEDS);

@@ -14,7 +14,7 @@
     #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
     //#define MATRIX_WIDTH            32
     //#define MATRIX_HEIGHT           8
-    #define MATRIX_WIDTH            6
+    #define MATRIX_WIDTH            10
     #define MATRIX_HEIGHT           8
 
     #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)

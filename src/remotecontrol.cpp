@@ -36,103 +36,107 @@
 
 #define BRIGHTNESS_STEP     20
 
-void RemoteControl::handle()
-{
-    decode_results results;
-    static uint lastResult = 0;
-
-    if (!_IR_Receive.decode(&results))
-        return;
-
-    uint result = results.value;
-    _IR_Receive.resume();
-
-    debugV("Received IR Remote Code: 0x%08X, Decode: %08X\n", result, results.decode_type);
-
-    if (0xFFFFFFFF == result || result == lastResult)
+#if __has_include ("custom_remote.h")
+      #include "custom_remote.h"
+#else
+    void RemoteControl::handle()
     {
-        static uint lastRepeatTime = millis();
+        decode_results results;
+        static uint lastResult = 0;
 
-        // Only the OFF key runs at the full unbounded speed, so you can rapidly dim.  But everything
-        // else has its repeat rate clamped here.
+        if (!_IR_Receive.decode(&results))
+            return;
 
-        const auto kMinRepeatms = (lastResult == IR_OFF) ? 0 : 200;
+        uint result = results.value;
+        _IR_Receive.resume();
 
-        if (millis() - lastRepeatTime > kMinRepeatms)
+        debugV("Received IR Remote Code: 0x%08X, Decode: %08X\n", result, results.decode_type);
+
+        if (0xFFFFFFFF == result || result == lastResult)
         {
-            debugV("Remote Repeat; lastResult == %08x, elapsed = %lu\n", lastResult, millis()-lastRepeatTime);
-            result = lastResult;
-            lastRepeatTime = millis();
+            static uint lastRepeatTime = millis();
+
+            // Only the OFF key runs at the full unbounded speed, so you can rapidly dim.  But everything
+            // else has its repeat rate clamped here.
+
+            const auto kMinRepeatms = (lastResult == IR_OFF) ? 0 : 200;
+
+            if (millis() - lastRepeatTime > kMinRepeatms)
+            {
+                debugV("Remote Repeat; lastResult == %08x, elapsed = %lu\n", lastResult, millis()-lastRepeatTime);
+                result = lastResult;
+                lastRepeatTime = millis();
+            }
+            else
+            {
+                return;
+            }
         }
-        else
+        lastResult = result;
+
+        auto &effectManager = g_ptrSystem->EffectManager();
+        auto &deviceConfig = g_ptrSystem->DeviceConfig();
+
+        if (IR_ON == result)
         {
+            debugV("Turning ON via remote");
+            effectManager.ClearRemoteColor();
+            effectManager.SetInterval(0);
+            effectManager.StartEffect();
+            deviceConfig.SetBrightness(BRIGHTNESS_MAX);
             return;
         }
-    }
-    lastResult = result;
-
-    auto &effectManager = g_ptrSystem->EffectManager();
-    auto &deviceConfig = g_ptrSystem->DeviceConfig();
-
-    if (IR_ON == result)
-    {
-        debugV("Turning ON via remote");
-        effectManager.ClearRemoteColor();
-        effectManager.SetInterval(0);
-        effectManager.StartEffect();
-        deviceConfig.SetBrightness(BRIGHTNESS_MAX);
-        return;
-    }
-    else if (IR_OFF == result)
-    {
-        deviceConfig.SetBrightness((int)deviceConfig.GetBrightness() - BRIGHTNESS_STEP);
-        return;
-    }
-    else if (IR_BPLUS == result)
-    {
-        if (deviceConfig.ApplyGlobalColors())
-            effectManager.ClearRemoteColor();
-        else
-            effectManager.NextEffect();
-        
-        return;
-    }
-    else if (IR_BMINUS == result)
-    {
-        if (deviceConfig.ApplyGlobalColors())
-            effectManager.ClearRemoteColor();
-        else
-            effectManager.PreviousEffect();
-        
-        return;
-    }
-    else if (IR_SMOOTH == result)
-    {
-        effectManager.ClearRemoteColor();
-        effectManager.SetInterval(EffectManager::csSmoothButtonSpeed);
-    }
-    else if (IR_STROBE == result)
-    {
-        effectManager.NextPalette();
-    }
-    else if (IR_FLASH == result)
-    {
-        effectManager.PreviousPalette();
-    }
-    else if (IR_FADE == result)
-    {
-        effectManager.ShowVU( !effectManager.IsVUVisible() );
-    }
-
-    for (int i = 0; i < ARRAYSIZE(RemoteColorCodes); i++)
-    {
-        if (RemoteColorCodes[i].code == result)
+        else if (IR_OFF == result)
         {
-            debugV("Changing Color via remote: %08X\n", (uint) RemoteColorCodes[i].color);
-            effectManager.ApplyGlobalColor(RemoteColorCodes[i].color);
+            deviceConfig.SetBrightness((int)deviceConfig.GetBrightness() - BRIGHTNESS_STEP);
             return;
         }
+        else if (IR_BPLUS == result)
+        {
+            if (deviceConfig.ApplyGlobalColors())
+                effectManager.ClearRemoteColor();
+            else
+                effectManager.NextEffect();
+            
+            return;
+        }
+        else if (IR_BMINUS == result)
+        {
+            if (deviceConfig.ApplyGlobalColors())
+                effectManager.ClearRemoteColor();
+            else
+                effectManager.PreviousEffect();
+            
+            return;
+        }
+        else if (IR_SMOOTH == result)
+        {
+            effectManager.ClearRemoteColor();
+            effectManager.SetInterval(EffectManager::csSmoothButtonSpeed);
+        }
+        else if (IR_STROBE == result)
+        {
+            effectManager.NextPalette();
+        }
+        else if (IR_FLASH == result)
+        {
+            effectManager.PreviousPalette();
+        }
+        else if (IR_FADE == result)
+        {
+            effectManager.ShowVU( !effectManager.IsVUVisible() );
+        }
+
+        for (int i = 0; i < ARRAYSIZE(RemoteColorCodes); i++)
+        {
+            if (RemoteColorCodes[i].code == result)
+            {
+                debugV("Changing Color via remote: %08X\n", (uint) RemoteColorCodes[i].color);
+                effectManager.ApplyGlobalColor(RemoteColorCodes[i].color);
+                return;
+            }
+        }
     }
-}
+#endif
 
 #endif

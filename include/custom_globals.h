@@ -57,7 +57,26 @@
     #define ENABLE_REMOTE           1   // IR Remote 
     #define IR_REMOTE_PIN   48//heltec
     //#define IR_REMOTE_PIN   14 //esp
-    
+
+#elif EAVES
+    #ifndef PROJECT_NAME
+        #define PROJECT_NAME            "Joe Eaves"
+    #endif
+    #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
+    #define MATRIX_WIDTH            653
+    #define MATRIX_HEIGHT           1
+
+    #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)
+    #define NUM_CHANNELS            1
+    #define ENABLE_AUDIO            0
+
+    //#define POWER_LIMIT_MW       12 * 10 * 1000   // 10 amp supply at 5 volts assumed
+    #define POWER_LIMIT_MW       5 * 25 * 1000   // 3 amp supply at 5 volts assumed
+    #define ENABLE_NTP              1
+    #define IR_REMOTE_PIN           48
+    #define ENABLE_REMOTE           1
+    #define INCOMING_WIFI_ENABLED   0   // Accepting incoming color data and commands
+    #define TIME_BEFORE_LOCAL       1   // How many seconds before the lamp times out and shows local content
 
 #elif CROSS
 

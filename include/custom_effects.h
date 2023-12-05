@@ -101,7 +101,10 @@
                   float brightness = 1.0)*/
 #if DEMO
     debugI("setting effects from external file");
-    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Blue, CRGB::Red, CRGB::Blue), 32, .1, 0, NUM_LEDS, 0, LINEARBLEND, false);
+    //ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Blue, CRGB::Red, CRGB::Blue), 32, .1, 0, NUM_LEDS, 0, LINEARBLEND, false);
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Red, CRGB::Green, CRGB::White, CRGB::Red, CRGB::Green, CRGB::White, CRGB::Red, CRGB::Green, CRGB::White, CRGB::Red, CRGB::Green, CRGB::White, CRGB::Red, CRGB::Green, CRGB::White, CRGB::Red), 1, 1, 0, 5, 0, NOBLEND);
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Blue, CRGB::Red, CRGB::Blue), 32, .1, 0, NUM_LEDS, 0, LINEARBLEND, true);
+    ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 3, 10, 100, 10, 100, false, true); //t(const String & strName, int ledCount = NUM_LEDS, int cellsPerLED = 1, int cooling = 20, int sparking = 100, int sparks = 3, int sparkHeight = 4,  bool breversed = false, bool bmirrored = false)
     //ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
     //ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 6, 2);
     //ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, MagentaColors_p, 256 / 16, .1, 0,1,0);
@@ -112,23 +115,46 @@
     ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,1,0);
     ADD_EFFECT(EFFECT_STRIP_METEOR, MeteorEffect, 4, 4, 10, 2.0, 2.0);
     ADD_EFFECT(EFFECT_STRIP_COLOR_FILL, ColorFillEffect, CRGB::Magenta, 1);
-    ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 3, 10, 100, 3, 15, false, false); //t(const String & strName, int ledCount = NUM_LEDS, int cellsPerLED = 1, int cooling = 20, int sparking = 100, int sparks = 3, int sparkHeight = 4,  bool breversed = false, bool bmirrored = false)
+    
+    ADD_EFFECT(EFFECT_STRIP_BOUNCING_BALL, BouncingBallEffect, 4, true, true, 4); //BouncingBallEffect(size_t ballCount = 3, bool bMirrored = true, bool bErase = false, int ballSize = 5)
+
+    //ChristmasLightStar(const CRGBPalette16 & palette, TBlendType blendType, float maxSpeed = 0.0)
+//RandomPaletteColorStar
+//`RandomPaletteColorStar(const CRGBPalette16 & palette, TBlendType blendType = NOBLEND, float maxSpeed = 1.0, float starSize = 1.0)
+//EFFECT_STAR_RANDOM_PALETTE_COLOR
+    //ADD_EFFECT(EFFECT_STRIP_SNAKE, SnakeEffect, 10);
     #ifndef EFFECT_SET_VERSION
-            #define EFFECT_SET_VERSION  2.9   // Bump version if default set changes in a meaningful way
+            #define EFFECT_SET_VERSION  3.1   // Bump version if default set changes in a meaningful way
     #endif
 #elif EAVES
+    //ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Red, CRGB::Green, CRGB::Red, CRGB::Green), 48, .1, 0,5,0);
+    //ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Red, CRGB::White, CRGB::Green, CRGB::White, CRGB::Red, CRGB::White, CRGB::Green, CRGB::White, CRGB::Red, CRGB::White, CRGB::Green, CRGB::White, CRGB::Red, CRGB::White, CRGB::Green, CRGB::White), 1, 1, 0, 2, 0, NOBLEND);
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Red, CRGB::White, CRGB::Green, CRGB::White, CRGB::Red, CRGB::White, CRGB::Green, CRGB::White, CRGB::Red, CRGB::White, CRGB::Green, CRGB::White, CRGB::Red, CRGB::White, CRGB::Green, CRGB::White), 2, .5, 0, 2, 0, NOBLEND);
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Red, CRGB::White, CRGB::Red, CRGB::White, CRGB::Red, CRGB::White, CRGB::Red, CRGB::White, CRGB::Red, CRGB::White, CRGB::Red, CRGB::White, CRGB::Red, CRGB::White, CRGB::Red, CRGB::White), 2, .5, 0, 2, 0, NOBLEND);
     ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
-    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, LavaColors_p, 256 / 16, .1, 0,1,0);
-    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, ForestColors_p, 256 / 16, .1, 0,1,0);
-    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,1,0);
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, LavaColors_p, 256 / 16, .1, 0,5,0);
+    //ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, CRGBPalette16(CRGB::Red, CRGB::Green, CRGB::Red, CRGB::Green), 256 / 16, .1, 0,5,0);
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, ForestColors_p, 256 / 16, .1, 0,5,0);
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,5,0);
     ADD_EFFECT(EFFECT_STRIP_COLOR_FILL, ColorFillEffect, CRGB::Blue, 1);
-    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,1,0);
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, BlueHeatColors_p, 256 / 16, .1, 0,10,0);
     //t(const String & strName, int ledCount = NUM_LEDS, int cellsPerLED = 1, int cooling = 20, int sparking = 100, int sparks = 3, int sparkHeight = 4,  bool breversed = false, bool bmirrored = false)
-    ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 3, 10, 100, 3, 15, false, false); //t(const String & strName, int ledCount = NUM_LEDS, int cellsPerLED = 1, int cooling = 20, int sparking = 100, int sparks = 3, int sparkHeight = 4,  bool breversed = false, bool bmirrored = false)
-    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, RedColors_p, 256 / 16, .1, 0,1,0);
-    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,1,0);
+    ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 3, 10, 100, 10, 175, false, true); //t(const String & strName, int ledCount = NUM_LEDS, int cellsPerLED = 1, int cooling = 20, int sparking = 100, int sparks = 3, int sparkHeight = 4,  bool breversed = false, bool bmirrored = false)
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, RedColors_p, 256 / 16, .1, 0,5,0);
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 256 / 16, .1, 0,5,0);
+    ADD_EFFECT(EFFECT_STRIP_PALETTE, PaletteEffect, PartyColors_p, 32, .1, 0, NUM_LEDS, 0, LINEARBLEND, false);
     ADD_EFFECT(EFFECT_STRIP_METEOR, MeteorEffect, 4, 4, 10, 2.0, 2.0);
+    ADD_EFFECT(EFFECT_STRIP_BOUNCING_BALL, BouncingBallEffect, 4, true, true, 4); //BouncingBallEffect(size_t ballCount = 3, bool bMirrored = true, bool bErase = false, int ballSize = 5)
+    #define EFFECT_SET_VERSION  1.1
+#elif YARDTREE
+    ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
+    ADD_EFFECT(EFFECT_STRIP_COLOR_CYCLE, ColorCycleEffect, BottomUp, 6);
+    ADD_EFFECT(EFFECT_STRIP_COLOR_CYCLE, ColorCycleEffect, BottomUp, 2);
 
+    ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 48, 0);
+
+    ADD_EFFECT(EFFECT_STRIP_COLOR_CYCLE, ColorCycleEffect, BottomUp, 3);
+    ADD_EFFECT(EFFECT_STRIP_COLOR_CYCLE, ColorCycleEffect, BottomUp, 1);
 # elif CROSS
     //debugI("NUmber of leds %i",NUM_LEDS);
     //ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 255, 255, 50, 6, 200, false, false);

@@ -164,6 +164,7 @@ std::map<uint, RemoteButton> remoteButtons
 
     
     // 24 Key Remote Buttons
+    // I still need to grab the colors from Dave's color map
     //Row 1
     {0xF700FF, {"Brightness Up",BRIGHTNESS_UP}},
     {0xF7807F, {"Brightness Down",BRIGHTNESS_DOWN}},

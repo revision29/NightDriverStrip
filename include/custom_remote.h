@@ -104,6 +104,7 @@ void RemoteControl::handle()
                 {
                     currentBrightness = deviceConfig.GetBrightness();
                     deviceConfig.SetBrightness(0);
+                    effectManager.ClearTempEffect();
                 }
             }
             case ButtonActions::POWER_ON:
@@ -120,11 +121,16 @@ void RemoteControl::handle()
                 {
                     currentBrightness = deviceConfig.GetBrightness() == 0 ? 127 :  deviceConfig.GetBrightness();
                     deviceConfig.SetBrightness(0);
-                    effectManager.ClearTemporaryEffect();
+                    effectManager.ClearTempEffect();
                 }
             break;
             case NEXT_EFFECT: 
-                effectManager.NextEffect();
+            {
+                if(effectManager.HasTempEffect())
+                    effectManager.ClearTempEffect();
+                else
+                    effectManager.NextEffect();
+            }
                 // Soon to be implemented with fresh codebase
                 /*
                 if (deviceConfig.ApplyGlobalColors())
@@ -145,6 +151,9 @@ void RemoteControl::handle()
                     CRGB fillColor = hexToCRGB(button.actionArgs);
                     effectManager.SetGlobalColor(fillColor);
                 }
+                auto effect = make_shared_psram<ColorFillEffect>(deviceConfig.GetGlobalColor());
+                effectManager.SetTempEffect(effect);
+
                 //to be repalced by: 
                 /*
                 effectManager.ApplyGlobalColor(fillColor);
@@ -154,7 +163,8 @@ void RemoteControl::handle()
             
             case TRIGGER_EFFECT:
                 {
-                    auto effect = make_shared_psram<ColorFillEffect>(CRGB::White, 1);
+                    auto effect = make_shared_psram<ColorFillEffect>(CRGB::Red, 1);
+                    effectManager.SetTempEffect(effect);
                 }
                 
             break;

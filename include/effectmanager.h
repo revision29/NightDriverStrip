@@ -393,14 +393,36 @@ public:
 
     void ClearGlobalColor(bool retainRemoteEffect = false);
 
-    void SetTemporaryEffect (std::shared_ptr<LEDStripEffect> tempEffect) 
+    // SetTempEffect
+    //
+    // Receives an effect and sets it as the temporary effect.
+    // This can be used by a user mapping a remote key to trigger a custom effect that is not in the queue.
+    
+     void SetTempEffect (std::shared_ptr<LEDStripEffect> tempEffect)
     {
         _tempEffect = tempEffect;
     }
 
-    void ClearTemporaryEffect()
+    // ClearTempEffect
+    //
+    // Clears whatever temporary effect might be active.
+
+    void ClearTempEffect()
     {
-        _tempEffect = nullptr;
+        if (_tempEffect)
+            _tempEffect = nullptr;
+    }
+
+    // HasTempEffect
+    //
+    // Checks to see if a temporary effect is set.
+    
+    bool HasTempEffect()
+    {
+        if (_tempEffect)
+            return true;
+        else
+            return false;
     }
 
     void StartEffect()

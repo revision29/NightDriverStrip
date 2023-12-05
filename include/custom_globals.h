@@ -14,15 +14,15 @@
     #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
     //#define MATRIX_WIDTH            32
     //#define MATRIX_HEIGHT           8
-    #define MATRIX_WIDTH            10
-    #define MATRIX_HEIGHT           8
+    #define MATRIX_WIDTH            653
+    #define MATRIX_HEIGHT           1
 
     #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)
     #define NUM_CHANNELS            1
     #define ENABLE_AUDIO            0
 
     //#define POWER_LIMIT_MW       12 * 10 * 1000   // 10 amp supply at 5 volts assumed
-    #define POWER_LIMIT_MW       12 * 3 * 1000   // 3 amp supply at 5 volts assumed
+    #define POWER_LIMIT_MW       5 * 3 * 1000   // 3 amp supply at 5 volts assumed
 
     // Once you have a working project, selectively enable various additional features by setting
     // them to 1 in the list below.  This DEMO config assumes no audio (mic), or screen, etc.
@@ -77,6 +77,31 @@
     #define ENABLE_REMOTE           1
     #define INCOMING_WIFI_ENABLED   0   // Accepting incoming color data and commands
     #define TIME_BEFORE_LOCAL       1   // How many seconds before the lamp times out and shows local content
+
+#elif YARDTREE
+    #ifndef PROJECT_NAME
+        #define PROJECT_NAME            "Joe Yard Tree"
+    #endif
+    #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
+    #define MATRIX_WIDTH            86
+    #define MATRIX_HEIGHT           1
+    #define NUM_RINGS               4
+    #define RING_SIZE_0             38
+    #define RING_SIZE_1             26
+    #define RING_SIZE_2             14
+    #define RING_SIZE_3             8
+
+    #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)
+    #define NUM_CHANNELS            1
+    #define ENABLE_AUDIO            0
+
+    #define POWER_LIMIT_MW       5 * 6 * 1000   // 6 amp supply at 5 volts
+    #define ENABLE_NTP              1
+    #define IR_REMOTE_PIN           48
+    #define ENABLE_REMOTE           1
+    #define INCOMING_WIFI_ENABLED   0   // Accepting incoming color data and commands
+    #define TIME_BEFORE_LOCAL       1   // How many seconds before the lamp times out and shows local content
+    
 
 #elif CROSS
 

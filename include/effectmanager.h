@@ -296,6 +296,7 @@ public:
     virtual bool ShowVU(bool bShow);
     virtual bool IsVUVisible() const;
 
+    // Start of Joe Customization
     // ApplyGlobalColor
     //
     // When a global color is set via the remote, we create a fill effect and assign it as the "remote effect"
@@ -338,7 +339,8 @@ public:
         else
             return false;
     }
-
+    // End of Joe Customization
+    
     void StartEffect()
     {
         // If there's a temporary effect override from the remote control active, we start that, else

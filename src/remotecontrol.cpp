@@ -123,12 +123,7 @@ void RemoteControl::handle()
     }
     else if (IR_FADE == result)
     {
-        #if (ENABLE_AUDIO)
-            effectManager.ShowVU( !effectManager.IsVUVisible() );
-        #else
-            auto tempEffect = make_shared_psram<PaletteEffect>(CRGBPalette16(CRGB::Blue, CRGB::Red, CRGB::Blue), 32, .1, 0, NUM_LEDS, 0, LINEARBLEND, false); // Someone called the cops.
-            effectManager.SetTempEffect(tempEffect);
-       #endif
+        effectManager.ShowVU( !effectManager.IsVUVisible() );
     }
 
     for (int i = 0; i < ARRAYSIZE(RemoteColorCodes); i++)

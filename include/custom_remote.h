@@ -144,12 +144,16 @@ void RemoteControl::handle()
             {
                 if (button.color)
                 {
+                    debugI("we have a button color\n");
                     effectManager.SetGlobalColor(button.color); 
+                    
                 }
                 else
                 {
+                    debugI("we have a button arg")
                     CRGB fillColor = hexToCRGB(button.actionArgs);
                     effectManager.SetGlobalColor(fillColor);
+                    
                 }
                 auto effect = make_shared_psram<ColorFillEffect>(deviceConfig.GetGlobalColor());
                 effectManager.SetTempEffect(effect);

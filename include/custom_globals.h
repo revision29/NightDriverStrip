@@ -83,13 +83,14 @@
         #define PROJECT_NAME            "Joe Yard Tree"
     #endif
     #define DEFAULT_EFFECT_INTERVAL 0 //to disable the effect rotation
-    #define MATRIX_WIDTH            86
+    #define MATRIX_WIDTH            84
     #define MATRIX_HEIGHT           1
-    #define NUM_RINGS               4
-    #define RING_SIZE_0             38
-    #define RING_SIZE_1             26
-    #define RING_SIZE_2             14
+    #define NUM_RINGS               5
+    #define RING_SIZE_0             30
+    #define RING_SIZE_1             22
+    #define RING_SIZE_2             16
     #define RING_SIZE_3             8
+    #define RING_SIZE_4             8
 
     #define NUM_LEDS                (MATRIX_WIDTH*MATRIX_HEIGHT)
     #define NUM_CHANNELS            1

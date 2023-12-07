@@ -168,8 +168,8 @@ std::map<uint, RemoteButton> remoteButtons
     //Row 1
     {0xF700FF, {"Brightness Up",BRIGHTNESS_UP}},
     {0xF7807F, {"Brightness Down",BRIGHTNESS_DOWN}},
-    {0xF740BF, {"Off", POWER_OFF}},
-    {0xF7C03F, {"Power On", NEXT_EFFECT}},
+    {0xF740BF, {"Off", NEXT_EFFECT}},
+    {0xF7C03F, {"Power On", POWER_TOGGLE}},
 
     //Row 2
     {0xF720DF, {"Full Red",FILL_COLOR, "FF0000"}},

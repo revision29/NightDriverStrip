@@ -147,14 +147,15 @@
     ADD_EFFECT(EFFECT_STRIP_BOUNCING_BALL, BouncingBallEffect, 4, true, true, 4); //BouncingBallEffect(size_t ballCount = 3, bool bMirrored = true, bool bErase = false, int ballSize = 5)
     #define EFFECT_SET_VERSION  1.1
 #elif YARDTREE
+    ADD_EFFECT(EFFECT_STRIP_COLOR_FILL, ColorFillEffect, CRGB::Red, 1);
     ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 15, 10);
     ADD_EFFECT(EFFECT_STRIP_COLOR_CYCLE, ColorCycleEffect, BottomUp, 6);
     ADD_EFFECT(EFFECT_STRIP_COLOR_CYCLE, ColorCycleEffect, BottomUp, 2);
-
     ADD_EFFECT(EFFECT_STRIP_RAINBOW_FILL, RainbowFillEffect, 48, 0);
-
     ADD_EFFECT(EFFECT_STRIP_COLOR_CYCLE, ColorCycleEffect, BottomUp, 3);
     ADD_EFFECT(EFFECT_STRIP_COLOR_CYCLE, ColorCycleEffect, BottomUp, 1);
+    ADD_EFFECT(EFFECT_STRIP_COLOR_FILL, ColorFillEffect, CRGB::Green, 1);
+    
 # elif CROSS
     //debugI("NUmber of leds %i",NUM_LEDS);
     //ADD_EFFECT(EFFECT_STRIP_FIRE, FireEffect, "Calm Fire", NUM_LEDS, 255, 255, 50, 6, 200, false, false);

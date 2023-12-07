@@ -37,6 +37,9 @@
 
 #define BRIGHTNESS_STEP     20
 
+#if __has_include ("custom_remote.h")
+      #include "custom_remote.h"
+#else
 void RemoteControl::handle()
 {
     decode_results results;
@@ -137,4 +140,5 @@ void RemoteControl::handle()
     }
 }
 
+#endif
 #endif

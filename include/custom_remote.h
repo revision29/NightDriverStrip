@@ -144,13 +144,13 @@ void RemoteControl::handle()
             {
                 if (button.color)
                 {
-                    debugI("we have a button color\n");
+                    debugI("we have a button color with r value of %i\n", button.color.r);
                     effectManager.SetGlobalColor(button.color); 
                     
                 }
                 else
                 {
-                    debugI("we have a button arg")
+                    debugI("we have a button arg");
                     CRGB fillColor = hexToCRGB(button.actionArgs);
                     effectManager.SetGlobalColor(fillColor);
                     

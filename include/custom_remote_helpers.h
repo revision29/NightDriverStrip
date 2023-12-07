@@ -45,15 +45,31 @@ class RemoteButton
         String name;
         ButtonActions buttonAction;
         String actionArgs; // In case someone wants to pass along a string of arguments that they might want to break apart and use to create an effect, call a function, etc.
-        CRGB color; // Stores a color associated with a remote button.
-        
-        RemoteButton (String _name, ButtonActions _buttonAction, String _actionArgs = "", CRGB _color = CRGB::Black) 
+        CRGB color = false; // Stores a color associated with a remote button.
+        //include/custom_remote_helpers.h:69:65: error: no matching function for call to 'RemoteButton::RemoteButton(const char [9], ButtonActions, CRGB::HTMLColorCode)'
+        RemoteButton (String _name, ButtonActions _buttonAction) 
+        {
+            name = _name;
+            buttonAction = _buttonAction;
+        };
+        RemoteButton (String _name, ButtonActions _buttonAction, String _actionArgs) 
         {
             name = _name;
             buttonAction = _buttonAction;
             actionArgs = _actionArgs;
-            if (_color != CRGB::Black)
-                color = _color;
+        };
+        RemoteButton (String _name, ButtonActions _buttonAction, CRGB _color) 
+        {
+            name = _name;
+            buttonAction = _buttonAction;
+            color = _color;
+        };
+        RemoteButton (String _name, ButtonActions _buttonAction, String _actionArgs, CRGB _color) 
+        {
+            name = _name;
+            buttonAction = _buttonAction;
+            color = _color;
+            actionArgs = _actionArgs;
         };
 };
 
@@ -61,40 +77,42 @@ class RemoteButton
 std::map<uint, RemoteButton> remoteButtons
 {
     //Row 1
-    {0xFF3AC5, {"Brightness Up",BRIGHTNESS_UP}},
-    {0xFFBA45, {"Brightness Down",BRIGHTNESS_DOWN}},
-    {0xFF827D, {"Next Effect",NEXT_EFFECT}},
-    {0xFF02FD, {"Power Off",POWER_TOGGLE}},
+    {0xFF3AC5, RemoteButton("Brightness Up",BRIGHTNESS_UP)},
+    {0xFFBA45, RemoteButton("Brightness Down",BRIGHTNESS_DOWN)},
+    {0xFF827D, RemoteButton("Next Effect",NEXT_EFFECT)},
+    {0xFF02FD, RemoteButton("Power Off",POWER_TOGGLE)},
 
     //Row 2
-    {0xFF1AE5, {"Full Red",FILL_COLOR, "FF0000", CRGB(0xFF0000)}},
-    {0xFF9A65, {"Full Green",FILL_COLOR, "00FF00", CRGB(0x00FF00)}},
-    {0xFFA25D, {"Full Blue",FILL_COLOR, "0000FF", CRGB(0x0000FF)}},
-    {0xFF22DD, {"Full White",FILL_COLOR, "FFFFFF"}},
-    
+    {0xFF1AE5, RemoteButton("Full Red", FILL_COLOR, "FF0000")},
+    /*
+    {0xFF9A65, {"Full Green",FILL_COLOR, CRGB(0x00FF00)}},
+    {0xFFA25D, {"Full Blue",FILL_COLOR, CRGB(0x0000FF)}},
+    {0xFF22DD, {"Full White",FILL_COLOR, CRGB(0xFFFFFF)}},
+    */
+    /*
     //Row 3
-    {0xFF2AD5, {"Color 1",FILL_COLOR, "E18E28"}},
-    {0xFFAA55, {"Color 2",FILL_COLOR, "1B9205"}},
-    {0xFF926D, {"Color 3",FILL_COLOR, "170C96"}},
-    {0xFF12ED, {"Color 4",FILL_COLOR, "F1BFDC"}},
+    {0xFF2AD5, {"Color 1",FILL_COLOR, CRGB(0xE18E28)}},
+    {0xFFAA55, {"Color 2",FILL_COLOR, CRGB(0x1B9205)}},
+    {0xFF926D, {"Color 3",FILL_COLOR, CRGB(0x170C96)}},
+    {0xFF12ED, {"Color 4",FILL_COLOR, CRGB(0xF1BFDC)}},
 
     //Row 4
-    {0xFF0AF5, {"Color 5",FILL_COLOR, "FBBE56"}},
-    {0xFF8A75, {"Color 6",FILL_COLOR, "229248"}},
-    {0xFFB24D, {"Color 7",FILL_COLOR, "200991"}},
-    {0xFF32CD, {"Color 8",FILL_COLOR, "D72FB9"}},
+    {0xFF0AF5, {"Color 5",FILL_COLOR, CRGB(0xFBBE56)}},
+    {0xFF8A75, {"Color 6",FILL_COLOR, CRGB(0x229248)}},
+    {0xFFB24D, {"Color 7",FILL_COLOR, CRGB(0x200991)}},
+    {0xFF32CD, {"Color 8",FILL_COLOR, CRGB(0xD72FB9)}},
 
     //Row 5
-    {0xFF38C7, {"Color 9",FILL_COLOR, "EDD917"}},
-    {0xFFB847, {"Color 10",FILL_COLOR, "2A92A1"}},
-    {0xFF7887, {"Color 11",FILL_COLOR, "7415B4"}},
-    {0xFFF807, {"Color 12",FILL_COLOR, "39AAC3"}},
+    {0xFF38C7, {"Color 9",FILL_COLOR, CRGB(0xEDD917)}},
+    {0xFFB847, {"Color 10",FILL_COLOR, CRGB(0x2A92A1)}},
+    {0xFF7887, {"Color 11",FILL_COLOR, CRGB(0x7415B4)}},
+    {0xFFF807, {"Color 12",FILL_COLOR, CRGB(0x39AAC3)}},
 
     //Row 6
-    {0xFF18E7, {"Color 13",FILL_COLOR, "D0E30F"}},
-    {0xFF9867, {"Color 14",FILL_COLOR, "2E7CC7"}},
-    {0xFF58A7, {"Color 15",FILL_COLOR, "C121B1"}},
-    {0xFFD827, {"Color 16",FILL_COLOR, "2D87D7"}},
+    {0xFF18E7, {"Color 13",FILL_COLOR, CRGB(0xD0E30F)}},
+    {0xFF9867, {"Color 14",FILL_COLOR, CRGB(0x2E7CC7)}},
+    {0xFF58A7, {"Color 15",FILL_COLOR, CRGB(0xC121B1)}},
+    {0xFFD827, {"Color 16",FILL_COLOR, CRGB(0x2D87D7)}},
 
     // Remote with 7th row as JUMP3, JUMP7...
 
@@ -127,20 +145,20 @@ std::map<uint, RemoteButton> remoteButtons
     {0xFFA05F, {"DIY 5",DIY5}},
     {0xFF609F, {"DIY 6",DIY6}},
     {0xFFE01F, {"Flash",FLASH}},
-
+*/
 
     /*
     // Remote with 7th row as REDUP, GREENUP, ...
     //Row 7
-    {0xFF28D7, {"Increase Red", CHANGER, "10"}},
-    {0xFFA857, {"Increase Green", CHANGEG, "10"}},
-    {0xFF6897, {"Increase Blue", CHANGEB, "10"}},
+    {0xFF28D7, {"Increase Red", CHANGER, "10)}},
+    {0xFFA857, {"Increase Green", CHANGEG, "10)}},
+    {0xFF6897, {"Increase Blue", CHANGEB, "10)}},
     {0xFFE817, {"Quick", QUICK}},
 
     //Row 8
-    {0xFF08F7, {"Decrease Red",CHANGER, "-10"}},
-    {0xFF8877, {"Decrease Green",CHANGEG, "-10"}},
-    {0xFF48B7, {"Decrease Blue",CHANGEB, "-10"}},
+    {0xFF08F7, {"Decrease Red",CHANGER, "-10)}},
+    {0xFF8877, {"Decrease Green",CHANGEG, "-10)}},
+    {0xFF48B7, {"Decrease Blue",CHANGEB, "-10)}},
     {0xFFC837, {"Slow", SLOW}},//fade speed is Slow
 
     //Row 9
@@ -172,34 +190,35 @@ std::map<uint, RemoteButton> remoteButtons
     {0xF7C03F, {"Power On", POWER_TOGGLE}},
 
     //Row 2
-    {0xF720DF, {"Full Red",FILL_COLOR, "FF0000"}},
-    {0xF7A05F, {"Full Green",FILL_COLOR, "00FF00"}},
-    {0xF7609F, {"Full Blue",FILL_COLOR, "0000FF"}},
-    {0xF7E01F, {"Full White",FILL_COLOR, "AAAAAA"}}, //because we don't want FULL white
-
+    {0xF720DF, {"Full Red", FILL_COLOR, CRGB(256, 0, 0)}},
+    {0xF7A05F, {"Full Green", FILL_COLOR, "00FF00"}},
+    {0xF7609F, {"Full Blue", FILL_COLOR, CRGB(0x0000FF)}},
+    {0xF7E01F, {"Full White", FILL_COLOR, CRGB(0xAAAAAA)}} //because we don't want FULL white
+/*
     //Row 3
-    {0xF710EF, {"Color 1",FILL_COLOR, "E18E28"}},
-    {0xF7906F, {"Color 2",FILL_COLOR, "1B9205"}},
-    {0xF750AF, {"Color 3",FILL_COLOR, "170C96"}},
+    {0xF710EF, {"Color 1",FILL_COLOR, CRGB(0xE18E28)}},
+    {0xF7906F, {"Color 2",FILL_COLOR, CRGB(0x1B9205)}},
+    {0xF750AF, {"Color 3",FILL_COLOR, CRGB(0x170C96)}},
     {0xF7D02F, {"Auto", AUTO_SCROLL}},
 
     //Row 4
-    {0xF730CF, {"Color 4",FILL_COLOR, "FBBE56"}},
-    {0xF7B04F, {"Color 5",FILL_COLOR, "229248"}},
-    {0xF7708F, {"Color 6",FILL_COLOR, "200991"}},
+    {0xF730CF, {"Color 4",FILL_COLOR, CRGB(0xFBBE56)}},
+    {0xF7B04F, {"Color 5",FILL_COLOR, CRGB(0x229248)}},
+    {0xF7708F, {"Color 6",FILL_COLOR, CRGB(0x200991)}},
     {0xF7F00F, {"Strobe", STROBE}},
 
     //Row 5
-    {0xF708F7, {"Color 7",FILL_COLOR, "EDD917"}},
-    {0xF78877, {"Color 8",FILL_COLOR, "2A92A1"}},
-    {0xF748B7, {"Color 9",FILL_COLOR, "7415B4"}},
+    {0xF708F7, {"Color 7",FILL_COLOR, CRGB(0xEDD917)}},
+    {0xF78877, {"Color 8",FILL_COLOR, CRGB(0x2A92A1)}},
+    {0xF748B7, {"Color 9",FILL_COLOR, CRGB(0x7415B4)}},
     {0xF7C837, {"Fade", FADE}},
 
     //Row 6
-    {0xFF18E7, {"Color 10",FILL_COLOR, "D0E30F"}},
-    {0xFF9867, {"Color 11",FILL_COLOR, "2E7CC7"}},
-    {0xFF58A7, {"Color 12",FILL_COLOR, "C121B1"}},
+    {0xFF18E7, {"Color 10",FILL_COLOR, CRGB(0xD0E30F)}},
+    {0xFF9867, {"Color 11",FILL_COLOR, CRGB(0x2E7CC7)}},
+    {0xFF58A7, {"Color 12",FILL_COLOR, CRGB(0xC121B1)}},
     {0xFFD827, {"Smooth", SMOOTH, "2D87D7"}}
+    */
     
 };
 

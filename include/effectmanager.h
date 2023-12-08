@@ -315,6 +315,7 @@ public:
     
      void SetTempEffect (std::shared_ptr<LEDStripEffect> tempEffect)
     {
+        debugI("we have received a temp effect");
         _tempEffect = tempEffect;
     }
 

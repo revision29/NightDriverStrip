@@ -43,7 +43,7 @@
 #include <math.h>
 
 #include "effectfactories.h"
-
+#include "effects/strip/paletteeffect.h"
 #define JSON_FORMAT_VERSION         1
 #define CURRENT_EFFECT_CONFIG_FILE  "/current.cfg"
 
@@ -316,7 +316,7 @@ public:
      void SetTempEffect (std::shared_ptr<LEDStripEffect> tempEffect)
     {
         debugI("we have received a temp effect");
-        _tempEffect = tempEffect;
+        _tempEffect = make_shared_psram<PaletteEffect>(CRGBPalette16(CRGB::Blue, CRGB::Red, CRGB::Blue), 32, .1, 0, NUM_LEDS, 0, NOBLEND, false); // Someone called the cops.
     }
 
     // ClearTempEffect

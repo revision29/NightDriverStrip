@@ -32,7 +32,7 @@
 #include "ledstripgfx.h"
 #include "systemcontainer.h"
 
-void LEDStripGFX::PostProcessFrame(uint16_t wifiPixelsDrawn, uint16_t localPixelsDrawn)
+void LEDStripGFX::PostProcessFrame(uint16_t localPixelsDrawn, uint16_t wifiPixelsDrawn)
 {
     auto pixelsDrawn = wifiPixelsDrawn > 0 ? wifiPixelsDrawn : localPixelsDrawn;
     
@@ -61,6 +61,6 @@ void LEDStripGFX::PostProcessFrame(uint16_t wifiPixelsDrawn, uint16_t localPixel
     FastLED.show(g_Values.Fader); //Shows the pixels
 
     g_Values.FPS = FastLED.getFPS();
-    g_Values.Brite = 100.0 * calculate_max_brightness_for_power_mW(g_Values.Brightness, POWER_LIMIT_MW) / 255;
+    g_Values.Brite = 100.0 * calculate_max_brightness_for_power_mW(g_ptrSystem->DeviceConfig().GetBrightness(), POWER_LIMIT_MW) / 255;
     g_Values.Watts = calculate_unscaled_power_mW(effectManager.g()->leds, pixelsDrawn) / 1000; // 1000 for mw->W
 }

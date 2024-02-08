@@ -49,6 +49,8 @@ class PatternSubscribers : public LEDStripEffect
     long subscribers                        = 0;
     String youtubeChannelGuid               = DEFAULT_CHANNEL_GUID;
     String youtubeChannelName               = DEFAULT_CHANNEL_NAME;
+    CRGB backgroundColor                    = CRGB(0,16,64);
+    CRGB borderColor                        = CRGB(160,160,255);
     bool guidUpdated                        = true;
     static std::vector<SettingSpec, psram_allocator<SettingSpec>> mySettingSpecs;
     size_t readerIndex                      = std::numeric_limits<size_t>::max();
@@ -126,6 +128,8 @@ class PatternSubscribers : public LEDStripEffect
 
   protected:
 
+    static constexpr int _jsonSize = LEDStripEffect::_jsonSize + 192;
+
     // Add our own SettingSpec instances to the standard set
     bool FillSettingSpecs() override
     {
@@ -143,12 +147,16 @@ class PatternSubscribers : public LEDStripEffect
                 "the effect should show subscriber information.",
                 SettingSpec::SettingType::String
             );
-            mySettingSpecs.emplace_back(
-                NAME_OF(youtubeChannelName),
-                "YouTube channel name",
-                "The name of the channel for which the effect should show subscriber information.",
-                SettingSpec::SettingType::String
-            );
+            mySettingSpecs.emplace_back(NAME_OF(backgroundColor), "Background Color",
+                                        "Color for the background",
+                                        SettingSpec::SettingType::Color);
+            mySettingSpecs.emplace_back(NAME_OF(borderColor), "Border Color",
+                                        "Color for the border around the edge", SettingSpec::SettingType::Color);
+            mySettingSpecs
+                .emplace_back(NAME_OF(youtubeChannelName), "YouTube channel name",
+                              "The name of the channel for which the effect should show subscriber information.",
+                              SettingSpec::SettingType::String)
+                .EmptyAllowed = true;
         }
 
         // Add our SettingSpecs reference_wrappers to the base set provided by LEDStripEffect
@@ -170,6 +178,10 @@ class PatternSubscribers : public LEDStripEffect
 
         if (jsonObject.containsKey("ycn"))
             youtubeChannelName = jsonObject["ycn"].as<String>();
+        if (jsonObject.containsKey("bgc"))
+            backgroundColor = jsonObject["bgc"].as<CRGB>();
+        if (jsonObject.containsKey("boc"))
+            borderColor = jsonObject["boc"].as<CRGB>();
     }
 
     ~PatternSubscribers()
@@ -179,13 +191,17 @@ class PatternSubscribers : public LEDStripEffect
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<256> jsonDoc;
+        StaticJsonDocument<_jsonSize> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc["ycg"] = youtubeChannelGuid;
         jsonDoc["ycn"] = youtubeChannelName;
+        jsonDoc["bgc"] = backgroundColor;
+        jsonDoc["boc"] = borderColor;
+
+        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -207,11 +223,12 @@ class PatternSubscribers : public LEDStripEffect
 
     void Draw() override
     {
-        LEDMatrixGFX::backgroundLayer.fillScreen(rgb24(0, 16, 64));
+        LEDMatrixGFX::backgroundLayer.fillScreen(rgb24(backgroundColor.r, backgroundColor.g, backgroundColor.b));
         LEDMatrixGFX::backgroundLayer.setFont(font5x7);
 
         // Draw a border around the edge of the panel
-        LEDMatrixGFX::backgroundLayer.drawRectangle(0, 1, MATRIX_WIDTH-1, MATRIX_HEIGHT-2, rgb24(160,160,255));
+        LEDMatrixGFX::backgroundLayer.drawRectangle(0, 1, MATRIX_WIDTH - 1, MATRIX_HEIGHT - 2,
+                                                    rgb24(borderColor.r, borderColor.g, borderColor.b));
 
         // Draw the channel name
         LEDMatrixGFX::backgroundLayer.drawString(2, 3, rgb24(255,255,255), youtubeChannelName.c_str());
@@ -243,12 +260,18 @@ class PatternSubscribers : public LEDStripEffect
     // Extension override to serialize our settings on top of those from LEDStripEffect
     bool SerializeSettingsToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<384> jsonDoc;
+        StaticJsonDocument<_jsonSize> jsonDoc;
 
-        LEDStripEffect::SerializeSettingsToJSON(jsonObject);
+        JsonObject root = jsonDoc.to<JsonObject>();
+        LEDStripEffect::SerializeSettingsToJSON(root);
 
         jsonDoc[NAME_OF(youtubeChannelGuid)] = youtubeChannelGuid;
         jsonDoc[NAME_OF(youtubeChannelName)] = youtubeChannelName;
+        jsonDoc[NAME_OF(backgroundColor)] = backgroundColor;
+        jsonDoc[NAME_OF(borderColor)] = borderColor;
+
+        if (jsonDoc.overflowed())
+            debugE("JSON buffer overflow while serializing settings for PatternSubscribers - object incomplete!");
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -258,6 +281,8 @@ class PatternSubscribers : public LEDStripEffect
     {
         RETURN_IF_SET(name, NAME_OF(youtubeChannelGuid), youtubeChannelGuid, value);
         RETURN_IF_SET(name, NAME_OF(youtubeChannelName), youtubeChannelName, value);
+        RETURN_IF_SET(name, NAME_OF(backgroundColor), backgroundColor, value);
+        RETURN_IF_SET(name, NAME_OF(borderColor), borderColor, value);
 
         return LEDStripEffect::SetSetting(name, value);
     }

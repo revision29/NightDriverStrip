@@ -74,8 +74,10 @@ public:
             hueval = hueval + 48;
             hueval %= 256;
             hue[i] = hueval;
-            iPos[i] = (pGFX->GetLEDCount() / meteorCount) * i;
+            iPos[i] = meteorCount < 1 ? 0 : (pGFX->GetLEDCount() / (meteorCount - 1) * i);
             speed[i] = random_range(meteorSpeedMin, meteorSpeedMax);
+            if (i % 1)
+                speed[i] *= -1;
             lastBeat[i] = g_Values.AppTime.FrameStartTime();
             bLeft[i] = i & 2;
         }
@@ -180,7 +182,7 @@ class MeteorEffect : public LEDStripEffect
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<256> jsonDoc;
+        StaticJsonDocument<LEDStripEffect::_jsonSize + 128> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
@@ -190,6 +192,8 @@ class MeteorEffect : public LEDStripEffect
         jsonDoc["dcy"] = _meteorTrailDecay;
         jsonDoc[PTY_MINSPEED] = _meteorSpeedMin;
         jsonDoc[PTY_MAXSPEED] = _meteorSpeedMax;
+
+        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }

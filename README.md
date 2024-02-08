@@ -26,6 +26,7 @@ _Davepl, 9/19/2021_
 - [Wifi setup](#wifi-setup)
 - [Feature defines](#feature-defines)
 - [Adding new effects](#adding-new-effects)
+- [Notes on JSON persistence](#notes-on-json-persistence)
 - [Resetting the effect list](#resetting-the-effect-list)
 - [Fetching things from the Internet](#fetching-things-from-the-internet)
 - [Build pointers](#build-pointers)
@@ -64,7 +65,7 @@ Please follow these steps to flash and, if supported, set up WiFi on your device
 
 3. Select your device (like "M5StickC Plus") from the drop-down list. A second drop-down with supported projects on that device will then appear.
 
-4. Select the project you want to flash in the second drop-down. When you do, a CONNECT button will appear below it.
+4. Select the project you want to flash in the second drop-down. When you do, a CONNECT button will appear below it. Note that each project's label includes an indication of the key features enabled in the build in question. The legend for each of the feature letters is shown below the project drop-down.
 
 5. Click the CONNECT button. A dialog will apear asking you to select a serial port. Depending on your system, it may show only one or a list of them. In case multiple are shown, it'll generally be the one plainly called "USB Serial Port (COMn)". Select the correct port and click Connect.
 
@@ -86,7 +87,7 @@ Please follow these steps to flash and, if supported, set up WiFi on your device
 
 11. In the WiFi connection information dialog, select or enter your SSID and password. Click CONNECT. In some cases, the WiFi connection dialog appears again after a successful connection was actually made. In that case, click SKIP. It is also possible that a time-out is reported while WiFi has actually successfully connected. In that case, click BACK.
 
-12. Now, a dialog will appear that will show the details of the project you flashed. It will also provide options to flash again and show the device's logs & console. Furthermore, if your device supports WiFi then options will be available to visit the device's web application or change the WiFi settings. Note that if you flashed a device image that includes the web server/web application, it may take a minute or so to come up after the connection to the WiFi network has been made.
+12. Now, a dialog will appear that will show the details of the project you flashed. It will also provide options to flash again and show the device's logs & console. Furthermore, if your device supports WiFi then options will be available to visit the device's web application (provided the on-device web server is also enabled) or change the WiFi settings. Note that if you flashed a device image that includes the web server/web application, it may take a minute or so to come up after the connection to the WiFi network has been made.
 
 ### Reconfiguring WiFi using the Web Installer
 
@@ -215,11 +216,23 @@ That simplest configuration, called here simply 'DEMO', is provided by a board s
 These [build types](#build-pointers) may be chosen by the '-e' argument
 to pio or in a menu option inside the PlatformIO IDE/VS Code.
 
-Concerning JSON peristence: the effects table is persisted to a JSON file on SPIFFS at regular intervals, to retain the state of effects (and in fact the whole effect list) across reboots. This is largely in preparation for future updates to NightDriverStrip, where the composition of the effect list configuration of individual effects can be changed using the device web application. The API endpoints to facilitate this are already available and ready for use (see [Device web UI and API](#device-web-ui-and-api), below.)
+## Notes on JSON persistence
 
-This makes that an override of `SerializeToJSON()` and a corresponding deserializing constructor must be provided for effects that need (or want) to persist more than the friendly name and effect number. Those two properties are (de)serialized from/to JSON by `LEDStripEffect` by default.
+The effects table is persisted to a JSON file on SPIFFS at regular intervals, to retain the state of effects (and in fact the whole effect list) across reboots. This is largely in preparation for future updates to NightDriverStrip, where the composition of the effect list configuration of individual effects can be changed using the device web application. The API endpoints to facilitate this are already available and ready for use (see [Device web UI and API](#device-web-ui-and-api), below.)
 
-**Note**: in line with the convention in ArduinoJson, which is the library used by the JSON serialization logic, `SerializeToJSON()` _must_ return `true` _except_ when an ArduinoJson function (like `JsonObject::set()`) returns `false` to indicate it ran out of buffer memory. Any `SerializeToJSON()` function returning `false` will trigger an increase in the serialization buffer and a restart of the serialization process.
+This makes that an override of `SerializeToJSON()` and a corresponding deserializing constructor must be provided for effects that need (or want) to persist more than the properties that are (de)serialized from/to JSON by `LEDStripEffect` by default.
+
+Throughout the project, the library used for JSON handling and (de)serialization is [ArduinoJson](https://arduinojson.org/). Among others, this means that:
+
+- in line with the convention in ArduinoJson, `SerializeToJSON()` functions _must_ return `true` _except_ when an ArduinoJson function (like `JsonObject::set()`) returns `false` to indicate it ran out of buffer memory. Any `SerializeToJSON()` function returning `false` will trigger an increase in the overall serialization buffer and a restart of the serialization process.
+- the memory required for an individual class instance's (de)serialization operation needs to be reserved _beforehand_, by creating either:
+
+  - a `StaticJsonDocument<`_buffer size_`>()` that reserves memory on the stack. This can be used for small buffer sizes (smaller than 1024 bytes) only.
+  - an `AllocatedJsonDocument(`_buffer size_`)` that reserves memory on the heap.
+
+  How much memory is actually required depends on the number, type and contents of the (de)serialized properties, and is effectively a bit of a guessing game - which means the values you'll see throughout the codebase are educated guesses as well. When properties that are serialized last fail to show up in the JSON that is generated, it is reasonable to assume the serialization process ran out of buffer memory and that buffer memory thus needs to be increased.
+
+To get a better understanding of the specifics related to JSON (de)serialization, you could consider taking a look at the respective tutorials in the ["First contact" section](https://arduinojson.org/v6/doc/#first-contact) of the ArduinoJson documentation.
 
 ## Resetting the effect list
 
@@ -336,6 +349,19 @@ A lifetime of coding has taught me to err on the side of simplicity, so please d
 Add whatever you want and/or need to make your LED dreams come true. Fix my blunders. Fill in the obvious gaps in my knowledge. Whatever has the most blinken for the fewest bits get my vote. You only get so much additional cool blinken for every byte of code and program. That return is measured in BlinkenPerBit, the amount of blinking awesomeness the code adds divided by the impact on the source (and binary).
 
 ## Time it takes to build this project
+
+To replicate, build the mesmerizer project.  Then delete pio/build_cache and build again, taking the time for the second build.
+
+- HP Z6 G5A, 7995WX, 128GB [96-core, 192-thread]
+  -> [davepl 11/29/2023] 25.270 seconds
+
+- 3970X, 128GB [32-core, 64-thread] Windows11+WSL2/Ubuntu02.04LTS
+  -> [davepl 11/29/2023] 34.292 seconds
+
+- Mac M1 Ultra Studio [10-core, 20-thread] 
+  -> [davepl 11/29/2023] 48.368 seconds
+
+## Old Build times, no longer relevant with current platformio, just historical curiosity:
 
 Time to build the SPECTRUM config (`pio run -e spectrum`). Assumes a clean build after everything has been installed and downloaded.
 

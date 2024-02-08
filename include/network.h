@@ -27,25 +27,40 @@
 //---------------------------------------------------------------------------
 #pragma once
 
-#include "secrets.h"                          // copy include/secrets.example.h to include/secrets.h
 #include "types.h"
 
 #if INCOMING_WIFI_ENABLED
     #include "socketserver.h"
 #endif
 
-    extern DRAM_ATTR String WiFi_password;
-    extern DRAM_ATTR String WiFi_ssid;
+    // For now, just a centralized location for the port numbers for our
+    // various services. Someday these might be configurable.
+    // This could be an enum class, but the static_cast<int> at the
+    // callers is ugly.
+    enum NetworkPort
+    {
+      ColorServer  = 12000,
+      IncomingWiFi  = 49152,
+      VICESocketServer = 25232,
+      Webserver  = 80
+    };
+
 #if ENABLE_WIFI
+    enum class WiFiConnectResult
+    {
+      Connected,
+      Disconnected,
+      NoCredentials
+    };
+
     void processRemoteDebugCmd();
 
-    bool ConnectToWiFi(uint cRetries, bool waitForCredentials);
+    WiFiConnectResult ConnectToWiFi(const String& ssid, const String& password);
+    WiFiConnectResult ConnectToWiFi(const String* ssid, const String* password);
     void UpdateNTPTime();
     void SetupOTA(const String & strHostname);
-    bool ReadWiFiConfig();
-    bool WriteWiFiConfig();
-    extern DRAM_ATTR String WiFi_password;
-    extern DRAM_ATTR String WiFi_ssid;
+    bool ReadWiFiConfig(String& WiFi_ssid, String& WiFi_password);
+    bool WriteWiFiConfig(const String& WiFi_ssid, const String& WiFi_password);
 
     // Static Helpers
     //

@@ -43,7 +43,7 @@ class Lifespan
 {
   protected:
 
-    double                       _birthTime;
+    const double _birthTime;
 
   public:
 
@@ -82,7 +82,7 @@ public:
     MovingObject(float maxSpeed = 0.25) : _maxSpeed(maxSpeed)
     {
         // Return a random value between -maxSpeed and +maxSpeed
-        
+
         _velocity = random_range(0.0f, _maxSpeed * 2) - _maxSpeed;
     }
 
@@ -398,7 +398,7 @@ class ColorBeatWithFlash : public BeatEffectBase, public ParticleSystem<RingPart
       _allParticles.push_back(newparticle);
     }
 
-    virtual void HandleBeat(bool bMajor, float elapsed, float span)
+    virtual void HandleBeat(bool bMajor, float elapsed, float span) override
     {
       for (int pass = 0; pass < 1; pass++)
       {
@@ -451,7 +451,7 @@ class ColorBeatOverRed : public LEDStripEffect, public BeatEffectBase, public Pa
     {
     }
 
-    virtual void HandleBeat(bool bMajor, float elapsed, float span)
+    virtual void HandleBeat(bool bMajor, float elapsed, float span) override
     {
         int iInsulator;
         do
@@ -716,18 +716,20 @@ class MoltenGlassOnVioletBkgnd : public LEDStripEffect, public BeatEffectBase, p
 
     virtual bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        AllocatedJsonDocument jsonDoc(512);
+        AllocatedJsonDocument jsonDoc(LEDStripEffect::_jsonSize + 512);
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc[PTY_PALETTE] = _Palette;
 
+        assert(!jsonDoc.overflowed());
+
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
 
 
-    virtual void HandleBeat(bool bMajor, float elapsed, float span)
+    virtual void HandleBeat(bool bMajor, float elapsed, float span) override
     {
         int iInsulator;
         do
@@ -806,17 +808,19 @@ class NewMoltenGlassOnVioletBkgnd : public LEDStripEffect, public BeatEffectBase
 
     virtual bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        AllocatedJsonDocument jsonDoc(512);
+        AllocatedJsonDocument jsonDoc(LEDStripEffect::_jsonSize + 512);
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc[PTY_PALETTE] = _Palette;
 
+        assert(!jsonDoc.overflowed());
+
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
 
-    virtual void HandleBeat(bool bMajor, float elapsed, float span)
+    virtual void HandleBeat(bool bMajor, float elapsed, float span) override
     {
         int iInsulator;
         do
@@ -892,17 +896,19 @@ class SparklySpinningMusicEffect : public LEDStripEffect, public BeatEffectBase,
 
     virtual bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        AllocatedJsonDocument jsonDoc(512);
+        AllocatedJsonDocument jsonDoc(LEDStripEffect::_jsonSize + 512);
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc[PTY_PALETTE] = _Palette;
 
+        assert(!jsonDoc.overflowed());
+
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
 
-    virtual void HandleBeat(bool bMajor, float elapsed, float span)
+    virtual void HandleBeat(bool bMajor, float elapsed, float span) override
     {
         int iInsulator;
         do
@@ -947,7 +953,7 @@ class MusicalHotWhiteInsulatorEffect : public LEDStripEffect, public BeatEffectB
     {
     }
 
-    virtual void HandleBeat(bool bMajor, float elapsed, float span)
+    virtual void HandleBeat(bool bMajor, float elapsed, float span) override
     {
         int iInsulator;
         do

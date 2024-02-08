@@ -34,6 +34,7 @@
 #include "globals.h"
 #include "musiceffect.h"
 #include "soundanalyzer.h"
+#include "systemcontainer.h"
 
 class FireEffect : public LEDStripEffect
 {
@@ -63,6 +64,8 @@ class FireEffect : public LEDStripEffect
     static const uint8_t BlendNeighbor3 = 0;       // 1
 
     static const uint8_t BlendTotal = (BlendSelf + BlendNeighbor1 + BlendNeighbor2 + BlendNeighbor3);
+
+    static constexpr int _jsonSize = LEDStripEffect::_jsonSize + 128;
 
     int CellCount() const { return LEDCount * CellsPerLED; }
 
@@ -101,7 +104,7 @@ class FireEffect : public LEDStripEffect
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<256> jsonDoc;
+        StaticJsonDocument<_jsonSize> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
@@ -115,6 +118,8 @@ class FireEffect : public LEDStripEffect
         jsonDoc[PTY_REVERSED] = bReversed;
         jsonDoc[PTY_MIRORRED] = bMirrored;
 
+        assert(!jsonDoc.overflowed());
+
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
 
@@ -125,25 +130,6 @@ class FireEffect : public LEDStripEffect
     size_t DesiredFramesPerSecond() const override
     {
         return 45;
-    }
-
-    virtual CRGB GetBlackBodyHeatColor(float temp) const override
-    {
-        temp *= 255;
-        uint8_t t192 = round((temp/255.0f)*191);
-
-        // calculate ramp up from
-        uint8_t heatramp = t192 & 0x3F; // 0..63
-        heatramp <<= 2; // scale up to 0..252
-
-        // figure out which third of the spectrum we're in:
-        if( t192 > 0x80) {                     // hottest
-            return CRGB(255, 255, heatramp);
-        } else if( t192 > 0x40 ) {             // middle
-            return CRGB( 255, heatramp, 0);
-        } else {                               // coolest
-            return CRGB( heatramp, 0, 0);
-        }
     }
 
     void Draw() override
@@ -223,6 +209,7 @@ class FireEffect : public LEDStripEffect
 class PaletteFlameEffect : public FireEffect
 {
     CRGBPalette16 _palette;
+    bool _ignoreGlobalColor;
 
     void construct()
     {
@@ -232,6 +219,7 @@ class PaletteFlameEffect : public FireEffect
 public:
     PaletteFlameEffect(const String & strName,
                        const CRGBPalette16 &palette,
+                       bool ignoreGlobalColor = false,
                        int ledCount = NUM_LEDS,
                        int cellsPerLED = 1,
                        int cooling = 20,         // Was 1.8 for NightDriverStrip
@@ -241,25 +229,31 @@ public:
                        bool reversed = false,
                        bool mirrored = false)
         : FireEffect(strName, ledCount, cellsPerLED, cooling, sparking, sparks, sparkHeight, reversed, mirrored),
-          _palette(palette)
+          _palette(palette),
+          _ignoreGlobalColor(ignoreGlobalColor)
     {
         construct();
     }
 
     PaletteFlameEffect(const JsonObjectConst& jsonObject)
       : FireEffect(jsonObject),
-        _palette(jsonObject[PTY_PALETTE].as<CRGBPalette16>())
+        _palette(jsonObject[PTY_PALETTE].as<CRGBPalette16>()),
+        _ignoreGlobalColor(jsonObject[PTY_IGNOREGLOBALCOLOR])
     {
         construct();
     }
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        AllocatedJsonDocument jsonDoc(512);
+        AllocatedJsonDocument jsonDoc(FireEffect::_jsonSize + 512);
 
-        FireEffect::SerializeToJSON(jsonObject);
+        JsonObject root = jsonDoc.to<JsonObject>();
+        FireEffect::SerializeToJSON(root);
 
-        jsonObject[PTY_PALETTE] = _palette;
+        jsonDoc[PTY_PALETTE] = _palette;
+        jsonDoc[PTY_IGNOREGLOBALCOLOR] = _ignoreGlobalColor;
+
+        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -267,8 +261,15 @@ public:
     virtual CRGB GetBlackBodyHeatColor(float temp) const override
     {
         temp = min(1.0f, temp);
-        int index = map(temp, 0.0f, 1.0f, 0.0f, 240.0f);
-        return ColorFromPalette(_palette, index, 255);
+        int index = fmap(temp, 0.0f, 1.0f, 0.0f, 240.0f);
+        auto& deviceConfig = g_ptrSystem->DeviceConfig();
+        if (deviceConfig.ApplyGlobalColors() && !_ignoreGlobalColor)
+        {
+            auto tempPalette = CRGBPalette16(CRGB::Black, deviceConfig.GlobalColor(), CRGB::Yellow, CRGB::White);
+            return ColorFromPalette(tempPalette, index, 255);
+        }
+        else
+            return ColorFromPalette(_palette, index, 255);
 
         //        uint8_t heatramp = (uint8_t)(t192 & 0x3F);
         //        heatramp <<=2;
@@ -287,6 +288,7 @@ class MusicalPaletteFire : public PaletteFlameEffect, protected BeatEffectBase
 
     MusicalPaletteFire(const String & strName,
                        const CRGBPalette16 &palette,
+                       bool ignoreGlobalColor = false,
                        int ledCount = NUM_LEDS,
                        int cellsPerLED = 1,
                        int cooling = 20,         // Was 1.8 for NightDriverStrip
@@ -295,9 +297,9 @@ class MusicalPaletteFire : public PaletteFlameEffect, protected BeatEffectBase
                        int sparkHeight = 3,
                        bool reversed = false,
                        bool mirrored = false)
-        : PaletteFlameEffect(strName, palette, ledCount, cellsPerLED, cooling, sparking, sparks, sparkHeight, reversed, mirrored),
+        : PaletteFlameEffect(strName, palette, ignoreGlobalColor, ledCount, cellsPerLED, cooling, sparking, sparks, sparkHeight, reversed, mirrored),
           BeatEffectBase(1.00, 0.01)
-            
+
 
     {
         construct();
@@ -306,7 +308,7 @@ class MusicalPaletteFire : public PaletteFlameEffect, protected BeatEffectBase
     MusicalPaletteFire(const JsonObjectConst& jsonObject)
         : PaletteFlameEffect(jsonObject),
           BeatEffectBase(1.00, 0.01)
-          
+
     {
         construct();
     }
@@ -359,7 +361,7 @@ public:
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<256> jsonDoc;
+        StaticJsonDocument<LEDStripEffect::_jsonSize + 64> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
@@ -367,6 +369,8 @@ public:
         jsonDoc[PTY_MIRORRED] = _Mirrored;
         jsonDoc[PTY_REVERSED] = _Reversed;
         jsonDoc[PTY_COOLING] = _Cooling;
+
+        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -521,7 +525,7 @@ public:
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<128> jsonDoc;
+        StaticJsonDocument<LEDStripEffect::_jsonSize> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
@@ -534,6 +538,8 @@ public:
         jsonDoc[PTY_SPARKHEIGHT] = _SparkHeight;
         jsonDoc["trb"] = _Turbo;
         jsonDoc[PTY_MIRORRED] = _Mirrored;
+
+        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }
@@ -689,7 +695,7 @@ class BaseFireEffect : public LEDStripEffect
 
     bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<256> jsonDoc;
+        StaticJsonDocument<LEDStripEffect::_jsonSize + 128> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
@@ -702,6 +708,8 @@ class BaseFireEffect : public LEDStripEffect
         jsonDoc[PTY_MIRORRED] = bMirrored;
         jsonDoc[PTY_LEDCOUNT] = LEDCount;
         jsonDoc["clc"] = CellCount;
+
+        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }

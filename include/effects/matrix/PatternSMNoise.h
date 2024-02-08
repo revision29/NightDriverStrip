@@ -3,7 +3,7 @@
 #include "effectmanager.h"
 
 // Derived from https://editor.soulmatelights.com/gallery/1509-noise-palettes
-// Cycles through 17 effects if pallette noise, looking like a surreal topo.
+// Cycles through 17 effects of pallette noise, looking like a surreal topo.
 
 // Leave these as globals so they're kept in Flash.
 DEFINE_GRADIENT_PALETTE(temperature_gp){
@@ -383,12 +383,14 @@ class PatternSMNoise : public LEDStripEffect
 
     virtual bool SerializeToJSON(JsonObject& jsonObject) override
     {
-        StaticJsonDocument<128> jsonDoc;
+        StaticJsonDocument<LEDStripEffect::_jsonSize> jsonDoc;
 
         JsonObject root = jsonDoc.to<JsonObject>();
         LEDStripEffect::SerializeToJSON(root);
 
         jsonDoc[PTY_EFFECT] = to_value(_effect);
+
+        assert(!jsonDoc.overflowed());
 
         return jsonObject.set(jsonDoc.as<JsonObjectConst>());
     }

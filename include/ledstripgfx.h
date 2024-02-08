@@ -89,8 +89,6 @@ protected:
         #ifdef POWER_LIMIT_MW
             set_max_power_in_milliwatts(POWER_LIMIT_MW);                // Set brightness limit
         #endif
-
-        g_Values.Brightness = 255;
     }
 
 public:
@@ -124,20 +122,13 @@ public:
 
         AddLEDsToFastLED(devices);
 
-        #if ATOMLIGHT                                                   // BUGBUG Why input?  Shouldn't they be output?
-            pinMode(4, INPUT);
-            pinMode(12, INPUT);
-            pinMode(13, INPUT);
-            pinMode(14, INPUT);
-            pinMode(15, INPUT);
-        #endif
     }
 
     // PostProcessFrame
     //
     // PostProcessFrame sends the data to the LED strip.  If it's fewer than the size of the strip, we only send that many.
 
-    void PostProcessFrame(uint16_t wifiPixelsDrawn, uint16_t localPixelsDrawn) override;
+    void PostProcessFrame(uint16_t localPixelsDrawn, uint16_t wifiPixelsDrawn) override;
 };
 
 #if HEXAGON

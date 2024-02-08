@@ -150,10 +150,7 @@
 //---------------------------------------------------------------------------
 
 
-#define HSPI_MISO   27
-#define HSPI_MOSI   26    // This is the only IO pin used in this code (master out, slave in)
-#define HSPI_SCLK   25
-#define HSPI_SS     32
+
 #define FASTLED_ALL_PINS_HARDWARE_SPI
 #define FASTLED_ESP32_SPI_BUS HSPI
 
@@ -164,6 +161,7 @@
 #include "globals.h"
 #include "deviceconfig.h"
 #include "systemcontainer.h"
+#include "soundanalyzer.h"
 #include "values.h"
 #include "improvserial.h"                       // ImprovSerial impl for setting WiFi credentials over the serial port
 #include <TJpg_Decoder.h>
@@ -178,19 +176,17 @@ void IRAM_ATTR ScreenUpdateLoopEntry(void *);
 // Global Variables
 //
 
-DRAM_ATTR std::unique_ptr<SystemContainer> g_ptrSystem;
-DRAM_ATTR Values g_Values;
-DRAM_ATTR SoundAnalyzer g_Analyzer;
-DRAM_ATTR RemoteDebug Debug;                                                        // Instance of our telnet debug server
-DRAM_ATTR String WiFi_ssid;
-DRAM_ATTR String WiFi_password;
-DRAM_ATTR std::mutex g_buffer_mutex;
+std::unique_ptr<SystemContainer> g_ptrSystem;
+Values g_Values;
+SoundAnalyzer g_Analyzer;
+RemoteDebug Debug;                                                        // Instance of our telnet debug server
+std::mutex g_buffer_mutex;
 
 // The one and only instance of ImprovSerial.  We instantiate it as the type needed
 // for the serial port on this module.  That's usually HardwareSerial but can be
 // other types on the S2, etc... which is why it's a template class.
 
-ImprovSerial<typeof(Serial)> g_ImprovSerial;
+std::unique_ptr<ImprovSerial<typeof(Serial)>> g_pImprovSerial;
 
 // If an insulator or tree or fan has multiple rings, this table defines how those rings are laid out such
 // that they add up to FAN_SIZE pixels total per ring.
@@ -198,7 +194,7 @@ ImprovSerial<typeof(Serial)> g_ImprovSerial;
 // Imagine a setup of 5 Christmas trees, where each tree was made up of 4 concentric rings of descreasing
 // size, like 16, 12, 8, 4.  You would have NUM_FANS of 5 and MAX_RINGS of 4 and your ring table would be 16, 12, 8 4.
 
-DRAM_ATTR const int g_aRingSizeTable[MAX_RINGS] =
+const int g_aRingSizeTable[MAX_RINGS] =
 {
     RING_SIZE_0,
     RING_SIZE_1,
@@ -279,9 +275,11 @@ void setup()
 
     // Initialize Serial output
     Serial.begin(115200);
+
     // Re-route debug output to the serial port
     Debug.setSerialEnabled(true);
 
+    // Intialialize SPIFFS for file access to non-volatile storage
     if (!SPIFFS.begin(true))
         Serial.println("WARNING: SPIFFs could not be initialized!");
 
@@ -290,9 +288,10 @@ void setup()
     // allocator to be PSRAM only on the MESMERIZER project where it's well tested.
 
     #if MESMERIZER
-        heap_caps_malloc_extmem_enable(128);
+        heap_caps_malloc_extmem_enable(96);
     #endif
 
+    // Initialize LZ library for decompressing compressed wifi packets
     uzlib_init();
 
     // Create the SystemContainer that holds primary device management objects.
@@ -319,41 +318,48 @@ void setup()
         ESP_ERROR_CHECK(nvs_flash_erase());
         err = nvs_flash_init();
     }
+
     ESP_ERROR_CHECK(err);
 
-    // Setup config objects
-    g_ptrSystem->SetupConfig();
-
     #if ENABLE_WIFI
+        String WiFi_ssid;
+        String WiFi_password;
+
+        // Read the WiFi crendentials from NVS.  If it fails, writes the defaults based on secrets.h
+
+        if (!ReadWiFiConfig(WiFi_ssid, WiFi_password))
+        {
+            debugW("Could not read WiFI Credentials");
+            WiFi_ssid     = cszSSID;
+            WiFi_password = cszPassword;
+            if (!WriteWiFiConfig(WiFi_ssid, WiFi_password))
+                debugW("Could not even write defaults to WiFi Credentials");
+        }
+        else if (WiFi_ssid.length() == 0)
+        {
+            WiFi_ssid     = cszSSID;
+            WiFi_password = cszPassword;
+        }
 
         // This chip alone is special-cased by Improv, so we pull it
         // from build flags. CONFIG_IDF_TARGET will be "esp32s3".
         #if CONFIG_IDF_TARGET_ESP32S3
             String family = "ESP32-S3";
         #else
-	        String family = "ESP32";
+            String family = "ESP32";
         #endif
 
         debugW("Starting ImprovSerial for %s", family.c_str());
         String name = "NDESP32" + get_mac_address().substring(6);
-        g_ImprovSerial.setup(PROJECT_NAME, FLASH_VERSION_NAME, family, name.c_str(), &Serial);
+        g_pImprovSerial = make_unique_psram<ImprovSerial<typeof(Serial)>>();
+        g_pImprovSerial->setup(PROJECT_NAME, FLASH_VERSION_NAME, family, name.c_str(), &Serial);
 
-        // Read the WiFi crendentials from NVS.  If it fails, writes the defaults based on secrets.h
+    #endif
 
-        if (!ReadWiFiConfig())
-        {
-            debugW("Could not read WiFI Credentials");
-            WiFi_password = cszPassword;
-            WiFi_ssid     = cszSSID;
-            if (!WriteWiFiConfig())
-                debugW("Could not even write defaults to WiFi Credentials");
-        }
-        else if (WiFi_ssid.length() == 0)
-        {
-            WiFi_password = cszPassword;
-            WiFi_ssid     = cszSSID;
-        }
+    // Setup config objects
+    g_ptrSystem->SetupConfig();
 
+    #if ENABLE_WIFI
         // We create the network reader here, so classes can register their readers from this point onwards.
         //   Note that the thread that executes the readers is started further down, along with other networking
         //   threads.
@@ -366,7 +372,7 @@ void setup()
     #endif
 
     #if INCOMING_WIFI_ENABLED
-        g_ptrSystem->SetupSocketServer(49152, NUM_LEDS);  // $C000 is free RAM on the C64, fwiw!
+        g_ptrSystem->SetupSocketServer(NetworkPort::IncomingWiFi, NUM_LEDS);  // $C000 is free RAM on the C64, fwiw!
     #endif
 
     #if ENABLE_WIFI && ENABLE_WEBSERVER
@@ -423,6 +429,11 @@ void setup()
             g_ptrSystem->SetupDisplay<M5Screen>(TFT_HEIGHT, TFT_WIDTH);
         #else
             M5.begin(false);
+        #endif
+
+        // Turn off the M5 vibration motor
+        #if M5STACKCORE2
+            M5.Axp.SetLDOEnable(3, false);
         #endif
 
     #elif ELECROW
@@ -498,13 +509,9 @@ void setup()
     taskManager.StartAudioThread();
     taskManager.StartRemoteThread();
 
-    #if ENABLE_WIFI && WAIT_FOR_WIFI
-        debugI("Calling ConnectToWifi()\n");
-        if (false == ConnectToWiFi(99, true))
-        {
-            debugI("Unable to connect to WiFi, but must have it, so rebooting...\n");
-            throw std::runtime_error("Unable to connect to WiFi, but must have it, so rebooting");
-        }
+    #if ENABLE_WIFI
+        debugI("Making initial attempt to connect to WiFi.");
+        ConnectToWiFi(WiFi_ssid, WiFi_password);
         Debug.setSerialEnabled(true);
     #endif
 
@@ -530,7 +537,7 @@ void loop()
         #if ENABLE_WIFI
             EVERY_N_MILLIS(20)
             {
-                g_ImprovSerial.loop();
+                g_pImprovSerial->loop();
             }
         #endif
 

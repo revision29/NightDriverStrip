@@ -37,7 +37,7 @@
 
 #define BRIGHTNESS_STEP     20
 
-#if __has_include ("custom_remote.h")
+#if __has_include ("remote_custom.h")
       #include "remote_custom.h"
 #else
 void RemoteControl::handle()

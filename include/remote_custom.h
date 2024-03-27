@@ -32,7 +32,7 @@ void RemoteControl::handle()
     static int currentBrightness = deviceConfig.GetBrightness();
     static uint currentEffectInterval = g_ptrSystem->EffectManager().GetInterval();
     static boolean remotePower = true;
-    
+
     if (!_IR_Receive.decode(&results))
         return;
 
@@ -182,14 +182,36 @@ void RemoteControl::handle()
             case CHANGER: // The button can send a positive or negative value to adjust the color.
                 {
                     CRGB tempColor = g_ptrSystem->DeviceConfig().GlobalColor();
-                    tempColor.red += button.actionArgs.toInt();
+                    if (tempColor.red + button.actionArgInt > 255)
+                    {
+                        tempColor.red = 255;
+                    }
+                    else if (tempColor.red + button.actionArgInt < 0)
+                    {
+                        tempColor.red = 0;
+                    } 
+                    else 
+                    {
+                        tempColor.red += button.actionArgInt;
+                    }
                     effectManager.ApplyGlobalColor(tempColor);
                 }
             break;
             case CHANGEG: // The button can send a positive or negative value to adjust the color.
                 {
                     CRGB tempColor = g_ptrSystem->DeviceConfig().GlobalColor();
-                    tempColor.green += button.actionArgs.toInt();
+                    if (tempColor.green + button.actionArgInt > 255)
+                    {
+                        tempColor.green = 255;
+                    }
+                    else if (tempColor.green + button.actionArgInt < 0)
+                    {
+                        tempColor.green = 0;
+                    } 
+                    else 
+                    {
+                        tempColor.green += button.actionArgInt;
+                    }
                     effectManager.ApplyGlobalColor(tempColor);
                 }
                     
@@ -197,7 +219,18 @@ void RemoteControl::handle()
             case CHANGEB: // The button can send a positive or negative value to adjust the color.
                 {
                     CRGB tempColor = g_ptrSystem->DeviceConfig().GlobalColor();
-                    tempColor.blue += button.actionArgs.toInt();
+                    if (tempColor.blue + button.actionArgInt > 255)
+                    {
+                        tempColor.blue = 255;
+                    }
+                    else if (tempColor.blue + button.actionArgInt < 0)
+                    {
+                        tempColor.blue = 0;
+                    } 
+                    else 
+                    {
+                        tempColor.blue += button.actionArgInt;
+                    }
                     effectManager.ApplyGlobalColor(tempColor); 
                 }
             break;

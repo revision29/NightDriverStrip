@@ -45,6 +45,7 @@ class RemoteButton
         String name;
         ButtonActions buttonAction;
         String actionArgs; // In case someone wants to pass along a string of arguments that they might want to break apart and use to create an effect, call a function, etc.
+        int actionArgInt = 0;
         CRGB color = false; // Stores a color associated with a remote button.
         //include/custom_remote_helpers.h:69:65: error: no matching function for call to 'RemoteButton::RemoteButton(const char [9], ButtonActions, CRGB::HTMLColorCode)'
         RemoteButton (String _name, ButtonActions _buttonAction) 
@@ -70,6 +71,13 @@ class RemoteButton
             buttonAction = _buttonAction;
             color = _color;
             actionArgs = _actionArgs;
+        };
+        //{"Decrease Blue", CHANGEB, -10}},
+        RemoteButton (String _name, ButtonActions _buttonAction, int _actionArgInt) 
+        {
+            name = _name;
+            buttonAction = _buttonAction;
+            actionArgInt = _actionArgInt;
         };
 };
 
@@ -111,32 +119,32 @@ std::map<uint, RemoteButton> remoteButtons
     {0xFF9867, {"Color 14",FILL_COLOR, CRGB(0x2E7CC7)}},
     {0xFF58A7, {"Color 15",FILL_COLOR, CRGB(0xC121B1)}},
     {0xFFD827, {"Color 16",FILL_COLOR, CRGB(0x2D87D7)}},
-
+    /*
     // Remote with 7th row as JUMP3, JUMP7...
 
     //Row 7
-    {0xFF28D7, {"Jump 3",JUMP3}},
-    {0xFFA857, {"Jump 7",JUMP7}},
-    {0xFF6897, {"Fade 3",FADE3}},
-    {0xFFE817, {"Fade 7",FADE7}},
+    {0xFF28D7, {"Jump 3", JUMP3}},
+    {0xFFA857, {"Jump 7", JUMP7}},
+    {0xFF6897, {"Fade 3", FADE3}},
+    {0xFFE817, {"Fade 7", FADE7}},
 
     //Row 8
-    {0xFF08F7, {"Increase Red",CHANGER, "10"}},
-    {0xFF8877, {"Increase Green",CHANGEG, "10"}},
-    {0xFF48B7, {"Increase Blue",CHANGEB, "10"}},
+    {0xFF08F7, {"Increase Red", CHANGER, "10"}},
+    {0xFF8877, {"Increase Green", CHANGEG, "10"}},
+    {0xFF48B7, {"Increase Blue", CHANGEB, "10"}},
     {0xFFC837, {"Quick",QUICK}},//fade speed is fast
 
     //Row 9
-    {0xFF30CF, {"Descrease Red",CHANGER, "-10"}},
-    {0xFFB04F, {"Descrease Green",CHANGEG, "-10"}},
-    {0xFF708F, {"Decrease Blue",CHANGEB, "-10"}},
+    {0xFF30CF, {"Descrease Red", CHANGER, "-10"}},
+    {0xFFB04F, {"Descrease Green", CHANGEG, "-10"}},
+    {0xFF708F, {"Decrease Blue", CHANGEB, "-10"}},
     {0xFFF00F, {"Slow",SLOW}},//fade speed is slow
 
     //Row 10
-    {0xFF10EF, {"DIY 1",DIY1}},
-    {0xFF906F, {"DIY 2",DIY2}},
-    {0xFF50AF, {"DIY 3",DIY3}},
-    {0xFFD02F, {"Auto",AUTO_SCROLL}},
+    {0xFF10EF, {"DIY 1", DIY1}},
+    {0xFF906F, {"DIY 2", DIY2}},
+    {0xFF50AF, {"DIY 3", DIY3}},
+    {0xFFD02F, {"Auto", AUTO_SCROLL}},
 
     //Row 11
     {0xFF20DF, {"DIY 4",DIY4}},
@@ -144,25 +152,25 @@ std::map<uint, RemoteButton> remoteButtons
     {0xFF609F, {"DIY 6",DIY6}},
     {0xFFE01F, {"Flash",FLASH}},
 
-    /*
+    */
     // Remote with 7th row as REDUP, GREENUP, ...
     //Row 7
-    {0xFF28D7, {"Increase Red", CHANGER, "10)}},
-    {0xFFA857, {"Increase Green", CHANGEG, "10)}},
-    {0xFF6897, {"Increase Blue", CHANGEB, "10)}},
+    {0xFF28D7, {"Increase Red", CHANGER, 10}},
+    {0xFFA857, {"Increase Green", CHANGEG, 10}},
+    {0xFF6897, {"Increase Blue", CHANGEB, 10}},
     {0xFFE817, {"Quick", QUICK}},
 
     //Row 8
-    {0xFF08F7, {"Decrease Red",CHANGER, "-10)}},
-    {0xFF8877, {"Decrease Green",CHANGEG, "-10)}},
-    {0xFF48B7, {"Decrease Blue",CHANGEB, "-10)}},
+    {0xFF08F7, {"Decrease Red", CHANGER, -10}},
+    {0xFF8877, {"Decrease Green", CHANGEG, -10}},
+    {0xFF48B7, {"Decrease Blue", CHANGEB, -10}},
     {0xFFC837, {"Slow", SLOW}},//fade speed is Slow
 
     //Row 9
     {0xFF30CF, {"DIY 1", DIY1}},
     {0xFFB04F, {"DIY 2", DIY2}},
     {0xFF708F, {"DIY 3", DIY3}},
-    {0xFFF00F, {"Auto", AUTO}},
+    {0xFFF00F, {"Auto", AUTO_SCROLL}},
 
     //Row 10
     {0xFF10EF, {"DIY 4", DIY4}},
@@ -175,7 +183,7 @@ std::map<uint, RemoteButton> remoteButtons
     {0xFFA05F, {"Jump 7", JUMP7}},
     {0xFF609F, {"Fade 3", FADE3}},
     {0xFFE01F, {"Fade 7", FADE7}},
-    */
+    
 
     
     // 24 Key Remote Buttons

@@ -176,5 +176,31 @@
       // Cancel a reader. After this, it will no longer be invoked.
       void CancelReader(size_t index);
   };
+  class WiFiStaticIP
+  {
+ 
+
+    init (String _statticIP, String _gatewayIP, String ipNetmask, String dnsIP)
+    {
+      //Validate each item. If all are valid then set validatedIP to true.
+      //If any fail to validate, set to false
+
+    }
+    public:
+      IPAddress staticIP;
+      IPAddress gatewayIP;
+      IPAddress ipNetmask;
+      IPAddress dnsIP;
+      bool validatedIP = false;
+      bool validatedIP(String ipAddress)
+      {
+        return false;
+      }
+      IPAddress stringToIP (String ipString) {
+        //Use regular expression to split the parts
+      }
+
+
+  };
 
 #endif

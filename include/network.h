@@ -179,11 +179,11 @@
   class WiFiStaticIP
   {
  
-
-    init (String _statticIP, String _gatewayIP, String ipNetmask, String dnsIP)
+    bool init (String _statticIP, String _gatewayIP, String ipNetmask, String dnsIP)
     {
       //Validate each item. If all are valid then set validatedIP to true.
       //If any fail to validate, set to false
+      return true;
 
     }
     public:
@@ -192,15 +192,14 @@
       IPAddress ipNetmask;
       IPAddress dnsIP;
       bool validatedIP = false;
-      bool validatedIP(String ipAddress)
+      bool validateIP(String ipAddress)
       {
         return false;
       }
       IPAddress stringToIP (String ipString) {
         //Use regular expression to split the parts
       }
-
-
+      
   };
 
 #endif
